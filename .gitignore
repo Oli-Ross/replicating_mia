@@ -3,3 +3,5 @@ data/
 
 # Virtual env
 .venv/
+
+__pycache__/
