@@ -2,12 +2,13 @@ import csv
 from os.path import exists
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 class DatasetFormat:
-    def __init__(self, size: int, numberOfFeatures: int, numberOfLabels: int) -> None:
+    def __init__(self, size: int, dataFormat: list[int], numberOfLabels: int) -> None:
         self.size = size
-        self.numberOfFeatures = numberOfFeatures
+        self.dataFormat = dataFormat
         self.numberOfLabels = numberOfLabels
 
 
@@ -21,13 +22,16 @@ class DatasetFiles:
 class Dataset:
 
     def __init__(self, files: DatasetFiles, format: DatasetFormat) -> None:
+
         self.files = files
         self.format = format
 
-        self.features: np.array = np.zeros(
-            (self.format.size, self.format.numberOfFeatures))
-        self.labels: np.array = np.zeros(
-            (self.format.size, self.format.numberOfLabels))
+        labelsArrayShape: list[int] = [format.numberOfLabels, format.size]
+        featuresArrayShape: list[int] = format.dataFormat.copy()
+        featuresArrayShape.append(format.size)
+
+        self.labels: NDArray = np.zeros(labelsArrayShape)
+        self.features: NDArray = np.zeros(featuresArrayShape)
 
     def load(self):
         if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
@@ -48,10 +52,10 @@ class KagglePurchaseDataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
-    numberOfFeatures: int = 600
+    dataFormat: list[int] = [600]
     numberOfLabels: int = 1
     format: DatasetFormat = DatasetFormat(
-        size, numberOfFeatures, numberOfLabels)
+        size, dataFormat, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
@@ -77,10 +81,10 @@ class Cifar10Dataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
-    numberOfFeatures: int = 600
+    dataFormat: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
     format: DatasetFormat = DatasetFormat(
-        size, numberOfFeatures, numberOfLabels)
+        size, dataFormat, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
