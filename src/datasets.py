@@ -6,7 +6,8 @@ from numpy.typing import NDArray
 
 
 class DatasetFormat:
-    def __init__(self, size: int, dataDimensions: list[int], numberOfLabels: int) -> None:
+    def __init__(self, size: int,
+                 dataDimensions: list[int], numberOfLabels: int) -> None:
         self.size = size
         self.dataDimensions = dataDimensions
         self.numberOfLabels = numberOfLabels
