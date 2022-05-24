@@ -6,9 +6,9 @@ from numpy.typing import NDArray
 
 
 class DatasetFormat:
-    def __init__(self, size: int, dataFormat: list[int], numberOfLabels: int) -> None:
+    def __init__(self, size: int, dataDimensions: list[int], numberOfLabels: int) -> None:
         self.size = size
-        self.dataFormat = dataFormat
+        self.dataDimensions = dataDimensions
         self.numberOfLabels = numberOfLabels
 
 
@@ -27,7 +27,7 @@ class Dataset:
         self.format = format
 
         labelsArrayShape: list[int] = [format.numberOfLabels, format.size]
-        featuresArrayShape: list[int] = format.dataFormat.copy()
+        featuresArrayShape: list[int] = format.dataDimensions.copy()
         featuresArrayShape.append(format.size)
 
         self.labels: NDArray = np.zeros(labelsArrayShape)
@@ -52,10 +52,10 @@ class KagglePurchaseDataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
-    dataFormat: list[int] = [600]
+    dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
     format: DatasetFormat = DatasetFormat(
-        size, dataFormat, numberOfLabels)
+        size, dataDimensions, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
@@ -81,10 +81,10 @@ class Cifar10Dataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
-    dataFormat: list[int] = [32, 32, 3]
+    dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
     format: DatasetFormat = DatasetFormat(
-        size, dataFormat, numberOfLabels)
+        size, dataDimensions, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
