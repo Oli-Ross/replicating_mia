@@ -48,9 +48,10 @@ class KagglePurchaseDataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
-    numFeatures: int = 600
-    numLabels: int = 1
-    format: DatasetFormat = DatasetFormat(size, numFeatures, numLabels)
+    numberOfFeatures: int = 600
+    numberOfLabels: int = 1
+    format: DatasetFormat = DatasetFormat(
+        size, numberOfFeatures, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
@@ -76,9 +77,10 @@ class Cifar10Dataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
-    numFeatures: int = 600
-    numLabels: int = 1
-    format: DatasetFormat = DatasetFormat(size, numFeatures, numLabels)
+    numberOfFeatures: int = 600
+    numberOfLabels: int = 1
+    format: DatasetFormat = DatasetFormat(
+        size, numberOfFeatures, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
