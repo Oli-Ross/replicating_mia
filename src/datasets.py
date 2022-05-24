@@ -13,9 +13,9 @@ class DatasetFormat:
 
 class DatasetFiles:
     def __init__(self, datasetName: str) -> None:
-        self.rawData = f"../data/raw_data_{datasetName}"
-        self.numpyFeatures = f"../data/features_{datasetName}.npy"
-        self.numpyLabels = f"../data/labels_{datasetName}.npy"
+        self.rawData = f"../data/{datasetName}/raw_data"
+        self.numpyFeatures = f"../data/{datasetName}/features.npy"
+        self.numpyLabels = f"../data/{datasetName}/labels.npy"
 
 
 class Dataset:
