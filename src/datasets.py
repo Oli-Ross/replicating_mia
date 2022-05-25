@@ -81,8 +81,8 @@ class KagglePurchaseDataset(Dataset):
 
 class Cifar10Dataset(Dataset):
 
-    datasetName: str = "purchase"
-    size: int = 197324
+    datasetName: str = "cifar10"
+    size: int = 60000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
     format: DatasetFormat = DatasetFormat(
