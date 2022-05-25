@@ -6,6 +6,7 @@ from numpy.typing import NDArray
 
 
 class DatasetFormat:
+
     def __init__(self, size: int,
                  dataDimensions: list[int], numberOfLabels: int) -> None:
         self.size = size
@@ -14,6 +15,7 @@ class DatasetFormat:
 
 
 class DatasetFiles:
+
     def __init__(self, datasetName: str) -> None:
         self.rawData = f"../data/{datasetName}/raw_data"
         self.numpyFeatures = f"../data/{datasetName}/features.npy"
@@ -23,7 +25,6 @@ class DatasetFiles:
 class Dataset:
 
     def __init__(self, files: DatasetFiles, format: DatasetFormat) -> None:
-
         self.files = files
         self.format = format
 
