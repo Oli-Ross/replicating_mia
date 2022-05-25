@@ -1,7 +1,9 @@
 import csv
 from os.path import exists
+from os import mkdir
 
 import numpy as np
+import tensorflow as tf
 from numpy.typing import NDArray
 
 
@@ -17,6 +19,7 @@ class DatasetFormat:
 class DatasetFiles:
 
     def __init__(self, datasetName: str) -> None:
+        self.dataDir = f"../data/{datasetName}"
         self.rawData = f"../data/{datasetName}/raw_data"
         self.numpyFeatures = f"../data/{datasetName}/features.npy"
         self.numpyLabels = f"../data/{datasetName}/labels.npy"
@@ -40,6 +43,11 @@ class Dataset:
             self.load_numpy_from_file()
         else:
             pass
+
+    def save(self):
+        if not exists(self.files.dataDir):
+            mkdir(self.files.dataDir)
+        self.save_numpy_to_file()
 
     def load_numpy_from_file(self):
         self.features = np.load(self.files.numpyFeatures)
@@ -100,4 +108,6 @@ class Cifar10Dataset(Dataset):
             self.load_from_tensorflow()
 
     def load_from_tensorflow(self):
-        pass
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+        self.features = np.append(x_train, x_test)
+        self.labels = np.append(y_train, y_test)
