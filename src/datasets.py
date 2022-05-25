@@ -42,7 +42,10 @@ class Dataset:
         if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
             self.load_numpy_from_file()
         else:
-            pass
+            self.load_external()
+
+    def load_external(self):
+        raise NotImplementedError("Must be implemented by subclass.")
 
     def save(self):
         if not exists(self.files.dataDir):
@@ -72,11 +75,8 @@ class KagglePurchaseDataset(Dataset):
         super().__init__(self.files, self.format)
         self.load()
 
-    def load(self):
-        if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
-            self.load_numpy_from_file()
-        else:
-            self.load_raw_data_from_file()
+    def load_external(self):
+        self.load_raw_data_from_file()
 
     # TODO: Assumes specific CSV format
     def load_raw_data_from_file(self):
@@ -101,11 +101,8 @@ class Cifar10Dataset(Dataset):
         super().__init__(self.files, self.format)
         self.load()
 
-    def load(self):
-        if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
-            self.load_numpy_from_file()
-        else:
-            self.load_from_tensorflow()
+    def load_external(self):
+        self.load_from_tensorflow()
 
     def load_from_tensorflow(self):
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
