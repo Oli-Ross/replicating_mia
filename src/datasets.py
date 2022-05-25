@@ -83,8 +83,8 @@ class KagglePurchaseDataset(Dataset):
         with open(self.files.rawData) as file:
             reader = csv.reader(file)
             for index, row in enumerate(reader):
-                self.labels[index] = row[0]
-                self.features[index] = row[1:]
+                self.labels[0, index] = row[0]
+                self.features[:, index] = row[1:]
 
 
 class Cifar10Dataset(Dataset):
