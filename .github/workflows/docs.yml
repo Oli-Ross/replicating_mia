@@ -23,6 +23,13 @@ jobs:
 
       - run: pip install -r requirements.txt
       - run: pdoc -o docs/ src/*.py
+      
+      - run: tar --directory docs/ -hcf artifact.tar .
+      - uses: actions/upload-artifact@v3
+        with:
+          name: github-pages
+          path: ./artifact.tar
+
   
   # Deploy the artifact to GitHub pages.
   deploy:
