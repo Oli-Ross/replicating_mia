@@ -1,6 +1,6 @@
 import csv
-from os.path import exists
 from os import mkdir
+from os.path import dirname, exists, join
 
 import numpy as np
 import tensorflow as tf
@@ -19,10 +19,13 @@ class DatasetFormat:
 class DatasetFiles:
 
     def __init__(self, datasetName: str) -> None:
-        self.dataDir = f"../data/{datasetName}"
-        self.rawData = f"../data/{datasetName}/raw_data"
-        self.numpyFeatures = f"../data/{datasetName}/features.npy"
-        self.numpyLabels = f"../data/{datasetName}/labels.npy"
+
+        currentDirectoryName = dirname(__file__)
+
+        self.dataDir = join(currentDirectoryName, f"../data/{datasetName}")
+        self.rawData = join(self.dataDir, "raw_data")
+        self.numpyFeatures = join(self.dataDir, "features.npy")
+        self.numpyLabels = join(self.dataDir, "labels.npy")
 
 
 class Dataset:
