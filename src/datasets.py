@@ -43,6 +43,7 @@ class Dataset:
             self.load_numpy_from_file()
         else:
             self.load_external()
+            self.save()
 
     def load_external(self):
         raise NotImplementedError("Must be implemented by subclass.")
