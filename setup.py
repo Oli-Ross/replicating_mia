@@ -5,4 +5,5 @@ setup(name='replicating_mia',
       author='Oliver Roß',
       author_email='mail@oliver-ross.at',
       url='https://github.com/OliverRoss/replicating_mia',
+      package_dir={'': 'src'}
       )
