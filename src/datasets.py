@@ -45,13 +45,17 @@ class Dataset:
 
         self.files: DatasetFiles = DatasetFiles(self.datasetName)
 
-        labelsArrayShape: list[int] = [self.labelDimension, self.size]
+        labelsArrayShape: list[int] = [self.labelDimension]
+        labelsArrayShape.insert(0, self.size)
         featuresArrayShape: list[int] = self.dataDimensions.copy()
-        featuresArrayShape.append(self.size)
+        featuresArrayShape.insert(0, self.size)
 
         self.labels: NDArray = np.zeros(labelsArrayShape)
         self.features: NDArray = np.zeros(featuresArrayShape)
         self.load()
+
+        # self.features should not be flattened or its shape changed otherwise
+        assert list(self.features.shape) == featuresArrayShape
 
     def load(self):
         """
@@ -128,5 +132,5 @@ class Cifar10Dataset(Dataset):
 
     def load_from_tensorflow(self):
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-        self.features: NDArray = np.append(x_train, x_test)
-        self.labels: NDArray = np.append(y_train, y_test)
+        self.features: NDArray = np.append(x_train, x_test, axis=0)
+        self.labels: NDArray = np.append(y_train, y_test, axis=0)
