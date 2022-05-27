@@ -32,7 +32,6 @@ class DatasetFiles:
         self.dataDirectory: str = join(
             currentDirectoryName,
             f"../data/{datasetName}")
-        self.rawData: str = join(self.dataDirectory, "raw_data")
         self.numpyFeatures: str = join(self.dataDirectory, "features.npy")
         self.numpyLabels: str = join(self.dataDirectory, "labels.npy")
 
@@ -118,7 +117,8 @@ class KagglePurchaseDataset(Dataset):
 
     # TODO: Assumes specific CSV format
     def load_raw_data_from_file(self):
-        with open(self.files.rawData) as file:
+        rawData: str = join(self.files.dataDirectory, "raw_data")
+        with open(rawData) as file:
             reader = csv.reader(file)
             for index, row in enumerate(reader):
                 self.labels[0, index] = row[0]
