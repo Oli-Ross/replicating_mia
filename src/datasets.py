@@ -50,14 +50,14 @@ class Dataset:
     def load_external(self):
         raise NotImplementedError("Must be implemented by subclass.")
 
+    def load_numpy_from_file(self):
+        self.features = np.load(self.files.numpyFeatures)
+        self.labels = np.load(self.files.numpyLabels)
+
     def save(self):
         if not exists(self.files.dataDir):
             mkdir(self.files.dataDir)
         self.save_numpy_to_file()
-
-    def load_numpy_from_file(self):
-        self.features = np.load(self.files.numpyFeatures)
-        self.labels = np.load(self.files.numpyLabels)
 
     def save_numpy_to_file(self):
         np.save(self.files.numpyFeatures, self.features)
