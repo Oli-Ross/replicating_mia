@@ -1,20 +1,10 @@
 import csv
 from os import mkdir
 from os.path import dirname, exists, join
-from typing import NamedTuple
 
 import numpy as np
 import tensorflow as tf
 from numpy.typing import NDArray
-
-
-class DatasetFormat(NamedTuple):
-    """
-    Format of a dataset.
-    """
-    size: int
-    dataDimensions: list[int]
-    numberOfLabels: int
 
 
 class DatasetFiles:
@@ -53,16 +43,11 @@ class Dataset:
         # This base class should not be instantiated, subclass it instead
         assert self.__class__ != Dataset
 
-        self.format = DatasetFormat(
-            self.size,
-            self.dataDimensions,
-            self.numberOfLabels)
-        self.files = DatasetFiles(self.datasetName)
+        self.files: DatasetFiles = DatasetFiles(self.datasetName)
 
-        labelsArrayShape: list[int] = [
-            self.format.numberOfLabels, self.format.size]
-        featuresArrayShape: list[int] = self.format.dataDimensions.copy()
-        featuresArrayShape.append(self.format.size)
+        labelsArrayShape: list[int] = [self.numberOfLabels, self.size]
+        featuresArrayShape: list[int] = self.dataDimensions.copy()
+        featuresArrayShape.append(self.size)
 
         self.labels: NDArray = np.zeros(labelsArrayShape)
         self.features: NDArray = np.zeros(featuresArrayShape)
