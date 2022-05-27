@@ -41,19 +41,31 @@ class DatasetFiles:
 
 class Dataset:
     """
-    Dataset representation.
+    Base class for dataset representation.
     """
+    size = 1
+    dataDimensions = [1]
+    numberOfLabels = 1
+    datasetName = "default"
 
-    def __init__(self, files: DatasetFiles, format: DatasetFormat) -> None:
+    def __init__(self) -> None:
         """
         Set up numpy arrays to hold the dataset, using the dataset format.
         """
-        self.files: DatasetFiles = files
-        self.format: DatasetFormat = format
 
-        labelsArrayShape: list[int] = [format.numberOfLabels, format.size]
-        featuresArrayShape: list[int] = format.dataDimensions.copy()
-        featuresArrayShape.append(format.size)
+        # This base class should not be instantiated, subclass it instead
+        assert self.__class__ != Dataset
+
+        self.format = DatasetFormat(
+            self.size,
+            self.dataDimensions,
+            self.numberOfLabels)
+        self.files = DatasetFiles(self.datasetName)
+
+        labelsArrayShape: list[int] = [
+            self.format.numberOfLabels, self.format.size]
+        featuresArrayShape: list[int] = self.format.dataDimensions.copy()
+        featuresArrayShape.append(self.format.size)
 
         self.labels: NDArray = np.zeros(labelsArrayShape)
         self.features: NDArray = np.zeros(featuresArrayShape)
@@ -67,6 +79,7 @@ class Dataset:
             self.load_numpy_from_file()
         else:
             self.load_external()
+            self.save()
 
     def load_external(self):
         """
@@ -98,15 +111,12 @@ class KagglePurchaseDataset(Dataset):
     size: int = 197324
     dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
-    format: DatasetFormat = DatasetFormat(size, dataDimensions, numberOfLabels)
-    files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
-        super().__init__(self.files, self.format)
+        super().__init__()
 
     def load_external(self):
         self.load_raw_data_from_file()
-        self.save()
 
     # TODO: Assumes specific CSV format
     def load_raw_data_from_file(self):
@@ -126,15 +136,12 @@ class Cifar10Dataset(Dataset):
     size: int = 60000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
-    format: DatasetFormat = DatasetFormat(size, dataDimensions, numberOfLabels)
-    files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
-        super().__init__(self.files, self.format)
+        super().__init__()
 
     def load_external(self):
         self.load_from_tensorflow()
-        self.save()
 
     def load_from_tensorflow(self):
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
