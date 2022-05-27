@@ -1,22 +1,20 @@
 import csv
 from os import mkdir
 from os.path import dirname, exists, join
+from typing import NamedTuple
 
 import numpy as np
 import tensorflow as tf
 from numpy.typing import NDArray
 
 
-class DatasetFormat:
+class DatasetFormat(NamedTuple):
     """
     Format of a dataset.
     """
-
-    def __init__(self, size: int,
-                 dataDimensions: list[int], numberOfLabels: int) -> None:
-        self.size: int = size
-        self.dataDimensions: list[int] = dataDimensions
-        self.numberOfLabels: int = numberOfLabels
+    size: int
+    dataDimensions: list[int]
+    numberOfLabels: int
 
 
 class DatasetFiles:
