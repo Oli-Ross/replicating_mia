@@ -57,6 +57,7 @@ class Dataset:
 
         self.labels: NDArray = np.zeros(labelsArrayShape)
         self.features: NDArray = np.zeros(featuresArrayShape)
+        self.load()
 
     def load(self):
         """
@@ -102,7 +103,6 @@ class KagglePurchaseDataset(Dataset):
 
     def __init__(self) -> None:
         super().__init__(self.files, self.format)
-        self.load()
 
     def load_external(self):
         self.load_raw_data_from_file()
@@ -131,7 +131,6 @@ class Cifar10Dataset(Dataset):
 
     def __init__(self) -> None:
         super().__init__(self.files, self.format)
-        self.load()
 
     def load_external(self):
         self.load_from_tensorflow()
