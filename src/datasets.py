@@ -8,6 +8,9 @@ from numpy.typing import NDArray
 
 
 class DatasetFormat:
+    """
+    The format of a dataset.
+    """
 
     def __init__(self, size: int,
                  dataDimensions: list[int], numberOfLabels: int) -> None:
@@ -17,8 +20,14 @@ class DatasetFormat:
 
 
 class DatasetFiles:
+    """
+    The paths to files that hold the content of a datset.
+    """
 
     def __init__(self, datasetName: str) -> None:
+        """
+        Construct the paths of the dataset files from its name.
+        """
 
         currentDirectoryName = dirname(__file__)
 
@@ -29,8 +38,14 @@ class DatasetFiles:
 
 
 class Dataset:
+    """
+    Dataset representation.
+    """
 
     def __init__(self, files: DatasetFiles, format: DatasetFormat) -> None:
+        """
+        Set up numpy arrays to hold the dataset, using the dataset format.
+        """
         self.files = files
         self.format = format
 
@@ -42,12 +57,23 @@ class Dataset:
         self.features: NDArray = np.zeros(featuresArrayShape)
 
     def load(self):
+        """
+        Load the dataset into the numpy arrays.
+        """
         if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
             self.load_numpy_from_file()
         else:
             self.load_external()
 
     def load_external(self):
+        """
+        Using an external source (e.g. file on disk or download), load the
+        dataset.
+
+        This method should be implemented by the subclass inheriting from this
+        class. It should save the loaded numpy arrays to disk, to speed up
+        future runs.
+        """
         raise NotImplementedError("Must be implemented by subclass.")
 
     def load_numpy_from_file(self):
@@ -65,6 +91,9 @@ class Dataset:
 
 
 class KagglePurchaseDataset(Dataset):
+    """
+    Kaggle's Acquire Valued Shoppers Challenge dataset of binary features.
+    """
 
     datasetName: str = "purchase"
     size: int = 197324
@@ -92,6 +121,9 @@ class KagglePurchaseDataset(Dataset):
 
 
 class Cifar10Dataset(Dataset):
+    """
+    CIFAR-10 dataset of small RGB images.
+    """
 
     datasetName: str = "cifar10"
     size: int = 60000
