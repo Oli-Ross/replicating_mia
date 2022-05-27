@@ -31,12 +31,12 @@ class DatasetFiles:
 
         currentDirectoryName = dirname(__file__)
 
-        self.dataDir: str = join(
+        self.dataDirectory: str = join(
             currentDirectoryName,
             f"../data/{datasetName}")
-        self.rawData: str = join(self.dataDir, "raw_data")
-        self.numpyFeatures: str = join(self.dataDir, "features.npy")
-        self.numpyLabels: str = join(self.dataDir, "labels.npy")
+        self.rawData: str = join(self.dataDirectory, "raw_data")
+        self.numpyFeatures: str = join(self.dataDirectory, "features.npy")
+        self.numpyLabels: str = join(self.dataDirectory, "labels.npy")
 
 
 class Dataset:
@@ -82,8 +82,8 @@ class Dataset:
         """
         Save the arrays that hold the dataset to disk.
         """
-        if not exists(self.files.dataDir):
-            mkdir(self.files.dataDir)
+        if not exists(self.files.dataDirectory):
+            mkdir(self.files.dataDirectory)
         np.save(self.files.numpyFeatures, self.features)
         np.save(self.files.numpyLabels, self.labels)
 
@@ -97,8 +97,7 @@ class KagglePurchaseDataset(Dataset):
     size: int = 197324
     dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
-    format: DatasetFormat = DatasetFormat(
-        size, dataDimensions, numberOfLabels)
+    format: DatasetFormat = DatasetFormat(size, dataDimensions, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
@@ -127,8 +126,7 @@ class Cifar10Dataset(Dataset):
     size: int = 60000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
-    format: DatasetFormat = DatasetFormat(
-        size, dataDimensions, numberOfLabels)
+    format: DatasetFormat = DatasetFormat(size, dataDimensions, numberOfLabels)
     files: DatasetFiles = DatasetFiles(datasetName)
 
     def __init__(self) -> None:
