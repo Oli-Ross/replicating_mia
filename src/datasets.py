@@ -32,7 +32,7 @@ class Dataset:
     """
     size = 1
     dataDimensions = [1]
-    numberOfLabels = 1
+    labelDimension = 1
     datasetName = "default"
 
     def __init__(self) -> None:
@@ -45,7 +45,7 @@ class Dataset:
 
         self.files: DatasetFiles = DatasetFiles(self.datasetName)
 
-        labelsArrayShape: list[int] = [self.numberOfLabels, self.size]
+        labelsArrayShape: list[int] = [self.labelDimension, self.size]
         featuresArrayShape: list[int] = self.dataDimensions.copy()
         featuresArrayShape.append(self.size)
 
