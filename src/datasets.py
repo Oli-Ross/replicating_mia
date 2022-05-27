@@ -81,11 +81,11 @@ class Dataset:
         self.labels = np.load(self.files.numpyLabels)
 
     def save(self):
+        """
+        Save the arrays that hold the dataset to disk.
+        """
         if not exists(self.files.dataDir):
             mkdir(self.files.dataDir)
-        self.save_numpy_to_file()
-
-    def save_numpy_to_file(self):
         np.save(self.files.numpyFeatures, self.features)
         np.save(self.files.numpyLabels, self.labels)
 
