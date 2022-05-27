@@ -14,9 +14,9 @@ class DatasetFormat:
 
     def __init__(self, size: int,
                  dataDimensions: list[int], numberOfLabels: int) -> None:
-        self.size = size
-        self.dataDimensions = dataDimensions
-        self.numberOfLabels = numberOfLabels
+        self.size: int = size
+        self.dataDimensions: list[int] = dataDimensions
+        self.numberOfLabels: int = numberOfLabels
 
 
 class DatasetFiles:
@@ -31,10 +31,12 @@ class DatasetFiles:
 
         currentDirectoryName = dirname(__file__)
 
-        self.dataDir = join(currentDirectoryName, f"../data/{datasetName}")
-        self.rawData = join(self.dataDir, "raw_data")
-        self.numpyFeatures = join(self.dataDir, "features.npy")
-        self.numpyLabels = join(self.dataDir, "labels.npy")
+        self.dataDir: str = join(
+            currentDirectoryName,
+            f"../data/{datasetName}")
+        self.rawData: str = join(self.dataDir, "raw_data")
+        self.numpyFeatures: str = join(self.dataDir, "features.npy")
+        self.numpyLabels: str = join(self.dataDir, "labels.npy")
 
 
 class Dataset:
@@ -46,8 +48,8 @@ class Dataset:
         """
         Set up numpy arrays to hold the dataset, using the dataset format.
         """
-        self.files = files
-        self.format = format
+        self.files: DatasetFiles = files
+        self.format: DatasetFormat = format
 
         labelsArrayShape: list[int] = [format.numberOfLabels, format.size]
         featuresArrayShape: list[int] = format.dataDimensions.copy()
@@ -77,8 +79,8 @@ class Dataset:
         raise NotImplementedError("Must be implemented by subclass.")
 
     def load_numpy_from_file(self):
-        self.features = np.load(self.files.numpyFeatures)
-        self.labels = np.load(self.files.numpyLabels)
+        self.features: NDArray = np.load(self.files.numpyFeatures)
+        self.labels: NDArray = np.load(self.files.numpyLabels)
 
     def save(self):
         """
@@ -143,5 +145,5 @@ class Cifar10Dataset(Dataset):
 
     def load_from_tensorflow(self):
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-        self.features = np.append(x_train, x_test)
-        self.labels = np.append(y_train, y_test)
+        self.features: NDArray = np.append(x_train, x_test)
+        self.labels: NDArray = np.append(y_train, y_test)
