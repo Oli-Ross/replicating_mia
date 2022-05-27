@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 
 class DatasetFormat:
     """
-    The format of a dataset.
+    Format of a dataset.
     """
 
     def __init__(self, size: int,
@@ -21,7 +21,7 @@ class DatasetFormat:
 
 class DatasetFiles:
     """
-    The paths to files that hold the content of a datset.
+    Paths to files that hold the content of a datset.
     """
 
     def __init__(self, datasetName: str) -> None:
