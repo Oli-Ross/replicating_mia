@@ -71,10 +71,6 @@ class Dataset:
         """
         Using an external source (e.g. file on disk or download), load the
         dataset.
-
-        This method should be implemented by the subclass inheriting from this
-        class. It should save the loaded numpy arrays to disk, to speed up
-        future runs.
         """
         raise NotImplementedError("Must be implemented by subclass.")
 
