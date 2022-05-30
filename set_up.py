@@ -52,14 +52,14 @@ def download_kaggle():
 
 def download_cifar10():
     print("Downloading CIFAR-10 Dataset.")
-    import src.datasets as datasets
-    datasets.Cifar10Dataset()
+    import tensorflow as tf
+    (_, _), (_, _) = tf.keras.datasets.cifar10.load_data()
 
 
 def download_cifar100():
     print("Downloading CIFAR-100 Dataset.")
-    import src.datasets as datasets
-    datasets.Cifar100Dataset()
+    import tensorflow as tf
+    (_, _), (_, _) = tf.keras.datasets.cifar100.load_data(label_mode='fine')
 
 
 def parse_args():
