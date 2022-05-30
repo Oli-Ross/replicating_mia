@@ -1,6 +1,6 @@
 import csv
 from os import mkdir
-from os.path import dirname, exists, join
+from os.path import dirname, exists, isfile, join
 
 import numpy as np
 import tensorflow as tf
@@ -104,14 +104,15 @@ class KagglePurchaseDataset(Dataset):
     def load_external(self):
         self.load_raw_data_from_file()
 
-    # TODO: Assumes specific CSV format
     def load_raw_data_from_file(self):
         rawData: str = join(self.files.dataDirectory, "raw_data")
+        assert isfile(rawData)
+
         with open(rawData) as file:
             reader = csv.reader(file)
             for index, row in enumerate(reader):
                 self.labels[index, 0] = row[0]
-                self.features[index,:] = row[1:]
+                self.features[index, :] = row[1:]
 
 
 class Cifar10Dataset(Dataset):
