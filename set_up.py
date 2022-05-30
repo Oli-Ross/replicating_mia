@@ -2,23 +2,52 @@ import argparse
 import glob
 import os
 import pathlib
-from typing import Dict
+import tarfile
+from typing import Dict, Tuple
+
+import requests
+
+topLevelDir = os.path.dirname(__file__)
 
 
 def generate_docs():
     print("Generating documentation into /docs.")
     import pdoc
 
-    topLevelDir = os.path.dirname(__file__)
     docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs"))
     pyFiles = glob.glob("src/*.py", root_dir=topLevelDir)
 
     pdoc.pdoc(*pyFiles, output_directory=docsDirPath)
 
 
+def download_kaggle_as_tgz(destinationFilePath: str):
+    url = 'https://github.com/OliverRoss/replicating_mia_datasets/raw/master/dataset_purchase.tgz'
+    response = requests.get(url)
+    with open(destinationFilePath, mode='wb') as kaggleFile:
+        kaggleFile.write(response.content)
+
+
+def extract_tgz_to_dir(tarFileName: str, destDir: str):
+    os.chdir(destDir)
+    compressedFile = tarfile.open(tarFileName)
+    compressedFile.extractall()
+    os.rename("dataset_purchase", "raw_data")
+
+
+def set_up_kaggle_directory() -> Tuple[str, str]:
+    dataDir = os.path.join(topLevelDir, "data", "purchase")
+    if not os.path.isdir(dataDir):
+        os.mkdir(dataDir)
+    kaggleFileName = os.path.join(dataDir, "raw_data.tgz")
+    return kaggleFileName, dataDir
+
+
 def download_kaggle():
     print("Downloading Kaggle Dataset.")
-    raise NotImplementedError()
+
+    kaggleFileName, dataDir = set_up_kaggle_directory()
+    download_kaggle_as_tgz(destinationFilePath=kaggleFileName)
+    extract_tgz_to_dir(kaggleFileName, dataDir)
 
 
 def download_cifar10():
