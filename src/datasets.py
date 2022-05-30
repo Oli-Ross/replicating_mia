@@ -134,3 +134,28 @@ class Cifar10Dataset(Dataset):
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
         self.features: NDArray = np.append(x_train, x_test, axis=0)
         self.labels: NDArray = np.append(y_train, y_test, axis=0)
+
+
+class Cifar100Dataset(Dataset):
+    """
+    CIFAR-100 dataset of small RGB images.
+    """
+
+    datasetName: str = "cifar100"
+    size: int = 60000
+    dataDimensions: list[int] = [32, 32, 3]
+    numberOfLabels: int = 1
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def load_external(self):
+        self.load_from_tensorflow()
+
+    def load_from_tensorflow(self):
+        # "Fine" label_mode for 100 classes as in MIA paper
+        (x_train, y_train), (x_test, y_test) = \
+            tf.keras.datasets.cifar100.load_data(label_mode='fine')
+
+        self.features: NDArray = np.append(x_train, x_test, axis=0)
+        self.labels: NDArray = np.append(y_train, y_test, axis=0)
