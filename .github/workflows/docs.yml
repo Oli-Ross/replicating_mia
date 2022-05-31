@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build
-        run: pdoc -o docs/ src/*.py
+        run: pdoc -o docs/ mia/*.py
       
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.3.3
