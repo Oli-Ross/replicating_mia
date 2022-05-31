@@ -1,4 +1,4 @@
-import mia.datasets as datasets
+from mia import datasets
 
 
 def test_dataset_files():
