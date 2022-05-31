@@ -11,6 +11,15 @@ published to https://oliverross.github.io/replicating_mia.
 
 ## Setup
 
+Set up a virtual environment, e.g.: 
+```bash
+python -m venv .venv && source .venv/bin/activate
+```
+Install necessary packages: 
+```bash
+python -m pip install -r requirements.txt
+```
+
 A setup script is provided, which does:
 * Download necessary datasets into `/data`
 * Run tests
