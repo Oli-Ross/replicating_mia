@@ -8,3 +8,5 @@ data/
 .venv/
 
 __pycache__/
+
+mia.egg-info/
