@@ -15,7 +15,7 @@ def generate_docs():
     import pdoc
 
     docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs"))
-    pyFiles = glob.glob("src/*.py", root_dir=topLevelDir)
+    pyFiles = glob.glob("mia/*.py", root_dir=topLevelDir)
 
     pdoc.pdoc(*pyFiles, output_directory=docsDirPath)
 
