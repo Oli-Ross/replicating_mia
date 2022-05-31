@@ -11,7 +11,10 @@ published to https://oliverross.github.io/replicating_mia.
 
 ## Setup
 
-In order to download all datasets and generate the documentation, 
-run `python3 set_up.py`. For more fine-grained control, see 
-`python3 set_up.py -h`.
+A setup script is provided, which does:
+* Download necessary datasets into `/data`
+* Run tests
+* Generate documentation into `/docs`
 
+Invoke it with `python set_up.py`.
+For more fine-grained control, see `python3 set_up.py -h`.
