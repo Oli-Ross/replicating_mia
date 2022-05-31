@@ -62,6 +62,11 @@ def download_cifar100():
     (_, _), (_, _) = tf.keras.datasets.cifar100.load_data(label_mode='fine')
 
 
+def run_tests():
+    import pytest
+    pytest.main(["-W", "ignore::DeprecationWarning"])
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Prepare repository for MIA attack. Without provided option, all actions are performed.')
@@ -85,6 +90,11 @@ def parse_args():
         action='store_true',
         help='Download CIFAR-100 dataset.'
     )
+    parser.add_argument(
+        '--test',
+        action='store_true',
+        help='Run tests.'
+    )
 
     args = parser.parse_args()
     return args
@@ -96,6 +106,7 @@ def do_entire_setup():
     except(ModuleNotFoundError):
         print("pdocs does not seem to be available.")
         print("Skipping the generation of documentation.")
+    run_tests()
     download_cifar10()
     download_cifar100()
     download_kaggle()
@@ -119,6 +130,8 @@ def perform_options(opts: Dict):
             download_cifar10()
         if opts['cifar100']:
             download_cifar100()
+        if opts['test']:
+            run_tests()
 
 
 def main():
