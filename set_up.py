@@ -38,6 +38,10 @@ def extract_tgz_to_dir(tarFileName: str, destDir: str):
     compressedFile.extractall()
     os.rename("dataset_purchase", "raw_data")
 
+def get_dataset_files(datasetName :str) -> Tuple[str,str]:
+    featuresFileName = os.path.join(topLevelDir, "data",datasetName,"features.npy")
+    labelsFileName = os.path.join(topLevelDir, "data",datasetName,"labels.npy")
+    return featuresFileName, labelsFileName 
 
 def set_up_kaggle_directory() -> Tuple[str, str]:
     dataDir = os.path.join(topLevelDir, "data")
@@ -48,7 +52,6 @@ def set_up_kaggle_directory() -> Tuple[str, str]:
         os.mkdir(kaggleDataDir)
     kaggleFileName = os.path.join(kaggleDataDir, "raw_data.tgz")
     return kaggleFileName, kaggleDataDir
-
 
 def download_kaggle():
     print("Downloading Kaggle Dataset.")
@@ -63,14 +66,22 @@ def download_kaggle():
 
 def download_cifar10():
     print("Downloading CIFAR-10 Dataset.")
-    import tensorflow as tf
-    (_, _), (_, _) = tf.keras.datasets.cifar10.load_data()
+    featuresFile, labelsFile = get_dataset_files("cifar10")
+    if os.path.isfile(featuresFile) and  os.path.isfile(labelsFile):
+        print("Skipping, already downloaded.")
+    else:
+        import tensorflow as tf
+        (_, _), (_, _) = tf.keras.datasets.cifar10.load_data()
 
 
 def download_cifar100():
     print("Downloading CIFAR-100 Dataset.")
-    import tensorflow as tf
-    (_, _), (_, _) = tf.keras.datasets.cifar100.load_data(label_mode='fine')
+    featuresFile, labelsFile = get_dataset_files("cifar100")
+    if os.path.isfile(featuresFile) and  os.path.isfile(labelsFile):
+        print("Skipping, already downloaded.")
+    else:
+        import tensorflow as tf
+        (_, _), (_, _) = tf.keras.datasets.cifar100.load_data(label_mode='fine')
 
 
 def run_tests():
