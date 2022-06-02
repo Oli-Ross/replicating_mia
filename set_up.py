@@ -1,16 +1,14 @@
-from os import environ
-
-# Tensorflow C++ backend logging verbosity
-environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
-
 import argparse
 import glob
 import os
 import pathlib
 import tarfile
+from os import environ
 from typing import Dict, Tuple
 
 import requests
+
+import mia.datasets as datasets
 
 topLevelDir = os.path.dirname(__file__)
 
@@ -57,6 +55,7 @@ def set_up_kaggle_directory() -> Tuple[str, str]:
     kaggleFileName = os.path.join(kaggleDataDir, "raw_data.tgz")
     return kaggleFileName, kaggleDataDir
 
+
 def download_kaggle():
     print("Downloading Kaggle Dataset.")
 
@@ -71,21 +70,21 @@ def download_kaggle():
 def download_cifar10():
     print("Downloading CIFAR-10 Dataset.")
     featuresFile, labelsFile = get_dataset_files("cifar10")
-    if os.path.isfile(featuresFile) and  os.path.isfile(labelsFile):
+    if os.path.isfile(featuresFile) and os.path.isfile(labelsFile):
         print("Skipping, already downloaded.")
     else:
-        import tensorflow as tf
-        (_, _), (_, _) = tf.keras.datasets.cifar10.load_data()
+        # Loading happens inside __init__
+        datasets.Cifar10Dataset()
 
 
 def download_cifar100():
     print("Downloading CIFAR-100 Dataset.")
     featuresFile, labelsFile = get_dataset_files("cifar100")
-    if os.path.isfile(featuresFile) and  os.path.isfile(labelsFile):
+    if os.path.isfile(featuresFile) and os.path.isfile(labelsFile):
         print("Skipping, already downloaded.")
     else:
-        import tensorflow as tf
-        (_, _), (_, _) = tf.keras.datasets.cifar100.load_data(label_mode='fine')
+        # Loading happens inside __init__
+        datasets.Cifar100Dataset()
 
 
 def run_tests():
