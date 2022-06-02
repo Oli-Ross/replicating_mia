@@ -1,3 +1,8 @@
+from os import environ
+
+# Tensorflow C++ backend logging verbosity
+environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
+
 import argparse
 import glob
 import os
