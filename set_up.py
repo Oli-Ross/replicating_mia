@@ -114,10 +114,10 @@ def do_entire_setup():
     except(ModuleNotFoundError):
         print("pdocs does not seem to be available.")
         print("Skipping the generation of documentation.")
-    run_tests()
     download_cifar10()
     download_cifar100()
     download_kaggle()
+    run_tests()
 
 
 def perform_options(opts: Dict):
