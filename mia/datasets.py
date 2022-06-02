@@ -143,11 +143,7 @@ class KagglePurchaseDataset(Dataset):
         super().__init__()
 
     def load_external(self):
-        try:
-            self.load_raw_data_from_file()
-        except FileNotFoundError as e:
-            raise FileNotFoundError("Have you downloaded the kaggle dataset? Run `python set_up.py --kaggle` to download it.") from e
-
+        self.load_raw_data_from_file()
 
     def load_raw_data_from_file(self):
         rawData: str = join(self.files.dataDirectory, "raw_data")
