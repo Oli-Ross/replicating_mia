@@ -1,4 +1,5 @@
 import datasets
 
-dataset = datasets.KagglePurchaseDataset()
-dataset2 = datasets.Cifar10Dataset()
+if __name__ == "__main__":
+    dataset = datasets.KagglePurchaseDataset()
+    dataset2 = datasets.Cifar10Dataset()
