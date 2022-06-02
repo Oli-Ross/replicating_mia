@@ -9,4 +9,5 @@ data/
 
 __pycache__/
 
-mia.egg-info/
+# My temporary test file
+test.py
