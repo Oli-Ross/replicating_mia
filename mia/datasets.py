@@ -111,7 +111,7 @@ class KagglePurchaseDataset(Dataset):
 
     def load_raw_data_from_file(self):
         rawData: str = join(self.files.dataDirectory, "raw_data")
-        assert isfile(rawData), "Kaggle data not found, use set_up.py to download."
+        assert isfile(rawData), "Use set_up.py to download Kaggle data."
 
         with open(rawData) as file:
             reader = csv.reader(file)
