@@ -73,6 +73,7 @@ class TestDataset():
     def test_kaggle_split(self):
         kaggle = datasets.KagglePurchaseDataset()
 
+    @pytest.mark.skip("Takes forever.")
     def test_cifar_split(self):
         cifar10 = datasets.Cifar10Dataset()
 
