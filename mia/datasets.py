@@ -6,6 +6,7 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 import csv
 from os import mkdir
 from os.path import dirname, exists, isfile, join
+from typing import Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -36,6 +37,8 @@ class Dataset:
     Base class for dataset representation.
     """
     size = 1
+    test_size = 1
+    train_size = 1
     dataDimensions = [1]
     labelDimension = 1
     datasetName = "default"
@@ -83,6 +86,37 @@ class Dataset:
         self.features: NDArray = np.load(self.files.numpyFeatures)
         self.labels: NDArray = np.load(self.files.numpyLabels)
 
+    def split(self, test_size=None,
+              train_size=None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+        """
+        Returns a split: (x_train,y_train),(x_test,y_test).
+
+        The amount of images to be used in each partition is determined by each
+        individual dataset. Alternatively, a parameter can be given.
+        TODO
+        """
+
+        # TODO: use tuple instead?
+        if test_size is None or train_size is None:
+            if train_size is not None:
+                raise ValueError(
+                    "If train_size is provided, test_size must be provided, too.")
+            if test_size is not None:
+                raise ValueError(
+                    "If test_size is provided, train_size must be provided, too.")
+            test_size = self.test_size
+            train_size = self.train_size
+
+        assert (test_size + train_size) <= self.size
+
+        x_train, x_test, _ = np.split(
+            self.features, [
+                train_size, train_size + test_size], axis=0)
+        y_train, y_test, _ = np.split(
+            self.labels, [
+                train_size, train_size + test_size], axis=0)
+        return (x_train, y_train), (x_test, y_test)
+
     def save(self):
         """
         Save the arrays that hold the dataset to disk.
@@ -100,6 +134,8 @@ class KagglePurchaseDataset(Dataset):
 
     datasetName: str = "purchase"
     size: int = 197324
+    test_size = 187324
+    train_size = 10000
     dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
 
@@ -127,6 +163,8 @@ class Cifar10Dataset(Dataset):
 
     datasetName: str = "cifar10"
     size: int = 60000
+    train_size = 50000
+    test_size = 10000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
 
@@ -149,6 +187,8 @@ class Cifar100Dataset(Dataset):
 
     datasetName: str = "cifar100"
     size: int = 60000
+    train_size = 50000
+    test_size = 10000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
 
