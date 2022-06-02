@@ -1,3 +1,8 @@
+from os import environ
+
+# Tensorflow C++ backend logging verbosity
+environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
+
 import csv
 from os import mkdir
 from os.path import dirname, exists, isfile, join
