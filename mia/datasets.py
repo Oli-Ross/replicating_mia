@@ -93,10 +93,10 @@ class Dataset:
 
         The amount of images to be used in each partition is determined by each
         individual dataset. Alternatively, a parameter can be given.
-        TODO
+        The returned numpy arrays are views onto the data hold by the dataset
+        object, not a copy.
         """
 
-        # TODO: use tuple instead?
         if test_size is None or train_size is None:
             if train_size is not None:
                 raise ValueError(
