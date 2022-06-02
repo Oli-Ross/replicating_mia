@@ -40,11 +40,14 @@ def extract_tgz_to_dir(tarFileName: str, destDir: str):
 
 
 def set_up_kaggle_directory() -> Tuple[str, str]:
-    dataDir = os.path.join(topLevelDir, "data", "purchase")
+    dataDir = os.path.join(topLevelDir, "data")
     if not os.path.isdir(dataDir):
         os.mkdir(dataDir)
-    kaggleFileName = os.path.join(dataDir, "raw_data.tgz")
-    return kaggleFileName, dataDir
+    kaggleDataDir = os.path.join(dataDir, "purchase")
+    if not os.path.isdir(kaggleDataDir):
+        os.mkdir(kaggleDataDir)
+    kaggleFileName = os.path.join(kaggleDataDir, "raw_data.tgz")
+    return kaggleFileName, kaggleDataDir
 
 
 def download_kaggle():
