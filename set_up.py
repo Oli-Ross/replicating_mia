@@ -141,7 +141,11 @@ def perform_options(opts: Dict):
 
 def main():
     options = parse_args()
-    perform_options(vars(options))
+    try:
+        perform_options(vars(options))
+    except ModuleNotFoundError as e:
+        raise ModuleNotFoundError(
+            "Have you installed all dependencies? Use `python -m pip install -r requirements.txt`.") from e
 
 
 if __name__ == "__main__":
