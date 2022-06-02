@@ -38,10 +38,14 @@ def extract_tgz_to_dir(tarFileName: str, destDir: str):
     compressedFile.extractall()
     os.rename("dataset_purchase", "raw_data")
 
-def get_dataset_files(datasetName :str) -> Tuple[str,str]:
-    featuresFileName = os.path.join(topLevelDir, "data",datasetName,"features.npy")
-    labelsFileName = os.path.join(topLevelDir, "data",datasetName,"labels.npy")
-    return featuresFileName, labelsFileName 
+
+def get_dataset_files(datasetName: str) -> Tuple[str, str]:
+    featuresFileName = os.path.join(
+        topLevelDir, "data", datasetName, "features.npy")
+    labelsFileName = os.path.join(
+        topLevelDir, "data", datasetName, "labels.npy")
+    return featuresFileName, labelsFileName
+
 
 def set_up_kaggle_directory() -> Tuple[str, str]:
     dataDir = os.path.join(topLevelDir, "data")
