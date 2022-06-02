@@ -54,8 +54,11 @@ def download_kaggle():
     print("Downloading Kaggle Dataset.")
 
     kaggleFileName, dataDir = set_up_kaggle_directory()
-    download_kaggle_as_tgz(destinationFilePath=kaggleFileName)
-    extract_tgz_to_dir(kaggleFileName, dataDir)
+    if not os.path.isfile(kaggleFileName):
+        download_kaggle_as_tgz(destinationFilePath=kaggleFileName)
+        extract_tgz_to_dir(kaggleFileName, dataDir)
+    else:
+        print("Skipping, already downloaded.")
 
 
 def download_cifar10():
