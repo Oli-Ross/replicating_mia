@@ -109,14 +109,14 @@ def parse_args():
 
 
 def do_entire_setup():
+    download_cifar10()
+    download_cifar100()
+    download_kaggle()
     try:
         generate_docs()
     except(ModuleNotFoundError):
         print("pdocs does not seem to be available.")
         print("Skipping the generation of documentation.")
-    download_cifar10()
-    download_cifar100()
-    download_kaggle()
     run_tests()
 
 
@@ -130,14 +130,14 @@ def perform_options(opts: Dict):
     if noOptionsProvided:
         do_entire_setup()
     else:
-        if opts['doc']:
-            generate_docs()
         if opts['kaggle']:
             download_kaggle()
         if opts['cifar10']:
             download_cifar10()
         if opts['cifar100']:
             download_cifar100()
+        if opts['doc']:
+            generate_docs()
         if opts['test']:
             run_tests()
 
