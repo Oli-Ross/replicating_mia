@@ -64,7 +64,7 @@ def download_cifar100():
 
 def run_tests():
     import pytest
-    pytest.main(["-W", "ignore::DeprecationWarning"])
+    pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
 
 
 def parse_args():
