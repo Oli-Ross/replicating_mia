@@ -3,7 +3,6 @@ import glob
 import os
 import pathlib
 import tarfile
-from os import environ
 from typing import Dict, Tuple
 
 import requests
@@ -18,7 +17,9 @@ def generate_docs():
     import pdoc
 
     docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs"))
-    pyFiles = glob.glob("mia/*.py", root_dir=topLevelDir)
+    miaPath = os.path.join(topLevelDir, "mia")
+    pyFiles = glob.glob("*.py", root_dir=miaPath)
+    os.chdir(miaPath)
 
     pdoc.pdoc(*pyFiles, output_directory=docsDirPath)
 
