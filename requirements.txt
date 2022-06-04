@@ -2,3 +2,4 @@ tensorflow
 numpy
 pdoc
 pytest
+scikit-learn
