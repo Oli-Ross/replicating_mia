@@ -9,6 +9,7 @@ from os.path import dirname, exists, isfile, join
 from typing import Tuple
 
 import numpy as np
+import sklearn.cluster
 import tensorflow as tf
 from numpy.typing import NDArray
 
@@ -157,6 +158,34 @@ class KagglePurchaseDataset(Dataset):
             for index, row in enumerate(reader):
                 self.labels[index, 0] = row[0]
                 self.features[index, :] = row[1:]
+
+
+class KagglePurchaseDatasetClustered(Dataset):
+    """
+    Kaggle's Acquire Valued Shoppers Challenge dataset, clustered into
+    partitions.
+    """
+
+    numberOfClusters = 5
+
+    size: int = 197324
+    test_size = 187324
+    train_size = 10000
+    dataDimensions = [600]
+    numberOfLabels: int = 1
+
+    def __init__(self, numberOfClusters: int = 5) -> None:
+        self.numberOfClusters = numberOfClusters
+        self.datasetName = "kaggle_clustered_" + str(self.numberOfClusters)
+        super().__init__()
+
+    def load_external(self):
+        kaggle_unclustered = KagglePurchaseDataset()
+        # TODO: use real KMeans, not MiniBatch
+        kmeans = sklearn.cluster.MiniBatchKMeans(
+            n_clusters=self.numberOfClusters)
+        self.features = kaggle_unclustered.features.copy()
+        self.labels = kmeans.fit_predict(self.features)
 
 
 class Cifar10Dataset(Dataset):
