@@ -69,9 +69,17 @@ class TestDataset():
         assert x_test.shape[0] == cifar10.test_size
         assert y_test.shape[0] == cifar10.test_size
 
-    # TODO : Kaggle should randomly shuffle the training dataset
-    def test_kaggle_split(self):
+    def test_random_split(self):
         kaggle = datasets.KagglePurchaseDataset()
+        (x_train, y_train), (x_test, y_test) = kaggle.split_random()
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(x_train, kaggle.features[0:10000])
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(x_test, kaggle.features[10000:187324])
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(y_train, kaggle.labels[0:10000])
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(y_test, kaggle.labels[10000:187324])
 
     @pytest.mark.skip("Takes forever.")
     def test_cifar_split(self):
