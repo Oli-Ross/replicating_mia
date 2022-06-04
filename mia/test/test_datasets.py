@@ -32,7 +32,7 @@ class TestDatasetFiles():
         assert expectedLabelsFile == actualLabelsFile
 
 
-class TestDataset():
+class TestDatasetBasic():
     def test_baseclass(self):
         with pytest.raises(AssertionError):
             datasets.Dataset()
@@ -60,6 +60,22 @@ class TestDataset():
         assert cifar100.labels.shape == (60000, 1)
         assert np.max(cifar100.features) != 0
         assert np.max(cifar100.labels) != 0
+
+    def test_kaggle_cluster(self):
+        kaggle_clustered_10 = datasets.KagglePurchaseDatasetClustered(10)
+
+        labels = kaggle_clustered_10.labels
+        assert labels.min() == 0
+        assert labels.max() == 9
+
+        kaggle_clustered_100 = datasets.KagglePurchaseDatasetClustered(100)
+
+        labels = kaggle_clustered_100.labels
+        assert labels.min() == 0
+        assert labels.max() == 99
+
+
+class TestDatasetSplit():
 
     def test_split_automatic(self):
         cifar10 = datasets.Cifar10Dataset()
