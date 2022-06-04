@@ -91,8 +91,8 @@ class Dataset:
         self.features: NDArray = np.load(self.files.numpyFeatures)
         self.labels: NDArray = np.load(self.files.numpyLabels)
 
-    def split(self, test_size=None,
-              train_size=None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+    def split(
+            self, train_size=None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
         """
         Returns a split: (x_train,y_train),(x_test,y_test).
 
@@ -102,16 +102,13 @@ class Dataset:
         object, not a copy.
         """
 
-        if test_size is None or train_size is None:
-            if (train_size, test_size) != (None, None):
-                raise ValueError(
-                    "Both or neither of test_size and train_size need to be None.")
-            test_size = self.test_size
+        if train_size is None:
             train_size = self.train_size
 
-        if (test_size + train_size) <= self.size:
-            raise ValueError(
-                "test_size + train_size must be at most dataset size.")
+        if train_size > self.size:
+            raise ValueError("train_size must be at most dataset size.")
+
+        test_size = self.size - train_size
 
         x_train, x_test, _ = np.split(
             self.features, [
