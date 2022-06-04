@@ -13,6 +13,8 @@ import sklearn.cluster
 import tensorflow as tf
 from numpy.typing import NDArray
 
+RANDOM_SEED = 1234
+
 
 class DatasetFiles:
     """
@@ -116,6 +118,24 @@ class Dataset:
         y_train, y_test, _ = np.split(
             self.labels, [
                 train_size, train_size + test_size], axis=0)
+        return (x_train, y_train), (x_test, y_test)
+
+    def split_random(
+            self, train_size=None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+
+        if train_size is None:
+            train_size = self.train_size
+
+        rng = np.random.default_rng(RANDOM_SEED)
+        trainIndices = np.sort(rng.choice(np.arange(self.size), self.train_size,
+                                          replace=False))
+        allIndices = np.arange(self.size)
+        testIndices = np.setdiff1d(allIndices, trainIndices)
+
+        x_train = self.features[trainIndices]
+        y_train = self.labels[trainIndices]
+        x_test = self.features[testIndices]
+        y_test = self.labels[testIndices]
         return (x_train, y_train), (x_test, y_test)
 
     def save(self):
