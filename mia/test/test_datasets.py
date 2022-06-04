@@ -78,7 +78,8 @@ class TestDataset():
         cifar10 = datasets.Cifar10Dataset()
 
         (x_train, y_train), (x_test, y_test) = cifar10.split()
-        (x_train_tf, y_train_tf), (x_test_tf, y_test_tf) = tf.keras.datasets.cifar10.load_data()
+        (x_train_tf, y_train_tf), (x_test_tf,
+                                   y_test_tf) = tf.keras.datasets.cifar10.load_data()
 
         # Assert that the dataset class correctly constructs the splits,
         # identical to the call to tensorflow
@@ -91,13 +92,5 @@ class TestDataset():
         kaggle = datasets.KagglePurchaseDataset()
 
         with pytest.raises(ValueError):
-            # Only 1 parameter supplied, 2 needed
-            kaggle.split(test_size=1)
-
-        with pytest.raises(ValueError):
-            # Only 1 parameter supplied, 2 needed
-            kaggle.split(train_size=1)
-
-        with pytest.raises(AssertionError):
-            # test_size + train_size > dataset size
-            kaggle.split(test_size=197324, train_size=3)
+            # train_size > dataset size
+            kaggle.split(train_size=200000)
