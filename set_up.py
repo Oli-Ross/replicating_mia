@@ -3,93 +3,82 @@ import glob
 import os
 import pathlib
 import tarfile
-from typing import Dict, Tuple
+from typing import Dict
 
 import requests
 
 import mia.datasets as datasets
 
 topLevelDir = os.path.dirname(__file__)
+miaDir = os.path.join(topLevelDir, "mia")
+dataDir = os.path.join(topLevelDir, "data")
 
 
 def generate_docs():
     print("Generating documentation into /docs.")
     import pdoc
+    os.chdir(miaDir)
 
     docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs"))
-    miaPath = os.path.join(topLevelDir, "mia")
-    pyFiles = glob.glob("*.py", root_dir=miaPath)
-    os.chdir(miaPath)
+    pyFiles = glob.glob("*.py", root_dir=miaDir)
 
     pdoc.pdoc(*pyFiles, output_directory=docsDirPath)
 
 
-def download_kaggle_as_tgz(destinationFilePath: str):
-    url = 'https://github.com/OliverRoss/replicating_mia_datasets/raw/master/dataset_purchase.tgz'
-    response = requests.get(url)
-    with open(destinationFilePath, mode='wb') as kaggleFile:
-        kaggleFile.write(response.content)
+def check_if_downloaded(datasetName: str) -> bool:
+    featuresFile = os.path.join(dataDir, datasetName, "features.npy")
+    labelsFile = os.path.join(dataDir, datasetName, "labels.npy")
+    if os.path.isfile(featuresFile) and os.path.isfile(labelsFile):
+        print("Skipping, already downloaded.")
+        return True
+    return False
 
 
-def extract_tgz_to_dir(tarFileName: str, destDir: str):
-    os.chdir(destDir)
-    compressedFile = tarfile.open(tarFileName)
-    compressedFile.extractall()
-    os.rename("dataset_purchase", "raw_data")
+def download_raw_kaggle_data():
+    kaggleDataDir = os.path.join(dataDir, "kaggle")
+    os.chdir(kaggleDataDir)
+    kaggleCompressed = os.path.join(kaggleDataDir, "raw_data.tgz")
+    kaggleRaw = os.path.join(kaggleDataDir, "raw_data")
+    if not os.path.isfile(kaggleCompressed):
+        url = 'https://github.com/OliverRoss/replicating_mia_datasets/raw/master/dataset_purchase.tgz'
+        response = requests.get(url)
+        with open(kaggleCompressed, mode='wb') as file:
+            file.write(response.content)
 
-
-def get_dataset_files(datasetName: str) -> Tuple[str, str]:
-    featuresFileName = os.path.join(
-        topLevelDir, "data", datasetName, "features.npy")
-    labelsFileName = os.path.join(
-        topLevelDir, "data", datasetName, "labels.npy")
-    return featuresFileName, labelsFileName
-
-
-def set_up_kaggle_directory() -> Tuple[str, str]:
-    dataDir = os.path.join(topLevelDir, "data")
-    if not os.path.isdir(dataDir):
-        os.mkdir(dataDir)
-    kaggleDataDir = os.path.join(dataDir, "purchase")
-    if not os.path.isdir(kaggleDataDir):
-        os.mkdir(kaggleDataDir)
-    kaggleFileName = os.path.join(kaggleDataDir, "raw_data.tgz")
-    return kaggleFileName, kaggleDataDir
+    if not os.path.isfile(kaggleRaw):
+        tarfile.open(kaggleCompressed).extractall()
+        os.rename("dataset_purchase", "raw_data")
 
 
 def download_kaggle():
     print("Downloading Kaggle Dataset.")
+    if check_if_downloaded("kaggle"):
+        return
 
-    kaggleFileName, dataDir = set_up_kaggle_directory()
-    if not os.path.isfile(kaggleFileName):
-        download_kaggle_as_tgz(destinationFilePath=kaggleFileName)
-        extract_tgz_to_dir(kaggleFileName, dataDir)
-    else:
-        print("Skipping, already downloaded.")
+    download_raw_kaggle_data()
+    datasets.KagglePurchaseDataset()
 
 
 def download_cifar10():
     print("Downloading CIFAR-10 Dataset.")
-    featuresFile, labelsFile = get_dataset_files("cifar10")
-    if os.path.isfile(featuresFile) and os.path.isfile(labelsFile):
-        print("Skipping, already downloaded.")
-    else:
-        # Loading happens inside __init__
-        datasets.Cifar10Dataset()
+    if check_if_downloaded("cifar10"):
+        return
+    # Loading happens inside __init__
+    datasets.Cifar10Dataset()
 
 
 def download_cifar100():
     print("Downloading CIFAR-100 Dataset.")
-    featuresFile, labelsFile = get_dataset_files("cifar100")
-    if os.path.isfile(featuresFile) and os.path.isfile(labelsFile):
-        print("Skipping, already downloaded.")
-    else:
-        # Loading happens inside __init__
-        datasets.Cifar100Dataset()
+    if check_if_downloaded("cifar100"):
+        return
+    # Loading happens inside __init__
+    datasets.Cifar100Dataset()
 
 
 def run_tests():
+    print("Running tests.")
     import pytest
+    os.chdir(miaDir)
     pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
 
 
@@ -122,42 +111,36 @@ def parse_args():
         help='Run tests.'
     )
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
-def do_entire_setup():
-    download_cifar10()
-    download_cifar100()
-    download_kaggle()
-    try:
-        generate_docs()
-    except(ModuleNotFoundError):
-        print("pdocs does not seem to be available.")
-        print("Skipping the generation of documentation.")
-    run_tests()
+def make_data_dirs():
+    if not os.path.isdir(dataDir):
+        os.mkdir(dataDir)
+    for dataset in ["cifar10", "cifar100", "kaggle"]:
+        datasetDir = os.path.join(dataDir, dataset)
+        if not os.path.isdir(datasetDir):
+            os.mkdir(datasetDir)
 
 
 def perform_options(opts: Dict):
+    make_data_dirs()
 
-    noOptionsProvided = True
-    for opt in opts:
-        if opts[opt]:
-            noOptionsProvided = False
+    # Check if no option was provided -> do all options
+    if True not in opts.values():
+        for opt in opts.keys():
+            opts[opt] = True
 
-    if noOptionsProvided:
-        do_entire_setup()
-    else:
-        if opts['kaggle']:
-            download_kaggle()
-        if opts['cifar10']:
-            download_cifar10()
-        if opts['cifar100']:
-            download_cifar100()
-        if opts['doc']:
-            generate_docs()
-        if opts['test']:
-            run_tests()
+    if opts['kaggle']:
+        download_kaggle()
+    if opts['cifar10']:
+        download_cifar10()
+    if opts['cifar100']:
+        download_cifar100()
+    if opts['doc']:
+        generate_docs()
+    if opts['test']:
+        run_tests()
 
 
 def main():
