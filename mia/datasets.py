@@ -104,7 +104,8 @@ class Dataset:
             test_size = self.test_size
             train_size = self.train_size
 
-        assert (test_size + train_size) <= self.size
+        if (test_size + train_size) <= self.size:
+            raise ValueError("test_size + train_size must be at most dataset size.")
 
         x_train, x_test, _ = np.split(
             self.features, [
