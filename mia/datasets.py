@@ -98,14 +98,15 @@ class Dataset:
         """
 
         if test_size is None or train_size is None:
-            if (train_size,test_size) != (None,None):
+            if (train_size, test_size) != (None, None):
                 raise ValueError(
                     "Both or neither of test_size and train_size need to be None.")
             test_size = self.test_size
             train_size = self.train_size
 
         if (test_size + train_size) <= self.size:
-            raise ValueError("test_size + train_size must be at most dataset size.")
+            raise ValueError(
+                "test_size + train_size must be at most dataset size.")
 
         x_train, x_test, _ = np.split(
             self.features, [
@@ -174,7 +175,7 @@ class Cifar10Dataset(Dataset):
 
     def load_from_tensorflow(self):
         (x_train, y_train), (x_test, y_test) = \
-                tf.keras.datasets.cifar10.load_data()
+            tf.keras.datasets.cifar10.load_data()
         self.features: NDArray = np.append(x_train, x_test, axis=0)
         self.labels: NDArray = np.append(y_train, y_test, axis=0)
 
