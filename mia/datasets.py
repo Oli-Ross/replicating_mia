@@ -98,7 +98,7 @@ class Dataset:
         """
 
         if test_size is None or train_size is None:
-            if (train_size,test_size) is not (None,None):
+            if (train_size,test_size) != (None,None):
                 raise ValueError(
                     "Both or neither of test_size and train_size need to be None.")
             test_size = self.test_size
