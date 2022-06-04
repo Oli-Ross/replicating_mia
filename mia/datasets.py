@@ -35,6 +35,10 @@ class DatasetFiles:
 class Dataset:
     """
     Base class for dataset representation.
+
+    The attribute `datasetName` determines the file names where the dataset will
+    be stored. When subclassing this base class, each subclass should use a
+    different `datasetName`.
     """
     size = 1
     test_size = 1
