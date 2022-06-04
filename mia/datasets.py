@@ -132,7 +132,7 @@ class KagglePurchaseDataset(Dataset):
     Kaggle's Acquire Valued Shoppers Challenge dataset of binary features.
     """
 
-    datasetName: str = "purchase"
+    datasetName: str = "kaggle"
     size: int = 197324
     test_size = 187324
     train_size = 10000
