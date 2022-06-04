@@ -88,14 +88,22 @@ class TestDatasetSplit():
     def test_random_split(self):
         kaggle = datasets.KagglePurchaseDataset()
         (x_train, y_train), (x_test, y_test) = kaggle.split_random()
+
+        assert x_train.shape == kaggle.features[0:10000].shape
         with pytest.raises(AssertionError):
             np.testing.assert_equal(x_train, kaggle.features[0:10000])
+
+        assert x_test.shape == kaggle.features[10000:197324].shape
         with pytest.raises(AssertionError):
-            np.testing.assert_equal(x_test, kaggle.features[10000:187324])
+            np.testing.assert_equal(x_test, kaggle.features[10000:197324])
+
+        assert y_train.shape == kaggle.labels[0:10000].shape
         with pytest.raises(AssertionError):
             np.testing.assert_equal(y_train, kaggle.labels[0:10000])
+
+        assert y_test.shape == kaggle.labels[10000:197324].shape
         with pytest.raises(AssertionError):
-            np.testing.assert_equal(y_test, kaggle.labels[10000:187324])
+            np.testing.assert_equal(y_test, kaggle.labels[10000:197324])
 
     @pytest.mark.skip("Takes forever.")
     def test_cifar_split(self):
