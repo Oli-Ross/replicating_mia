@@ -172,7 +172,8 @@ class Cifar10Dataset(Dataset):
         self.load_from_tensorflow()
 
     def load_from_tensorflow(self):
-        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+        (x_train, y_train), (x_test, y_test) = \
+                tf.keras.datasets.cifar10.load_data()
         self.features: NDArray = np.append(x_train, x_test, axis=0)
         self.labels: NDArray = np.append(y_train, y_test, axis=0)
 
