@@ -61,6 +61,7 @@ class TestDatasetBasic():
         assert np.max(cifar100.features) != 0
         assert np.max(cifar100.labels) != 0
 
+    @pytest.mark.skip("Takes too long.")
     def test_kaggle_cluster(self):
         kaggle_clustered_10 = datasets.KagglePurchaseDatasetClustered(10)
 
@@ -85,6 +86,7 @@ class TestDatasetSplit():
         assert x_test.shape[0] == cifar10.size - cifar10.train_size
         assert y_test.shape[0] == cifar10.size - cifar10.train_size
 
+    @pytest.mark.skip("Takes too long.")
     def test_random_split(self):
         kaggle = datasets.KagglePurchaseDataset()
         (x_train, y_train), (x_test, y_test) = kaggle.split_random()
@@ -105,7 +107,6 @@ class TestDatasetSplit():
         with pytest.raises(AssertionError):
             np.testing.assert_equal(y_test, kaggle.labels[10000:197324])
 
-    @pytest.mark.skip("Takes forever.")
     def test_cifar_split(self):
         cifar10 = datasets.Cifar10Dataset()
 
