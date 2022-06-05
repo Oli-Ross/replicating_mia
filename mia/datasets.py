@@ -43,12 +43,12 @@ class Dataset:
     be stored. When subclassing this base class, each subclass should use a
     different `datasetName`.
     """
-    size = 1
-    test_size = 1
-    train_size = 1
-    dataDimensions = [1]
-    labelDimension = 1
-    datasetName = "default"
+    size: int = 1
+    test_size: int = 1
+    train_size: int = 1
+    dataDimensions: list[int] = [1]
+    labelDimension: int = 1
+    datasetName: str = "default"
 
     def __init__(self) -> None:
         """
@@ -94,7 +94,7 @@ class Dataset:
         self.labels: NDArray = np.load(self.files.numpyLabels)
 
     def split(
-            self, train_size=None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+            self, train_size: int | None = None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
         """
         Returns a split: (x_train,y_train),(x_test,y_test).
 
@@ -110,7 +110,7 @@ class Dataset:
         if train_size > self.size:
             raise ValueError("train_size must be at most dataset size.")
 
-        test_size = self.size - train_size
+        test_size: int = self.size - train_size
 
         x_train, x_test, _ = np.split(
             self.features, [
@@ -121,21 +121,21 @@ class Dataset:
         return (x_train, y_train), (x_test, y_test)
 
     def split_random(
-            self, train_size=None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+            self, train_size: int | None = None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
 
         if train_size is None:
             train_size = self.train_size
 
         rng = np.random.default_rng(RANDOM_SEED)
-        trainIndices = np.sort(rng.choice(np.arange(self.size), self.train_size,
-                                          replace=False))
-        allIndices = np.arange(self.size)
-        testIndices = np.setdiff1d(allIndices, trainIndices)
+        trainIndices: NDArray = np.sort(rng.choice(np.arange(self.size), self.train_size,
+                                                   replace=False))
+        allIndices: NDArray = np.arange(self.size)
+        testIndices: NDArray = np.setdiff1d(allIndices, trainIndices)
 
-        x_train = self.features[trainIndices]
-        y_train = self.labels[trainIndices]
-        x_test = self.features[testIndices]
-        y_test = self.labels[testIndices]
+        x_train: NDArray = self.features[trainIndices]
+        y_train: NDArray = self.labels[trainIndices]
+        x_test: NDArray = self.features[testIndices]
+        y_test: NDArray = self.labels[testIndices]
         return (x_train, y_train), (x_test, y_test)
 
     def save(self):
@@ -155,8 +155,8 @@ class KagglePurchaseDataset(Dataset):
 
     datasetName: str = "kaggle"
     size: int = 197324
-    test_size = 187324
-    train_size = 10000
+    test_size: int = 187324
+    train_size: int = 10000
     dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
 
@@ -186,23 +186,24 @@ class KagglePurchaseDatasetClustered(Dataset):
     numberOfClusters = 5
 
     size: int = 197324
-    test_size = 187324
-    train_size = 10000
-    dataDimensions = [600]
+    test_size: int = 187324
+    train_size: int = 10000
+    dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
 
     def __init__(self, numberOfClusters: int = 5) -> None:
-        self.numberOfClusters = numberOfClusters
-        self.datasetName = "kaggle_clustered_" + str(self.numberOfClusters)
+        self.numberOfClusters: int = numberOfClusters
+        self.datasetName: str = "kaggle_clustered_" + \
+            str(self.numberOfClusters)
         super().__init__()
 
     def load_external(self):
-        kaggle_unclustered = KagglePurchaseDataset()
+        kaggle_unclustered: Dataset = KagglePurchaseDataset()
         # TODO: use real KMeans, not MiniBatch
         kmeans = sklearn.cluster.MiniBatchKMeans(
             n_clusters=self.numberOfClusters)
-        self.features = kaggle_unclustered.features.copy()
-        self.labels = kmeans.fit_predict(self.features)
+        self.features: NDArray = kaggle_unclustered.features.copy()
+        self.labels: NDArray = kmeans.fit_predict(self.features)
 
 
 class Cifar10Dataset(Dataset):
@@ -212,8 +213,8 @@ class Cifar10Dataset(Dataset):
 
     datasetName: str = "cifar10"
     size: int = 60000
-    train_size = 50000
-    test_size = 10000
+    train_size: int = 50000
+    test_size: int = 10000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
 
@@ -237,8 +238,8 @@ class Cifar100Dataset(Dataset):
 
     datasetName: str = "cifar100"
     size: int = 60000
-    train_size = 50000
-    test_size = 10000
+    train_size: int = 50000
+    test_size: int = 10000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
 
