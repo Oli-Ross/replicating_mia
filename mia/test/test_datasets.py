@@ -82,8 +82,8 @@ class TestDatasetSplit():
         (x_train, y_train), (x_test, y_test) = cifar10.split()
         assert x_train.shape[0] == cifar10.train_size
         assert y_train.shape[0] == cifar10.train_size
-        assert x_test.shape[0] == cifar10.test_size
-        assert y_test.shape[0] == cifar10.test_size
+        assert x_test.shape[0] == cifar10.size - cifar10.train_size
+        assert y_test.shape[0] == cifar10.size - cifar10.train_size
 
     def test_random_split(self):
         kaggle = datasets.KagglePurchaseDataset()
