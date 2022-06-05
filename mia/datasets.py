@@ -44,7 +44,6 @@ class Dataset:
     different `datasetName`.
     """
     size: int = 1
-    test_size: int = 1
     train_size: int = 1
     dataDimensions: list[int] = [1]
     labelDimension: int = 1
@@ -155,7 +154,6 @@ class KagglePurchaseDataset(Dataset):
 
     datasetName: str = "kaggle"
     size: int = 197324
-    test_size: int = 187324
     train_size: int = 10000
     dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
@@ -186,7 +184,6 @@ class KagglePurchaseDatasetClustered(Dataset):
     numberOfClusters = 5
 
     size: int = 197324
-    test_size: int = 187324
     train_size: int = 10000
     dataDimensions: list[int] = [600]
     numberOfLabels: int = 1
@@ -214,7 +211,6 @@ class Cifar10Dataset(Dataset):
     datasetName: str = "cifar10"
     size: int = 60000
     train_size: int = 50000
-    test_size: int = 10000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
 
@@ -239,7 +235,6 @@ class Cifar100Dataset(Dataset):
     datasetName: str = "cifar100"
     size: int = 60000
     train_size: int = 50000
-    test_size: int = 10000
     dataDimensions: list[int] = [32, 32, 3]
     numberOfLabels: int = 1
 
