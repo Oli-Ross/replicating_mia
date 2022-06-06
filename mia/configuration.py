@@ -92,6 +92,14 @@ class Configuration:
             return yaml.load(yamlFile, Loader=yaml.Loader)
 
     @classmethod
+    def from_rel_path(cls, fileName: str):
+        """
+        Conveniance method to load a Configuration from relative file path.
+        """
+        configFilePath = ConfigFilePath.from_rel_path(fileName)
+        return cls.from_file(configFilePath)
+
+    @classmethod
     def from_name(cls, fileName: str):
         """
         Conveniance method to load a Configuration from `config/`.
