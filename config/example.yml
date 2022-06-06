@@ -1,6 +1,5 @@
 ---
 !!python/object:configuration.Configuration
 name: Example Configuration
-seed: 
-  numpy: 1234
+seed: 1234
 ...
