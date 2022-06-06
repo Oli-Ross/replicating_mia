@@ -84,8 +84,10 @@ def download_cifar100():
 def run_tests():
     print("Running tests from inside `mia/`.")
     import pytest
+    curDir = os.path.curdir
     os.chdir(miaDir)
     returnCode = pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
+    os.chdir(curDir)
     if returnCode != pytest.ExitCode.OK:
         raise AssertionError("Tests did not succesfully run through.")
 
