@@ -17,13 +17,17 @@ seed: int = 1234
 
 
 def set_seed(new_seed: int):
+    """
+    Set the global seed that will be used for all functions that include
+    randomness.
+    """
     global seed
     seed = new_seed
 
 
 class DatasetFiles:
     """
-    Paths to files that hold the content of a datset.
+    Paths to files that hold the content of a datset as numpy arrays.
     """
 
     def __init__(self, datasetName: str) -> None:
@@ -47,6 +51,10 @@ class DatasetBaseClass:
     The attribute `datasetName` determines the file names where the dataset will
     be stored. When subclassing this base class, each subclass should use a
     different `datasetName`.
+    Numpy arrays can be loaded either from file, or "externally", which means
+    potential downloading and/or preprocessing. Since the latter depends on the
+    dataset and source, the corresponding method `load_external` must be
+    implemented by the subclass.
     """
     size: int = 1
     train_size: int = 1
@@ -78,7 +86,7 @@ class DatasetBaseClass:
 
     def load(self):
         """
-        Load the dataset into the numpy arrays.
+        Load the dataset into the numpy arrays, either from file or "externally".
         """
         if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
             self.load_numpy_from_file()
@@ -94,6 +102,9 @@ class DatasetBaseClass:
         raise NotImplementedError("Must be implemented by subclass.")
 
     def load_numpy_from_file(self):
+        """
+        Load the numpy arrays from the respective files.
+        """
         self.features: NDArray = np.load(self.files.numpyFeatures)
         self.labels: NDArray = np.load(self.files.numpyLabels)
 
@@ -103,9 +114,9 @@ class DatasetBaseClass:
         Returns a split: (x_train,y_train),(x_test,y_test).
 
         The amount of images to be used in each partition is determined by each
-        individual dataset. Alternatively, a parameter can be given.
-        The returned numpy arrays are views onto the data hold by the dataset
-        object, not a copy.
+        individual dataset. Alternatively, a parameter `train_size` can be
+        given, which determines the sizes of `x_train` and `y_train`. The rest
+        of the data is put into `x_test` and `y_test`.
         """
 
         if train_size is None:
@@ -126,6 +137,15 @@ class DatasetBaseClass:
 
     def split_random(
             self, train_size: int | None = None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+        """
+        Returns a randomly sampled split: (x_train,y_train),(x_test,y_test).
+
+        See `DatasetBaseClass.split()` for an explanation what this function
+        does. The difference is, that it randomly samples from the entire
+        dataset to determine which data points are put into the "train"-sets.
+        No data point is chosen twice.
+
+        """
 
         if train_size is None:
             train_size = self.train_size
@@ -171,6 +191,12 @@ class KagglePurchaseDataset(DatasetBaseClass):
         self.load_raw_data_from_file()
 
     def load_raw_data_from_file(self):
+        """
+        Load the dataset from the raw text file, that is provided by Shokri et
+        al. 
+        It is a CSV file with 601 columns, where the first column represents the
+        label, and a row represents a data record.
+        """
         rawData: str = join(self.files.dataDirectory, "raw_data")
         assert isfile(rawData), "Use set_up.py to download Kaggle data."
 
@@ -201,6 +227,11 @@ class KagglePurchaseDatasetClustered(DatasetBaseClass):
         super().__init__()
 
     def load_external(self):
+        """
+        Load the unaltered Kaggle dataset, using the respective Class. Then use
+        k-means clustering, to cluster the data into the given number of
+        clusters, which is also the new number of labels.
+        """
         kaggle_unclustered: DatasetBaseClass = KagglePurchaseDataset()
         # TODO: use real KMeans, not MiniBatch
         kmeans = sklearn.cluster.MiniBatchKMeans(
@@ -227,6 +258,10 @@ class Cifar10Dataset(DatasetBaseClass):
         self.load_from_tensorflow()
 
     def load_from_tensorflow(self):
+        """
+        Invoke the calls to tensorflow that automatically download and cache the
+        dataset.
+        """
         (x_train, y_train), (x_test, y_test) = \
             tf.keras.datasets.cifar10.load_data()
         self.features: NDArray = np.append(x_train, x_test, axis=0)
@@ -251,6 +286,10 @@ class Cifar100Dataset(DatasetBaseClass):
         self.load_from_tensorflow()
 
     def load_from_tensorflow(self):
+        """
+        Invoke the calls to tensorflow that automatically download and cache the
+        dataset.
+        """
         # "Fine" label_mode for 100 classes as in MIA paper
         (x_train, y_train), (x_test, y_test) = \
             tf.keras.datasets.cifar100.load_data(label_mode='fine')
