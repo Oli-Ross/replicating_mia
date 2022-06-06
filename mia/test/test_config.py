@@ -1,5 +1,6 @@
-import configuration
 import os.path
+
+import configuration
 
 
 class TestConfigFilePath():

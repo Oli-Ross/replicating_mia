@@ -1,7 +1,8 @@
-import yaml
 import datetime
-import os.path
 import os
+import os.path
+
+import yaml
 
 configDir = os.path.join(os.path.dirname(__file__), "..", "config")
 if not os.path.isdir(configDir):

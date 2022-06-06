@@ -5,10 +5,10 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import abspath, dirname, join
 
-import tensorflow as tf
 import datasets
 import numpy as np
 import pytest
+import tensorflow as tf
 
 
 class TestDatasetFiles():
