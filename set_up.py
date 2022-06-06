@@ -17,12 +17,14 @@ dataDir = os.path.join(topLevelDir, "data")
 def generate_docs():
     print("Generating documentation into /docs.")
     import pdoc
-    os.chdir(miaDir)
 
     docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs"))
     pyFiles = glob.glob("*.py", root_dir=miaDir)
 
+    curDir = os.path.curdir
+    os.chdir(miaDir)
     pdoc.pdoc(*pyFiles, output_directory=docsDirPath)
+    os.chdir(curDir)
 
 
 def check_if_downloaded(datasetName: str) -> bool:
