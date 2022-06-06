@@ -122,7 +122,7 @@ class DatasetBaseClass:
         y_train, y_test, _ = np.split(
             self.labels, [
                 train_size, train_size + test_size], axis=0)
-        return (x_train, y_train), (x_test, y_test)
+        return (x_train.copy(), y_train.copy()), (x_test.copy(), y_test.copy())
 
     def split_random(
             self, train_size: int | None = None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
