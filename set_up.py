@@ -110,6 +110,11 @@ def parse_args():
         help='Download CIFAR-100 dataset.'
     )
     parser.add_argument(
+        '--download',
+        action='store_true',
+        help='Download all datasets.'
+    )
+    parser.add_argument(
         '--test',
         action='store_true',
         help='Run tests.'
@@ -134,13 +139,19 @@ def perform_options(opts: Dict):
     if True not in opts.values():
         for opt in opts.keys():
             opts[opt] = True
+        opts["download"] = False
 
-    if opts['kaggle']:
+    if opts["download"]:
         download_kaggle()
-    if opts['cifar10']:
         download_cifar10()
-    if opts['cifar100']:
         download_cifar100()
+    else:
+        if opts['kaggle']:
+            download_kaggle()
+        if opts['cifar10']:
+            download_cifar10()
+        if opts['cifar100']:
+            download_cifar100()
     if opts['doc']:
         generate_docs()
     if opts['test']:
@@ -154,6 +165,7 @@ def main():
     except ModuleNotFoundError as e:
         raise ModuleNotFoundError(
             "Have you installed all dependencies? Use `python -m pip install -r requirements.txt`.") from e
+
 
 if __name__ == "__main__":
     main()
