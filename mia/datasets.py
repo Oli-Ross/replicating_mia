@@ -40,7 +40,7 @@ class DatasetFiles:
         self.numpyLabels: str = join(self.dataDirectory, "labels.npy")
 
 
-class Dataset:
+class DatasetBaseClass:
     """
     Base class for dataset representation.
 
@@ -60,7 +60,7 @@ class Dataset:
         """
 
         # This base class should not be instantiated, subclass it instead
-        assert self.__class__ != Dataset
+        assert self.__class__ != DatasetBaseClass
 
         self.files: DatasetFiles = DatasetFiles(self.datasetName)
 
@@ -153,7 +153,7 @@ class Dataset:
         np.save(self.files.numpyLabels, self.labels)
 
 
-class KagglePurchaseDataset(Dataset):
+class KagglePurchaseDataset(DatasetBaseClass):
     """
     Kaggle's Acquire Valued Shoppers Challenge dataset of binary features.
     """
@@ -181,7 +181,7 @@ class KagglePurchaseDataset(Dataset):
                 self.features[index, :] = row[1:]
 
 
-class KagglePurchaseDatasetClustered(Dataset):
+class KagglePurchaseDatasetClustered(DatasetBaseClass):
     """
     Kaggle's Acquire Valued Shoppers Challenge dataset, clustered into
     partitions.
@@ -201,7 +201,7 @@ class KagglePurchaseDatasetClustered(Dataset):
         super().__init__()
 
     def load_external(self):
-        kaggle_unclustered: Dataset = KagglePurchaseDataset()
+        kaggle_unclustered: DatasetBaseClass = KagglePurchaseDataset()
         # TODO: use real KMeans, not MiniBatch
         kmeans = sklearn.cluster.MiniBatchKMeans(
             n_clusters=self.numberOfClusters)
@@ -209,7 +209,7 @@ class KagglePurchaseDatasetClustered(Dataset):
         self.labels: NDArray = kmeans.fit_predict(self.features)
 
 
-class Cifar10Dataset(Dataset):
+class Cifar10Dataset(DatasetBaseClass):
     """
     CIFAR-10 dataset of small RGB images.
     """
@@ -233,7 +233,7 @@ class Cifar10Dataset(Dataset):
         self.labels: NDArray = np.append(y_train, y_test, axis=0)
 
 
-class Cifar100Dataset(Dataset):
+class Cifar100Dataset(DatasetBaseClass):
     """
     CIFAR-100 dataset of small RGB images.
     """
