@@ -1,0 +1,6 @@
+---
+!!python/object:mia.config.Configuration
+name: Example Configuration
+seed: 
+  numpy: 1234
+...

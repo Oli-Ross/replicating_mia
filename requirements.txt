@@ -2,4 +2,5 @@ tensorflow
 numpy
 pdoc
 pytest
+pyyaml
 scikit-learn
