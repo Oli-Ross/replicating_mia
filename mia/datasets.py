@@ -193,7 +193,7 @@ class KagglePurchaseDataset(DatasetBaseClass):
     def load_raw_data_from_file(self):
         """
         Load the dataset from the raw text file, that is provided by Shokri et
-        al. 
+        al.
         It is a CSV file with 601 columns, where the first column represents the
         label, and a row represents a data record.
         """
