@@ -25,10 +25,15 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Cache data directory
+        id: cache-data
         uses: actions/cache@v3
         with:
           path: data/
           key: ${{ runner.os }}-${{ hashFiles('data/**') }}
 
+      - name: Download datasets 
+        if: steps.cache-data.outputs.cache-hit != 'true'
+        run: python set_up.py --download
+
       - name: Test
-        run: python set_up.py 
+        run: python set_up.py --test
