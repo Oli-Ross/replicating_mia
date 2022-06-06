@@ -13,7 +13,12 @@ import sklearn.cluster
 import tensorflow as tf
 from numpy.typing import NDArray
 
-RANDOM_SEED = 1234
+seed: int = 1234
+
+
+def set_seed(new_seed: int):
+    global seed
+    seed = new_seed
 
 
 class DatasetFiles:
@@ -125,7 +130,8 @@ class Dataset:
         if train_size is None:
             train_size = self.train_size
 
-        rng = np.random.default_rng(RANDOM_SEED)
+        global seed
+        rng = np.random.default_rng(seed)
         trainIndices: NDArray = np.sort(rng.choice(np.arange(self.size), self.train_size,
                                                    replace=False))
         allIndices: NDArray = np.arange(self.size)
