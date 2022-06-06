@@ -81,7 +81,9 @@ def run_tests():
     print("Running tests from inside `mia/`.")
     import pytest
     os.chdir(miaDir)
-    pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
+    returnCode = pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
+    if returnCode != pytest.ExitCode.OK:
+        raise AssertionError("Tests did not succesfully run through.")
 
 
 def parse_args():
@@ -152,7 +154,6 @@ def main():
     except ModuleNotFoundError as e:
         raise ModuleNotFoundError(
             "Have you installed all dependencies? Use `python -m pip install -r requirements.txt`.") from e
-
 
 if __name__ == "__main__":
     main()
