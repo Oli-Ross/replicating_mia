@@ -35,7 +35,7 @@ class TestDatasetFiles():
 class TestDatasetBasic():
     def test_baseclass(self):
         with pytest.raises(AssertionError):
-            datasets.Dataset()
+            datasets.DatasetBaseClass()
 
     def test_kaggle(self):
         kaggle = datasets.KagglePurchaseDataset()
