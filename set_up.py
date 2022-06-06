@@ -78,7 +78,7 @@ def download_cifar100():
 
 
 def run_tests():
-    print("Running tests.")
+    print("Running tests from inside `mia/`.")
     import pytest
     os.chdir(miaDir)
     pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
