@@ -38,7 +38,6 @@ def check_if_downloaded(datasetName: str) -> bool:
 
 def download_raw_kaggle_data():
     kaggleDataDir = os.path.join(dataDir, "kaggle")
-    os.chdir(kaggleDataDir)
     kaggleCompressed = os.path.join(kaggleDataDir, "raw_data.tgz")
     kaggleRaw = os.path.join(kaggleDataDir, "raw_data")
     if not os.path.isfile(kaggleCompressed):
@@ -46,10 +45,15 @@ def download_raw_kaggle_data():
         response = requests.get(url)
         with open(kaggleCompressed, mode='wb') as file:
             file.write(response.content)
+    else:
+        print("Skipping download, using local archive file.")
 
     if not os.path.isfile(kaggleRaw):
-        tarfile.open(kaggleCompressed).extractall()
-        os.rename("dataset_purchase", "raw_data")
+        tarfile.open(kaggleCompressed).extractall(kaggleDataDir)
+        # "dataset_purchase" is the file name, we use the one in kaggleRaw
+        os.rename(os.path.join(kaggleDataDir, "dataset_purchase"), kaggleRaw)
+    else:
+        print("Skipping extraction, using local raw data file.")
 
 
 def download_kaggle():
