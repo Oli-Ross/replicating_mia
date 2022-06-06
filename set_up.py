@@ -92,7 +92,7 @@ def run_tests():
         raise AssertionError("Tests did not succesfully run through.")
 
 
-def parse_args():
+def parse_args() -> Dict:
     parser = argparse.ArgumentParser(
         description='Prepare repository for MIA attack. Without provided option, all actions are performed.')
     parser.add_argument(
@@ -126,7 +126,7 @@ def parse_args():
         help='Run tests.'
     )
 
-    return parser.parse_args()
+    return vars(parser.parse_args())
 
 
 def make_data_dirs():
@@ -167,7 +167,7 @@ def perform_options(opts: Dict):
 def main():
     options = parse_args()
     try:
-        perform_options(vars(options))
+        perform_options(options)
     except ModuleNotFoundError as e:
         raise ModuleNotFoundError(
             "Have you installed all dependencies? Use `python -m pip install -r requirements.txt`.") from e
