@@ -17,8 +17,9 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v3
-
-      - name: Install deps
+        with:
+          python-version: '3.10'
+          cache: 'pip'
         run: pip install -r requirements.txt
 
       - name: Build
