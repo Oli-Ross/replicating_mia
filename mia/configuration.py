@@ -60,7 +60,6 @@ class Configuration:
     """
 
     def __init__(self) -> None:
-        print("t")
         pass
 
     def save_to_file(self, configName: str | None = None):
@@ -86,7 +85,6 @@ class Configuration:
         Return a Configuration object loaded from a given file path.
         """
         absoluteFilePath = configFilePath.absoluteFilePath
-        print(absoluteFilePath)
         assert os.path.isfile(absoluteFilePath)
         with open(absoluteFilePath) as yamlFile:
             return yaml.load(yamlFile, Loader=yaml.Loader)
