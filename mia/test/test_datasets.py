@@ -107,6 +107,7 @@ class TestDatasetSplit():
         with pytest.raises(AssertionError):
             np.testing.assert_equal(y_test, kaggle.labels[10000:197324])
 
+    @pytest.mark.skip("Takes too long.")
     def test_cifar_split(self):
         cifar10 = datasets.Cifar10Dataset()
 
