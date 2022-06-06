@@ -27,7 +27,6 @@ class ConfigFilePath():
         Construct ConfigFile object from the relative file path.
         """
         curDir = os.path.abspath(os.path.curdir)
-        print(f"curdir:{curDir}")
         absoluteFilePath = os.path.join(curDir, relativeFilePath)
         return cls(absoluteFilePath)
 
