@@ -1,5 +1,5 @@
 ---
-!!python/object:mia.config.Configuration
+!!python/object:mia.configuration.Configuration
 name: Example Configuration
 seed: 
   numpy: 1234
