@@ -59,7 +59,7 @@ class DatasetBaseClass:
     size: int = 1
     train_size: int = 1
     dataDimensions: list[int] = [1]
-    labelDimension: int = 1
+    numberOfLabels: int = 1
     datasetName: str = "default"
 
     def __init__(self) -> None:
@@ -72,7 +72,7 @@ class DatasetBaseClass:
 
         self.files: DatasetFiles = DatasetFiles(self.datasetName)
 
-        labelsArrayShape: list[int] = [self.labelDimension]
+        labelsArrayShape: list[int] = [self.numberOfLabels]
         labelsArrayShape.insert(0, self.size)
         featuresArrayShape: list[int] = self.dataDimensions.copy()
         featuresArrayShape.insert(0, self.size)
