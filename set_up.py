@@ -15,10 +15,11 @@ dataDir = os.path.join(topLevelDir, "data")
 
 
 def generate_docs():
-    print("Generating documentation into /docs.")
+    docDir = "docs/build"
+    print(f"Generating documentation into {docDir}.")
     import pdoc
 
-    docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs"))
+    docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs/build"))
     pyFiles = glob.glob("*.py", root_dir=miaDir)
 
     curDir = os.path.curdir
