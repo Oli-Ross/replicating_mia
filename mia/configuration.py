@@ -1,3 +1,7 @@
+"""
+.. include:: ../docs/configuration.md
+"""
+
 import datetime
 import os
 import os.path
