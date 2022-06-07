@@ -108,8 +108,8 @@ class DatasetBaseClass:
         self.features: NDArray = np.load(self.files.numpyFeatures)
         self.labels: NDArray = np.load(self.files.numpyLabels)
 
-    def split(
-            self, train_size: int | None = None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
+    def split(self, train_size: int | None = None,
+              random: bool = False) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
         """
         Returns a split: (x_train,y_train),(x_test,y_test).
 
@@ -117,31 +117,7 @@ class DatasetBaseClass:
         individual dataset. Alternatively, a parameter `train_size` can be
         given, which determines the sizes of `x_train` and `y_train`. The rest
         of the data is put into `x_test` and `y_test`.
-        """
-
-        if train_size is None:
-            train_size = self.train_size
-
-        if train_size > self.size:
-            raise ValueError("train_size must be at most dataset size.")
-
-        test_size: int = self.size - train_size
-
-        x_train, x_test, _ = np.split(
-            self.features, [
-                train_size, train_size + test_size], axis=0)
-        y_train, y_test, _ = np.split(
-            self.labels, [
-                train_size, train_size + test_size], axis=0)
-        return (x_train.copy(), y_train.copy()), (x_test.copy(), y_test.copy())
-
-    def split_random(
-            self, train_size: int | None = None) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
-        """
-        Returns a randomly sampled split: (x_train,y_train),(x_test,y_test).
-
-        See `DatasetBaseClass.split()` for an explanation what this function
-        does. The difference is, that it randomly samples from the entire
+        If `random` is set to True, it randomly samples from the entire
         dataset to determine which data points are put into the "train"-sets.
         No data point is chosen twice.
 
@@ -150,11 +126,22 @@ class DatasetBaseClass:
         if train_size is None:
             train_size = self.train_size
 
-        global seed
-        rng = np.random.default_rng(seed)
-        trainIndices: NDArray = np.sort(rng.choice(np.arange(self.size), self.train_size,
-                                                   replace=False))
+        if train_size > self.size:
+            raise ValueError("train_size must be at most dataset size.")
+
         allIndices: NDArray = np.arange(self.size)
+
+        if random:
+            global seed
+            rng = np.random.default_rng(seed)
+            randomIndices: NDArray = rng.choice(
+                allIndices,
+                self.train_size,
+                replace=False)
+            trainIndices: NDArray = np.sort(randomIndices)
+        else:
+            trainIndices: NDArray = np.arange(self.train_size)
+
         testIndices: NDArray = np.setdiff1d(allIndices, trainIndices)
 
         x_train: NDArray = self.features[trainIndices]

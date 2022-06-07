@@ -90,7 +90,7 @@ class TestDatasetSplit():
     @pytest.mark.skip("Takes too long.")
     def test_random_split(self):
         kaggle = datasets.KagglePurchaseDataset()
-        (x_train, y_train), (x_test, y_test) = kaggle.split_random()
+        (x_train, y_train), (x_test, y_test) = kaggle.split(random=True)
 
         assert x_train.shape == kaggle.features[0:10000].shape
         with pytest.raises(AssertionError):
