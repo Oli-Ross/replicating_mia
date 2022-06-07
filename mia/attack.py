@@ -2,7 +2,7 @@ import argparse
 from typing import Dict
 
 import datasets
-from configuration import ConfigFilePath, Configuration
+from configuration import Configuration
 
 
 def parse_args() -> Dict:
