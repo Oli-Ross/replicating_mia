@@ -14,7 +14,7 @@ import tensorflow as tf
 from numpy.typing import NDArray
 
 seed: int = 1234
-
+LABELS_PER_DATA_POINT = 1
 
 def set_seed(new_seed: int):
     """
@@ -59,7 +59,6 @@ class DatasetBaseClass:
     size: int = 1
     train_size: int = 1
     dataDimensions: list[int] = [1]
-    numberOfLabels: int = 1
     datasetName: str = "default"
 
     def __init__(self) -> None:
@@ -72,7 +71,7 @@ class DatasetBaseClass:
 
         self.files: DatasetFiles = DatasetFiles(self.datasetName)
 
-        labelsArrayShape: list[int] = [self.numberOfLabels]
+        labelsArrayShape: list[int] = [LABELS_PER_DATA_POINT]
         labelsArrayShape.insert(0, self.size)
         featuresArrayShape: list[int] = self.dataDimensions.copy()
         featuresArrayShape.insert(0, self.size)
@@ -169,7 +168,6 @@ class KagglePurchaseDataset(DatasetBaseClass):
     size: int = 197324
     train_size: int = 10000
     dataDimensions: list[int] = [600]
-    numberOfLabels: int = 1
 
     def __init__(self) -> None:
         super().__init__()
@@ -205,7 +203,6 @@ class KagglePurchaseDatasetClustered(DatasetBaseClass):
     size: int = 197324
     train_size: int = 10000
     dataDimensions: list[int] = [600]
-    numberOfLabels: int = 1
 
     def __init__(self, numberOfClusters: int = 5) -> None:
         self.numberOfClusters: int = numberOfClusters
@@ -236,7 +233,6 @@ class Cifar10Dataset(DatasetBaseClass):
     size: int = 60000
     train_size: int = 50000
     dataDimensions: list[int] = [32, 32, 3]
-    numberOfLabels: int = 1
 
     def __init__(self) -> None:
         super().__init__()
@@ -264,7 +260,6 @@ class Cifar100Dataset(DatasetBaseClass):
     size: int = 60000
     train_size: int = 50000
     dataDimensions: list[int] = [32, 32, 3]
-    numberOfLabels: int = 1
 
     def __init__(self) -> None:
         super().__init__()
