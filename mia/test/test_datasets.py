@@ -85,6 +85,7 @@ class TestDatasetSplit():
         assert y_train.shape[0] == cifar10.train_size
         assert x_test.shape[0] == cifar10.size - cifar10.train_size
         assert y_test.shape[0] == cifar10.size - cifar10.train_size
+        assert x_test[0:10].all() == cifar10.features[0:10].all()
 
     @pytest.mark.skip("Takes too long.")
     def test_random_split(self):
