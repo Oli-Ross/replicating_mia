@@ -1,3 +1,7 @@
+"""
+.. include:: ../docs/datasets.md
+"""
+
 from os import environ
 
 # Tensorflow C++ backend logging verbosity
