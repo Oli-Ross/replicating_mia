@@ -10,7 +10,7 @@ def parse_args() -> Dict:
         description='Launch a membership inference attack')
     parser.add_argument(
         '--config',
-        help='Path to config file.',
+        help='Relative path to config file.',
     )
 
     return vars(parser.parse_args())
