@@ -1,17 +1,17 @@
 import argparse
 import glob
-import os
 import pathlib
 import tarfile
+from os import chdir, mkdir, path, rename
 from typing import Dict
 
 import requests
 
 import mia.datasets as datasets
 
-topLevelDir = os.path.dirname(__file__)
-miaDir = os.path.join(topLevelDir, "mia")
-dataDir = os.path.join(topLevelDir, "data")
+topLevelDir = path.dirname(__file__)
+miaDir = path.join(topLevelDir, "mia")
+dataDir = path.join(topLevelDir, "data")
 
 
 def generate_docs():
@@ -19,13 +19,13 @@ def generate_docs():
     print(f"Generating documentation into {docDir}.")
     import pdoc
 
-    docsDirPath = pathlib.Path(os.path.join(topLevelDir, "docs/build"))
+    docsDirPath = pathlib.Path(path.join(topLevelDir, "docs/build"))
     pyFiles = glob.glob("*.py", root_dir=miaDir)
 
-    curDir = os.path.curdir
-    os.chdir(miaDir)
+    curDir = path.curdir
+    chdir(miaDir)
     pdoc.pdoc(*pyFiles, output_directory=docsDirPath)
-    os.chdir(curDir)
+    chdir(curDir)
 
 
 def check_if_downloaded(datasetName: str) -> bool:
@@ -37,10 +37,10 @@ def check_if_downloaded(datasetName: str) -> bool:
 
 
 def download_raw_kaggle_data():
-    kaggleDataDir = os.path.join(dataDir, "kaggle")
-    kaggleCompressed = os.path.join(kaggleDataDir, "raw_data.tgz")
-    kaggleRaw = os.path.join(kaggleDataDir, "raw_data")
-    if not os.path.isfile(kaggleCompressed):
+    kaggleDataDir = path.join(dataDir, "kaggle")
+    kaggleCompressed = path.join(kaggleDataDir, "raw_data.tgz")
+    kaggleRaw = path.join(kaggleDataDir, "raw_data")
+    if not path.isfile(kaggleCompressed):
         url = 'https://github.com/OliverRoss/replicating_mia_datasets/raw/master/dataset_purchase.tgz'
         response = requests.get(url)
         with open(kaggleCompressed, mode='wb') as file:
@@ -48,10 +48,10 @@ def download_raw_kaggle_data():
     else:
         print("Skipping download, using local archive file.")
 
-    if not os.path.isfile(kaggleRaw):
+    if not path.isfile(kaggleRaw):
         tarfile.open(kaggleCompressed).extractall(kaggleDataDir)
         # "dataset_purchase" is the file name, we use the one in kaggleRaw
-        os.rename(os.path.join(kaggleDataDir, "dataset_purchase"), kaggleRaw)
+        rename(path.join(kaggleDataDir, "dataset_purchase"), kaggleRaw)
     else:
         print("Skipping extraction, using local raw data file.")
 
@@ -84,10 +84,10 @@ def download_cifar100():
 def run_tests():
     print("Running tests from inside `mia/`.")
     import pytest
-    curDir = os.path.curdir
-    os.chdir(miaDir)
+    curDir = path.curdir
+    chdir(miaDir)
     returnCode = pytest.main(["-v", "-W", "ignore::DeprecationWarning"])
-    os.chdir(curDir)
+    chdir(curDir)
     if returnCode != pytest.ExitCode.OK:
         raise AssertionError("Tests did not succesfully run through.")
 
@@ -130,12 +130,12 @@ def parse_args() -> Dict:
 
 
 def make_data_dirs():
-    if not os.path.isdir(dataDir):
-        os.mkdir(dataDir)
+    if not path.isdir(dataDir):
+        mkdir(dataDir)
     for dataset in ["cifar10", "cifar100", "kaggle"]:
-        datasetDir = os.path.join(dataDir, dataset)
-        if not os.path.isdir(datasetDir):
-            os.mkdir(datasetDir)
+        datasetDir = path.join(dataDir, dataset)
+        if not path.isdir(datasetDir):
+            mkdir(datasetDir)
 
 
 def perform_options(opts: Dict):
