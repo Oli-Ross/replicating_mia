@@ -1,0 +1,6 @@
+train:
+  main: mia/attack --config example.yml
+  flags-import: yes
+  flags-dest: config:config/example.yml
+  flags:
+    seed: 4321

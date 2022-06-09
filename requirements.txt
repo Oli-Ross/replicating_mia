@@ -1,6 +1,7 @@
-tensorflow
+guildai
 numpy
 pdoc
 pytest
 pyyaml
 scikit-learn
+tensorflow
