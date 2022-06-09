@@ -29,9 +29,8 @@ def generate_docs():
 
 
 def check_if_downloaded(datasetName: str) -> bool:
-    featuresFile = os.path.join(dataDir, datasetName, "features.npy")
-    labelsFile = os.path.join(dataDir, datasetName, "labels.npy")
-    if os.path.isfile(featuresFile) and os.path.isfile(labelsFile):
+    files = datasets.DatasetFiles(datasetName)
+    if path.isfile(files.numpyFeatures) and path.isfile(files.numpyLabels):
         print("Skipping, already downloaded.")
         return True
     return False
