@@ -8,7 +8,7 @@ from os import environ
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import csv
-from os import mkdir
+from os import makedirs
 from os.path import dirname, exists, isfile, join
 from typing import Tuple
 
@@ -157,7 +157,7 @@ class DatasetBaseClass:
         Save the arrays that hold the dataset to disk.
         """
         if not exists(self.files.dataDirectory):
-            mkdir(self.files.dataDirectory)
+            makedirs(self.files.dataDirectory)
         np.save(self.files.numpyFeatures, self.features)
         np.save(self.files.numpyLabels, self.labels)
 

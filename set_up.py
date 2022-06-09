@@ -2,7 +2,7 @@ import argparse
 import glob
 import pathlib
 import tarfile
-from os import chdir, mkdir, path, rename
+from os import chdir, makedirs, path, rename
 from typing import Dict
 
 import requests
@@ -130,12 +130,10 @@ def parse_args() -> Dict:
 
 
 def make_data_dirs():
-    if not path.isdir(dataDir):
-        mkdir(dataDir)
     for dataset in ["cifar10", "cifar100", "kaggle"]:
         datasetDir = path.join(dataDir, dataset)
         if not path.isdir(datasetDir):
-            mkdir(datasetDir)
+            makedirs(datasetDir)
 
 
 def perform_options(opts: Dict):
