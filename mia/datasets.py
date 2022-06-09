@@ -14,7 +14,6 @@ from typing import Tuple
 
 import numpy as np
 import sklearn.cluster
-import tensorflow as tf
 from numpy.typing import NDArray
 
 seed: int = 1234
@@ -249,6 +248,7 @@ class Cifar10Dataset(DatasetBaseClass):
         Invoke the calls to tensorflow that automatically download and cache the
         dataset.
         """
+        import tensorflow as tf
         (x_train, y_train), (x_test, y_test) = \
             tf.keras.datasets.cifar10.load_data()
         self.features: NDArray = np.append(x_train, x_test, axis=0)
@@ -276,6 +276,7 @@ class Cifar100Dataset(DatasetBaseClass):
         Invoke the calls to tensorflow that automatically download and cache the
         dataset.
         """
+        import tensorflow as tf
         # "Fine" label_mode for 100 classes as in MIA paper
         (x_train, y_train), (x_test, y_test) = \
             tf.keras.datasets.cifar100.load_data(label_mode='fine')
