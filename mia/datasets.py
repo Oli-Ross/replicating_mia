@@ -16,7 +16,7 @@ import numpy as np
 import sklearn.cluster
 from numpy.typing import NDArray
 
-seed: int = 1234
+global_seed: int = 1234
 LABELS_PER_DATA_POINT = 1
 
 def set_seed(new_seed: int):
@@ -24,8 +24,8 @@ def set_seed(new_seed: int):
     Set the global seed that will be used for all functions that include
     randomness.
     """
-    global seed
-    seed = new_seed
+    global global_seed
+    global_seed = new_seed
 
 
 class DatasetFiles:
@@ -134,8 +134,7 @@ class DatasetBaseClass:
         allIndices: NDArray = np.arange(self.size)
 
         if random:
-            global seed
-            rng = np.random.default_rng(seed)
+            rng = np.random.default_rng(global_seed)
             randomIndices: NDArray = rng.choice(
                 allIndices,
                 self.train_size,
@@ -222,7 +221,7 @@ class KagglePurchaseDatasetClustered(DatasetBaseClass):
         kaggle_unclustered: DatasetBaseClass = KagglePurchaseDataset()
         # TODO: use real KMeans, not MiniBatch
         kmeans = sklearn.cluster.MiniBatchKMeans(
-            n_clusters=self.numberOfClusters)
+            n_clusters=self.numberOfClusters,random_state=global_seed)
         self.features: NDArray = kaggle_unclustered.features.copy()
         self.labels: NDArray = kmeans.fit_predict(self.features)
 
