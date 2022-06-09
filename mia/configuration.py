@@ -7,6 +7,7 @@ import os
 import os.path
 
 import yaml
+from typing import Dict
 
 configDir = os.path.join(os.path.dirname(__file__), "..", "config")
 if not os.path.isdir(configDir):
@@ -19,11 +20,12 @@ class Configuration:
 
     Provides methods to parse a YAML file into a Configuration object or
     save a Configuration object to disk.
-    This happens dynamically, the attributes depend on the YAML file's content.
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, configOptions: Dict | None = None) -> None:
+        if configOptions:
+            self.seed = configOptions["seed"]
+            self.name = configOptions["name"]
 
     def save_to_file(self, configName: str | None = None):
         """
@@ -42,16 +44,17 @@ class Configuration:
         print(f"Configuration has been saved to {configFilePath}.")
 
     @classmethod
-    def from_abs_path(cls, absoluteFilePath: str):
+    def from_abs_path(cls, absoluteFilePath: str) -> 'Configuration':
         """
         Load a Configuration from absolute file path.
         """
         assert os.path.isfile(absoluteFilePath)
         with open(absoluteFilePath) as yamlFile:
-            return yaml.load(yamlFile, Loader=yaml.Loader)
+            yamlContent: Dict = yaml.load(yamlFile, Loader=yaml.Loader)
+        return cls(yamlContent)
 
     @classmethod
-    def from_rel_path(cls, fileName: str):
+    def from_rel_path(cls, fileName: str) -> 'Configuration':
         """
         Load a Configuration from relative file path.
         """
@@ -60,7 +63,7 @@ class Configuration:
         return cls.from_abs_path(absoluteFilePath)
 
     @classmethod
-    def from_name(cls, fileName: str):
+    def from_name(cls, fileName: str) -> 'Configuration':
         """
         Load a Configuration from `config/`.
 

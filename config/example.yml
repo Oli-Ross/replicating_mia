@@ -1,5 +1,4 @@
 ---
-!!python/object:configuration.Configuration
 name: Example Configuration
 seed: 1234
 ...
