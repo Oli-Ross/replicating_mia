@@ -82,7 +82,7 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     """
     Load the Kaggle data and cluster it.
     """
-    print(f"Clustering Kaggle with {numberOfClusters} classes..")
+    print(f"Clustering Kaggle with {numberOfClusters} classes.")
     kmeans = sklearn.cluster.MiniBatchKMeans(
         n_clusters=numberOfClusters,
         random_state=global_seed)
@@ -104,7 +104,7 @@ def load_dataset(datasetName: str) -> tf.data.Dataset:
         print(f"Loading {datasetName} from disk.")
         return tf.data.experimental.load(datasetDir)
 
-    print(f"Loading {datasetName}..")
+    print(f"Loading {datasetName}.")
 
     match datasetName:
         case "cifar10":
