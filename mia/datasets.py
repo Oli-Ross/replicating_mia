@@ -71,7 +71,7 @@ def load_kaggle() -> tf.data.Dataset:
 
 def load_clustered_kaggle(numberOfClusters: int):
     """
-    Load the Kaggle data and cluster
+    Load the Kaggle data and cluster it.
     """
     print(f"Clustering Kaggle with {numberOfClusters} classes..")
     kmeans = sklearn.cluster.MiniBatchKMeans(
@@ -84,6 +84,12 @@ def load_clustered_kaggle(numberOfClusters: int):
 
 
 def load_dataset(datasetName: str) -> tf.data.Dataset:
+    """
+    Load a dataset.
+
+    Valid `datasetName` values are: "cifar10", "cifar100", "kaggle", "kaggle_2",
+    "kaggle_10","kaggle_20","kaggle_50","kaggle_100".
+    """
     datasetDir: str = join(dataDir, datasetName, "dataset")
     if isdir(datasetDir):
         print(f"Loading {datasetName} from disk.")
