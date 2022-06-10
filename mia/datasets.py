@@ -1,23 +1,20 @@
-"""
-.. include:: ../docs/datasets.md
-"""
-
 from os import environ
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import csv
-from os import makedirs
-from os.path import dirname, exists, isfile, join
+from os.path import dirname, isdir, join
 from typing import Tuple
 
 import numpy as np
 import sklearn.cluster
+import tensorflow as tf
 from numpy.typing import NDArray
 
+dataDir = join(dirname(__file__), "../data")
 global_seed: int = 1234
-LABELS_PER_DATA_POINT = 1
+
 
 def set_seed(new_seed: int):
     """
@@ -28,257 +25,109 @@ def set_seed(new_seed: int):
     global_seed = new_seed
 
 
-class DatasetFiles:
+def _dataset_from_split(
+        x_train, y_train, x_test, y_test) -> tf.data.Dataset:
     """
-    Paths to files that hold the content of a datset as numpy arrays.
+    Using the provided split dataset, create a tf.data.Dataset.
     """
-
-    def __init__(self, datasetName: str) -> None:
-        """
-        Construct the paths of the dataset files from its name.
-        """
-
-        currentDirectoryName = dirname(__file__)
-
-        self.dataDirectory: str = join(
-            currentDirectoryName,
-            f"../data/{datasetName}")
-        self.numpyFeatures: str = join(self.dataDirectory, "features.npy")
-        self.numpyLabels: str = join(self.dataDirectory, "labels.npy")
+    features: NDArray = np.append(x_train, x_test, axis=0)
+    labels: NDArray = np.append(y_train, y_test, axis=0)
+    return tf.data.Dataset.from_tensor_slices((features, labels))
 
 
-class DatasetBaseClass:
+def load_cifar100() -> tf.data.Dataset:
+    train, test = tf.keras.datasets.cifar100.load_data()
+    return _dataset_from_split(train[0], train[1], test[0], test[1])
+
+
+def load_cifar10() -> tf.data.Dataset:
+    train, test = tf.keras.datasets.cifar10.load_data()
+    return _dataset_from_split(train[0], train[1], test[0], test[1])
+
+
+def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     """
-    Base class for dataset representation.
-
-    The attribute `datasetName` determines the file names where the dataset will
-    be stored. When subclassing this base class, each subclass should use a
-    different `datasetName`.
-    Numpy arrays can be loaded either from file, or "externally", which means
-    potential downloading and/or preprocessing. Since the latter depends on the
-    dataset and source, the corresponding method `load_external` must be
-    implemented by the subclass.
+    Read the Kaggle dataset features and labels from disk into Numpy arrays.
     """
-    size: int = 1
-    train_size: int = 1
-    dataDimensions: list[int] = [1]
-    datasetName: str = "default"
-
-    def __init__(self) -> None:
-        """
-        Set up numpy arrays to hold the dataset, using the dataset format.
-        """
-
-        # This base class should not be instantiated, subclass it instead
-        assert self.__class__ != DatasetBaseClass
-
-        self.files: DatasetFiles = DatasetFiles(self.datasetName)
-
-        labelsArrayShape: list[int] = [LABELS_PER_DATA_POINT]
-        labelsArrayShape.insert(0, self.size)
-        featuresArrayShape: list[int] = self.dataDimensions.copy()
-        featuresArrayShape.insert(0, self.size)
-
-        self.labels: NDArray = np.zeros(labelsArrayShape)
-        self.features: NDArray = np.zeros(featuresArrayShape)
-        self.load()
-
-        # self.features should not be flattened or its shape changed otherwise
-        assert list(self.features.shape) == featuresArrayShape
-
-    def load(self):
-        """
-        Load the dataset into the numpy arrays, either from file or "externally".
-        """
-        if exists(self.files.numpyFeatures) and exists(self.files.numpyLabels):
-            self.load_numpy_from_file()
-        else:
-            self.load_external()
-            self.save()
-
-    def load_external(self):
-        """
-        Using an external source (e.g. file on disk or download), load the
-        dataset.
-        """
-        raise NotImplementedError("Must be implemented by subclass.")
-
-    def load_numpy_from_file(self):
-        """
-        Load the numpy arrays from the respective files.
-        """
-        self.features: NDArray = np.load(self.files.numpyFeatures)
-        self.labels: NDArray = np.load(self.files.numpyLabels)
-
-    def split(self, train_size: int | None = None,
-              random: bool = False) -> Tuple[Tuple[NDArray, NDArray], Tuple[NDArray, NDArray]]:
-        """
-        Returns a split: (x_train,y_train),(x_test,y_test).
-
-        The amount of images to be used in each partition is determined by each
-        individual dataset. Alternatively, a parameter `train_size` can be
-        given, which determines the sizes of `x_train` and `y_train`. The rest
-        of the data is put into `x_test` and `y_test`.
-        If `random` is set to True, it randomly samples from the entire
-        dataset to determine which data points are put into the "train"-sets.
-        No data point is chosen twice.
-
-        """
-
-        if train_size is None:
-            train_size = self.train_size
-
-        if train_size > self.size:
-            raise ValueError("train_size must be at most dataset size.")
-
-        allIndices: NDArray = np.arange(self.size)
-
-        if random:
-            rng = np.random.default_rng(global_seed)
-            randomIndices: NDArray = rng.choice(
-                allIndices,
-                self.train_size,
-                replace=False)
-            trainIndices: NDArray = np.sort(randomIndices)
-        else:
-            trainIndices: NDArray = np.arange(self.train_size)
-
-        testIndices: NDArray = np.setdiff1d(allIndices, trainIndices)
-
-        x_train: NDArray = self.features[trainIndices]
-        y_train: NDArray = self.labels[trainIndices]
-        x_test: NDArray = self.features[testIndices]
-        y_test: NDArray = self.labels[testIndices]
-        return (x_train, y_train), (x_test, y_test)
-
-    def save(self):
-        """
-        Save the arrays that hold the dataset to disk.
-        """
-        if not exists(self.files.dataDirectory):
-            makedirs(self.files.dataDirectory)
-        np.save(self.files.numpyFeatures, self.features)
-        np.save(self.files.numpyLabels, self.labels)
+    rawData: str = join(dataDir, "kaggle", "raw_data")
+    kaggleSize = 197324
+    labels: NDArray = np.zeros([kaggleSize, 1])
+    features: NDArray = np.zeros([kaggleSize, 600])
+    with open(rawData) as file:
+        reader = csv.reader(file)
+        for index, row in enumerate(reader):
+            labels[index, 0] = row[0]
+            features[index, :] = row[1:]
+    return features, labels
 
 
-class KagglePurchaseDataset(DatasetBaseClass):
+def load_kaggle() -> tf.data.Dataset:
     """
-    Kaggle's Acquire Valued Shoppers Challenge dataset of binary features.
+    Create Kaggle as tf.data.Dataset from Numpy arrays
     """
-
-    datasetName: str = "kaggle"
-    size: int = 197324
-    train_size: int = 10000
-    dataDimensions: list[int] = [600]
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def load_external(self):
-        self.load_raw_data_from_file()
-
-    def load_raw_data_from_file(self):
-        """
-        Load the dataset from the raw text file, that is provided by Shokri et
-        al.
-        It is a CSV file with 601 columns, where the first column represents the
-        label, and a row represents a data record.
-        """
-        rawData: str = join(self.files.dataDirectory, "raw_data")
-        assert isfile(rawData), "Use set_up.py to download Kaggle data."
-
-        with open(rawData) as file:
-            reader = csv.reader(file)
-            for index, row in enumerate(reader):
-                self.labels[index, 0] = row[0]
-                self.features[index, :] = row[1:]
+    features, labels = _read_kaggle_data()
+    return tf.data.Dataset.from_tensor_slices((features, labels))
 
 
-class KagglePurchaseDatasetClustered(DatasetBaseClass):
+def load_clustered_kaggle(numberOfClusters: int):
     """
-    Kaggle's Acquire Valued Shoppers Challenge dataset, clustered into
-    partitions.
+    Load the Kaggle data and cluster
     """
-
-    numberOfClusters = 5
-
-    size: int = 197324
-    train_size: int = 10000
-    dataDimensions: list[int] = [600]
-
-    def __init__(self, numberOfClusters: int = 5) -> None:
-        self.numberOfClusters: int = numberOfClusters
-        self.datasetName: str = "kaggle_clustered_" + \
-            str(self.numberOfClusters)
-        super().__init__()
-
-    def load_external(self):
-        """
-        Load the unaltered Kaggle dataset, using the respective Class. Then use
-        k-means clustering, to cluster the data into the given number of
-        clusters, which is also the new number of labels.
-        """
-        kaggle_unclustered: DatasetBaseClass = KagglePurchaseDataset()
-        # TODO: use real KMeans, not MiniBatch
-        kmeans = sklearn.cluster.MiniBatchKMeans(
-            n_clusters=self.numberOfClusters,random_state=global_seed)
-        self.features: NDArray = kaggle_unclustered.features.copy()
-        self.labels: NDArray = kmeans.fit_predict(self.features)
+    print(f"Clustering Kaggle with {numberOfClusters} classes..")
+    kmeans = sklearn.cluster.MiniBatchKMeans(
+        n_clusters=numberOfClusters,
+        random_state=global_seed)
+    features, _ = _read_kaggle_data()
+    kaggleSize = 197324
+    labels: NDArray = kmeans.fit_predict(features).reshape(kaggleSize, 1)
+    return tf.data.Dataset.from_tensor_slices((features, labels))
 
 
-class Cifar10Dataset(DatasetBaseClass):
-    """
-    CIFAR-10 dataset of small RGB images.
-    """
+def load_dataset(datasetName: str) -> tf.data.Dataset:
+    datasetDir: str = join(dataDir, datasetName, "dataset")
+    if isdir(datasetDir):
+        print(f"Loading {datasetName} from disk.")
+        return tf.data.experimental.load(datasetDir)
 
-    datasetName: str = "cifar10"
-    size: int = 60000
-    train_size: int = 50000
-    dataDimensions: list[int] = [32, 32, 3]
+    print(f"Loading {datasetName}..")
 
-    def __init__(self) -> None:
-        super().__init__()
+    match datasetName:
+        case "cifar10":
+            dataset = load_cifar10()
+        case "cifar100":
+            dataset = load_cifar100()
+        case "kaggle":
+            dataset = load_kaggle()
+        case "kaggle_2":
+            dataset = load_clustered_kaggle(2)
+        case "kaggle_10":
+            dataset = load_clustered_kaggle(10)
+        case "kaggle_20":
+            dataset = load_clustered_kaggle(20)
+        case "kaggle_50":
+            dataset = load_clustered_kaggle(50)
+        case "kaggle_100":
+            dataset = load_clustered_kaggle(100)
+        case _:
+            raise ValueError  # TODO
 
-    def load_external(self):
-        self.load_from_tensorflow()
-
-    def load_from_tensorflow(self):
-        """
-        Invoke the calls to tensorflow that automatically download and cache the
-        dataset.
-        """
-        import tensorflow as tf
-        (x_train, y_train), (x_test, y_test) = \
-            tf.keras.datasets.cifar10.load_data()
-        self.features: NDArray = np.append(x_train, x_test, axis=0)
-        self.labels: NDArray = np.append(y_train, y_test, axis=0)
+    print(f"Saving {datasetName} to disk.")
+    tf.data.experimental.save(dataset, datasetDir)
+    return dataset
 
 
-class Cifar100Dataset(DatasetBaseClass):
-    """
-    CIFAR-100 dataset of small RGB images.
-    """
+def load_all_datasets():
+    load_dataset("cifar10")
+    load_dataset("cifar100")
+    load_dataset("kaggle")
+    load_dataset("kaggle_2")
+    load_dataset("kaggle_10")
+    load_dataset("kaggle_20")
+    load_dataset("kaggle_50")
+    load_dataset("kaggle_100")
 
-    datasetName: str = "cifar100"
-    size: int = 60000
-    train_size: int = 50000
-    dataDimensions: list[int] = [32, 32, 3]
 
-    def __init__(self) -> None:
-        super().__init__()
-
-    def load_external(self):
-        self.load_from_tensorflow()
-
-    def load_from_tensorflow(self):
-        """
-        Invoke the calls to tensorflow that automatically download and cache the
-        dataset.
-        """
-        import tensorflow as tf
-        # "Fine" label_mode for 100 classes as in MIA paper
-        (x_train, y_train), (x_test, y_test) = \
-            tf.keras.datasets.cifar100.load_data(label_mode='fine')
-
-        self.features: NDArray = np.append(x_train, x_test, axis=0)
-        self.labels: NDArray = np.append(y_train, y_test, axis=0)
+if __name__ == "__main__":
+    load_all_datasets()
+    #  k = load_dataset("kaggle_20")
+    #  print(k.element_spec)
