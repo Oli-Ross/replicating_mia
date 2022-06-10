@@ -18,8 +18,6 @@ def _extract_kaggle_data():
         response = requests.get(url)
         with open(kaggleCompressed, mode='wb') as file:
             file.write(response.content)
-    else:
-        print("Skipping download, using local archive file.")
 
 
 def _download_raw_kaggle_data():
@@ -32,8 +30,6 @@ def _download_raw_kaggle_data():
         tarfile.open(kaggleCompressed).extractall(kaggleDataDir)
         # "dataset_purchase" is the file name, we use the one in kaggleRaw
         rename(path.join(kaggleDataDir, "dataset_purchase"), kaggleRaw)
-    else:
-        print("Skipping extraction, using local raw data file.")
 
 
 def download_kaggle():
@@ -50,6 +46,7 @@ def download_cifar100():
 
 
 def download_all_datasets():
+    print("Downloading all datasets.")
     download_cifar100()
     download_cifar10()
     download_kaggle()
