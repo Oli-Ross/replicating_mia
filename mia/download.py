@@ -11,7 +11,7 @@ import tensorflow as tf
 kaggleDataDir = path.join(path.dirname(__file__), "../data/kaggle")
 
 
-def _extract_kaggle_data():
+def _download_raw_kaggle_data():
     kaggleCompressed = path.join(kaggleDataDir, "raw_data.tgz")
     if not path.isfile(kaggleCompressed):
         url = 'https://github.com/OliverRoss/replicating_mia_datasets/raw/master/dataset_purchase.tgz'
@@ -20,7 +20,7 @@ def _extract_kaggle_data():
             file.write(response.content)
 
 
-def _download_raw_kaggle_data():
+def _extract_kaggle_data():
     if not path.isdir(kaggleDataDir):
         makedirs(kaggleDataDir)
     kaggleRaw = path.join(kaggleDataDir, "raw_data")
