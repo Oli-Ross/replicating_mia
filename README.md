@@ -12,6 +12,13 @@ Generate it locally with [pdoc](https://pypi.org/project/pdoc/):
 cd mia && pdoc -o ../docs/build *.py
 ```
 
+## Tests
+
+Run tests with pytest:
+```bash
+cd mia && pytest -v -W ignore::DeprecationWarning
+```
+
 ## Setup
 
 Set up a virtual environment, e.g.: 
