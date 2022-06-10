@@ -7,7 +7,7 @@ from configuration import Configuration
 
 def parse_args() -> Dict:
     parser = argparse.ArgumentParser(
-        description='Launch a membership inference attack')
+        description='Launch a membership inference attack pipeline')
     parser.add_argument(
         '--config',
         help='Relative path to config file.',
@@ -20,7 +20,7 @@ def set_seeds(config: Configuration):
     datasets.set_seed(config.seed)
 
 
-if __name__ == "__main__":
+def parse_config() -> Configuration:
     options = parse_args()
     try:
         config = Configuration.from_rel_path(options["config"])
@@ -28,5 +28,19 @@ if __name__ == "__main__":
     except BaseException:
         config = Configuration.from_name("example.yml")
         print("Using default configuration.")
+    return config
 
+
+if __name__ == "__main__":
+
+    # Meta/Preparing
+    config = parse_config()
     set_seeds(config)
+
+    # Download datasets
+
+    # Prepare datasets for training
+
+    # Train victim model
+
+    # Launch MIA attack
