@@ -2,6 +2,7 @@ import argparse
 from typing import Dict
 
 import datasets
+import download
 from configuration import Configuration
 
 
@@ -38,6 +39,7 @@ if __name__ == "__main__":
     set_seeds(config)
 
     # Download datasets
+    download.download_all_datasets()
 
     # Prepare datasets for training
 
