@@ -1,3 +1,7 @@
+"""
+.. include:: ../docs/download.md
+"""
+
 import tarfile
 from os import makedirs, path, rename
 
