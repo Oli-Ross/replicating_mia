@@ -1,5 +1,5 @@
-This module provides an interface to the CIFAR-10, CIFAR-100 and Kaggle datasets.
-Instantiate e.g. a Cifar-10 dataset like this:
+This module preprocesses the datasets (where necessary) and returns them as 
+tf.data.Dataset objects.
 
 ```python
 cifar10 = datasets.Cifar10Dataset()
