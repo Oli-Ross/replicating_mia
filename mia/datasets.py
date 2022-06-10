@@ -61,6 +61,15 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     return features, labels
 
 
+def shuffle_kaggle(kaggle: tf.data.Dataset) -> tf.data.Dataset:
+    """
+    Shuffles Kaggle Dataset and datasets derived from it via clustering.
+    """
+    kaggleSize = 197324
+    return kaggle.shuffle(kaggleSize, seed=global_seed,
+                          reshuffle_each_iteration=False)
+
+
 def load_kaggle() -> tf.data.Dataset:
     """
     Create Kaggle as tf.data.Dataset from Numpy arrays
