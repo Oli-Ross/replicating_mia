@@ -35,12 +35,12 @@ def _dataset_from_split(
     return tf.data.Dataset.from_tensor_slices((features, labels))
 
 
-def load_cifar100() -> tf.data.Dataset:
+def _prepare_cifar100() -> tf.data.Dataset:
     train, test = tf.keras.datasets.cifar100.load_data()
     return _dataset_from_split(train[0], train[1], test[0], test[1])
 
 
-def load_cifar10() -> tf.data.Dataset:
+def _prepare_cifar10() -> tf.data.Dataset:
     train, test = tf.keras.datasets.cifar10.load_data()
     return _dataset_from_split(train[0], train[1], test[0], test[1])
 
@@ -70,7 +70,7 @@ def shuffle_kaggle(kaggle: tf.data.Dataset) -> tf.data.Dataset:
                           reshuffle_each_iteration=False)
 
 
-def load_kaggle() -> tf.data.Dataset:
+def _prepare_kaggle() -> tf.data.Dataset:
     """
     Create Kaggle as tf.data.Dataset from Numpy arrays
     """
@@ -78,7 +78,7 @@ def load_kaggle() -> tf.data.Dataset:
     return tf.data.Dataset.from_tensor_slices((features, labels))
 
 
-def load_clustered_kaggle(numberOfClusters: int):
+def _prepare_clustered_kaggle(numberOfClusters: int):
     """
     Load the Kaggle data and cluster it.
     """
@@ -108,21 +108,21 @@ def load_dataset(datasetName: str) -> tf.data.Dataset:
 
     match datasetName:
         case "cifar10":
-            dataset = load_cifar10()
+            dataset = _prepare_cifar10()
         case "cifar100":
-            dataset = load_cifar100()
+            dataset = _prepare_cifar100()
         case "kaggle":
-            dataset = load_kaggle()
+            dataset = _prepare_kaggle()
         case "kaggle_2":
-            dataset = load_clustered_kaggle(2)
+            dataset = _prepare_clustered_kaggle(2)
         case "kaggle_10":
-            dataset = load_clustered_kaggle(10)
+            dataset = _prepare_clustered_kaggle(10)
         case "kaggle_20":
-            dataset = load_clustered_kaggle(20)
+            dataset = _prepare_clustered_kaggle(20)
         case "kaggle_50":
-            dataset = load_clustered_kaggle(50)
+            dataset = _prepare_clustered_kaggle(50)
         case "kaggle_100":
-            dataset = load_clustered_kaggle(100)
+            dataset = _prepare_clustered_kaggle(100)
         case _:
             raise ValueError  # TODO
 
