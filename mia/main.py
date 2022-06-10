@@ -42,6 +42,8 @@ if __name__ == "__main__":
     download.download_all_datasets()
 
     # Prepare datasets for training
+    kaggle = datasets.load_dataset("kaggle")
+    kaggle = datasets.shuffle_kaggle(kaggle)  # Randomly sample training set
 
     # Train victim model
 
