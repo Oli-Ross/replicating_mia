@@ -4,10 +4,32 @@ This repository contains my work on replicating the original paper of the
 [membership inference attack](https://arxiv.org/abs/1610.05820) 
 against machine learning classifiers.
 
+## Setup
+
+Set up a virtual environment, e.g.: 
+```bash
+python -m venv .venv && source .venv/bin/activate
+```
+Install dependencies: 
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Usage
+
+For each step of the MIA pipeline, there's one module:
+1. `mia/download`: Download datasets
+2. `mia/datasets`: Data preprocessing
+3. `mia/?`: Victim model training
+4. `mia/?`: Launch MIA
+
+Refer to the documentation of each module on how to use it. 
+An example script, which ties the modules together is given at `mia/main.py`.
+
 ## Documentation
 
-Documentation avaible at https://oliverross.github.io/replicating_mia.
-Generate it locally with [pdoc](https://pypi.org/project/pdoc/):
+Documentation is avaible at https://oliverross.github.io/replicating_mia.
+You can generate it locally with [pdoc](https://pypi.org/project/pdoc/):
 ```bash
 cd mia && pdoc -o ../docs/build *.py
 ```
@@ -18,22 +40,3 @@ Run tests with pytest:
 ```bash
 cd mia && pytest
 ```
-
-## Setup
-
-Set up a virtual environment, e.g.: 
-```bash
-python -m venv .venv && source .venv/bin/activate
-```
-Install necessary packages: 
-```bash
-python -m pip install -r requirements.txt
-```
-
-A setup script is provided, which does:
-* Download necessary datasets into `/data`
-* Run tests
-* Generate documentation into `/docs`
-
-Invoke it with `python set_up.py`.
-For more fine-grained control, see `python3 set_up.py -h`.
