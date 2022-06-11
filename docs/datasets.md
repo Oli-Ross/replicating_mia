@@ -1,28 +1,42 @@
+## Loading datasets
+
 This module preprocesses the datasets (where necessary) and returns them as 
-tf.data.Dataset objects.
+`tf.data.Dataset` objects.
 
+The main interface is the function `load_dataset(datasetName:str)`. It loads a
+`tf.data.Dataset` from disk and if none is found, creates one and saves it to
+disk. That means, it can also be used in advance to ensure that the dataset is
+stored to disk and can be quickly loaded during training.
+
+Use it like this:
 ```python
-cifar10 = datasets.Cifar10Dataset()
+kaggle = load_dataset("kaggle")
 ```
 
-Get a split for testing and training:
+Valid `datasetName` values are: "cifar10", "cifar100", "kaggle", "kaggle_2",
+"kaggle_10","kaggle_20","kaggle_50","kaggle_100". Using the key "kaggle_x" 
+returns the Kaggle dataset, but clustered into `x` classes. If the dataset has 
+to be constructed, a k-means clustering is done in the backend, so it can take 
+a while.
 
+## Shuffling
+
+To shuffle a Kaggle dataset (e.g. to construct a training set from random 
+samples) call `shuffle_kaggle`:
 ```python
-(x_train, y_train), (x_test, y_test) = cifar10.split()
+kaggle = load_dataset("kaggle")
+kaggle_shuffled = shuffle_kaggle(kaggle)
 ```
 
-If you want the training subset to be sampled randomly, use the `random`
-parameter. To set a fixed chosen size for the training subset, use the
-`train_size` parameter.
+## Pre-loading for later use
 
+There is a conveniance method `load_all_datasets`, which loads all datasets as
+`tf.data.Dataset` and saves them to disk, so that they can be quickly loaded in
+the future.
+
+## Seeding
+
+Use `set_seed` to set a global seed, used by all random functions:
 ```python
-(x_train, y_train), (x_test, y_test) = cifar10.split(random=True,train_size=1000)
-```
-
-The Kaggle datasets has in-built functionality to cluster the data into fewer
-classes by using the `KagglePurchaseDatasetClustered` class. To cluster the data
-into 5 classes:
-
-```python
-kaggle_clustered_5 = datasets.KagglePurchaseDatasetClustered(5)
+set_seed(1234)
 ```
