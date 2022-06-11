@@ -1,131 +1,45 @@
-from os import environ
-
-# Tensorflow C++ backend logging verbosity
-environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
-
-from os.path import abspath, dirname, join
-
 import datasets
 import numpy as np
 import pytest
-import tensorflow as tf
+import itertools
+
+COMPARE_SIZE = 2
 
 
-class TestDatasetFiles():
+def test_seed():
+    datasets.set_seed(2222)
 
-    def test_all(self):
-        datasetFiles = datasets.DatasetFiles("test")
-        actualDataDir: str = abspath(datasetFiles.dataDirectory)
-        currentDir: str = dirname(__file__)
-        expectedDataDir: str = abspath(join(currentDir, "../../data/test"))
-
-        assert actualDataDir == expectedDataDir
-
-        expectedFeaturesFile = abspath(join(expectedDataDir, "features.npy"))
-        actualFeaturesFile = abspath(datasetFiles.numpyFeatures)
-
-        assert expectedFeaturesFile == actualFeaturesFile
-
-        expectedLabelsFile = abspath(join(expectedDataDir, "labels.npy"))
-        actualLabelsFile = abspath(datasetFiles.numpyLabels)
-
-        assert expectedLabelsFile == actualLabelsFile
+    assert datasets.global_seed == 2222
 
 
-class TestDatasetBasic():
-    def test_baseclass(self):
+@pytest.mark.skip("Takes long.")
+def test_shuffle():
+    kaggle = datasets.load_dataset("kaggle")
+    shuffled = datasets.shuffle_kaggle(kaggle)
+    kaggle = kaggle.take(COMPARE_SIZE).as_numpy_iterator()
+    shuffled = shuffled.take(COMPARE_SIZE).as_numpy_iterator()
+
+    for a, b in itertools.zip_longest(kaggle, shuffled):
         with pytest.raises(AssertionError):
-            datasets.DatasetBaseClass()
-
-    def test_kaggle(self):
-        kaggle = datasets.KagglePurchaseDataset()
-
-        assert kaggle.features.shape == (197324, 600)
-        assert kaggle.labels.shape == (197324, 1)
-        assert np.max(kaggle.features) != 0
-        assert np.max(kaggle.labels) != 0
-
-    def test_cifar10(self):
-        cifar10 = datasets.Cifar10Dataset()
-
-        assert cifar10.features.shape == (60000, 32, 32, 3)
-        assert cifar10.labels.shape == (60000, 1)
-        assert np.max(cifar10.features) != 0
-        assert np.max(cifar10.labels) != 0
-
-    def test_cifar100(self):
-        cifar100 = datasets.Cifar100Dataset()
-
-        assert cifar100.features.shape == (60000, 32, 32, 3)
-        assert cifar100.labels.shape == (60000, 1)
-        assert np.max(cifar100.features) != 0
-        assert np.max(cifar100.labels) != 0
-
-    @pytest.mark.skip("Takes too long.")
-    def test_kaggle_cluster(self):
-        kaggle_clustered_10 = datasets.KagglePurchaseDatasetClustered(10)
-
-        labels = kaggle_clustered_10.labels
-        assert labels.min() == 0
-        assert labels.max() == 9
-
-        kaggle_clustered_100 = datasets.KagglePurchaseDatasetClustered(100)
-
-        labels = kaggle_clustered_100.labels
-        assert labels.min() == 0
-        assert labels.max() == 99
+            np.testing.assert_equal(a, b)
 
 
-class TestDatasetSplit():
+@pytest.mark.skip("Takes long.")
+def test_deterministic_shuffling():
+    kaggle = datasets.shuffle_kaggle(datasets.load_dataset("kaggle"))
+    kaggle_2 = datasets.shuffle_kaggle(datasets.load_dataset("kaggle"))
+    kaggle = kaggle.take(COMPARE_SIZE).as_numpy_iterator()
+    kaggle_2 = kaggle_2.take(COMPARE_SIZE).as_numpy_iterator()
 
-    def test_split_automatic(self):
-        cifar10 = datasets.Cifar10Dataset()
-        (x_train, y_train), (x_test, y_test) = cifar10.split()
-        assert x_train.shape[0] == cifar10.train_size
-        assert y_train.shape[0] == cifar10.train_size
-        assert x_test.shape[0] == cifar10.size - cifar10.train_size
-        assert y_test.shape[0] == cifar10.size - cifar10.train_size
-        assert x_test[0:10].all() == cifar10.features[0:10].all()
+    for a, b in itertools.zip_longest(kaggle, kaggle_2):
+        np.testing.assert_equal(a, b)
 
-    @pytest.mark.skip("Takes too long.")
-    def test_random_split(self):
-        kaggle = datasets.KagglePurchaseDataset()
-        (x_train, y_train), (x_test, y_test) = kaggle.split(random=True)
 
-        assert x_train.shape == kaggle.features[0:10000].shape
-        with pytest.raises(AssertionError):
-            np.testing.assert_equal(x_train, kaggle.features[0:10000])
+def test_load_dataset():
+    cifar = datasets.load_dataset("cifar10")
+    assert cifar.element_spec[0].shape == (32, 32, 3)
+    assert cifar.element_spec[1].shape == (1,)
 
-        assert x_test.shape == kaggle.features[10000:197324].shape
-        with pytest.raises(AssertionError):
-            np.testing.assert_equal(x_test, kaggle.features[10000:197324])
-
-        assert y_train.shape == kaggle.labels[0:10000].shape
-        with pytest.raises(AssertionError):
-            np.testing.assert_equal(y_train, kaggle.labels[0:10000])
-
-        assert y_test.shape == kaggle.labels[10000:197324].shape
-        with pytest.raises(AssertionError):
-            np.testing.assert_equal(y_test, kaggle.labels[10000:197324])
-
-    @pytest.mark.skip("Takes too long.")
-    def test_cifar_split(self):
-        cifar10 = datasets.Cifar10Dataset()
-
-        (x_train, y_train), (x_test, y_test) = cifar10.split()
-        (x_train_tf, y_train_tf), (x_test_tf,
-                                   y_test_tf) = tf.keras.datasets.cifar10.load_data()
-
-        # Assert that the dataset class correctly constructs the splits,
-        # identical to the call to tensorflow
-        np.testing.assert_equal(x_train, x_train_tf)
-        np.testing.assert_equal(y_train, y_train_tf)
-        np.testing.assert_equal(x_test, x_test_tf)
-        np.testing.assert_equal(y_test, y_test_tf)
-
-    def test_custom_split_fail(self):
-        kaggle = datasets.KagglePurchaseDataset()
-
-        with pytest.raises(ValueError):
-            # train_size > dataset size
-            kaggle.split(train_size=200000)
+    cifar = datasets.load_dataset("kaggle")
+    assert cifar.element_spec[0].shape == (600,)
+    assert cifar.element_spec[1].shape == (1,)
