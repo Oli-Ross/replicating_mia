@@ -5,9 +5,9 @@
 import datetime
 import os
 import os.path
+from typing import Dict
 
 import yaml
-from typing import Dict
 
 configDir = os.path.join(os.path.dirname(__file__), "..", "config")
 if not os.path.isdir(configDir):

@@ -1,7 +1,8 @@
+import itertools
+
 import datasets
 import numpy as np
 import pytest
-import itertools
 
 COMPARE_SIZE = 2
 
