@@ -16,7 +16,7 @@ cd mia && pdoc -o ../docs/build *.py
 
 Run tests with pytest:
 ```bash
-cd mia && pytest -v -W ignore::DeprecationWarning
+cd mia && pytest
 ```
 
 ## Setup
