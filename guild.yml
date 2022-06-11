@@ -1,5 +1,5 @@
 train:
-  main: mia/attack --config example.yml
+  main: mia/main --config example.yml
   flags-import: yes
   flags-dest: config:config/example.yml
   flags:
