@@ -5,8 +5,10 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from tensorflow.keras.layers import Conv2D, Dense, Input, MaxPool2D, Softmax
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.activations import tanh
 from tensorflow import keras
 from os.path import join, dirname
+
 
 global_seed: int = 1234
 
@@ -49,11 +51,11 @@ class CifarModel(Model):
     def __init__(self, name: str) -> None:
         self.model = Sequential()
         self.model.add(Input((32, 32, 3)))
-        self.model.add(Conv2D(3, 2))
+        self.model.add(Conv2D(3, 2, activation=tanh))
         self.model.add(MaxPool2D(pool_size=(2, 2)))
-        self.model.add(Conv2D(3, 2))
+        self.model.add(Conv2D(3, 2, activation=tanh))
         self.model.add(MaxPool2D(pool_size=(2, 2)))
-        self.model.add(Dense(128, activation='tanh'))
+        self.model.add(Dense(128, activation=tanh))
         self.model.add(Softmax())
         super().__init__(name)
 
@@ -70,6 +72,6 @@ class KaggleModel(Model):
     def __init__(self, name: str) -> None:
         self.model = Sequential()
         self.model.add(Input((600, 1)))
-        self.model.add(Dense(128, activation='tanh'))
+        self.model.add(Dense(128, activation=tanh))
         self.model.add(Softmax())
         super().__init__(name)
