@@ -3,12 +3,13 @@ from os import environ
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
+from os.path import dirname, join
+
+from tensorflow import keras
+from tensorflow.data import Dataset
+from tensorflow.keras.activations import tanh
 from tensorflow.keras.layers import Conv2D, Dense, Input, MaxPool2D, Softmax
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.activations import tanh
-from tensorflow import keras
-from os.path import join, dirname
-
 
 global_seed: int = 1234
 
