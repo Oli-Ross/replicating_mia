@@ -8,6 +8,17 @@ from tensorflow.keras.models import Sequential
 from tensorflow import keras
 from os.path import join, dirname
 
+global_seed: int = 1234
+
+
+def set_seed(new_seed: int):
+    """
+    Set the global seed that will be used for all functions that include
+    randomness.
+    """
+    global global_seed
+    global_seed = new_seed
+
 
 class Model:
     def __init__(self, name: str) -> None:

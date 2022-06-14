@@ -3,6 +3,7 @@ from typing import Dict
 
 import datasets
 import download
+import victim_models
 from configuration import Configuration
 
 
@@ -19,6 +20,7 @@ def parse_args() -> Dict:
 
 def set_seeds(config: Configuration):
     datasets.set_seed(config.seed)
+    victim_models.set_seed(config.seed)
 
 
 def parse_config() -> Configuration:
