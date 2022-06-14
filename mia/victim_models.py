@@ -24,6 +24,16 @@ def set_seed(new_seed: int):
 
 
 class Model:
+
+    epochs = 1  # Overridden by subclass
+    learningRate = 0.01
+    learningRateDecay = int(1e-07)
+    activation = tanh
+    batchSize = 100
+    optimizer = keras.optimizers.Adam(learning_rate=learningRate, name="Adam")
+    loss = keras.losses.CategoricalCrossentropy()
+    metrics = [keras.metrics.CategoricalAccuracy()]
+
     def __init__(self, name: str) -> None:
         self.name = name
         self.filePath = join(dirname(__file__), "../models", name)
@@ -49,14 +59,16 @@ class CifarModel(Model):
     maximum epochs of training to 100.
     """
 
+    epochs = 100
+
     def __init__(self, name: str) -> None:
         self.model = Sequential()
         self.model.add(Input((32, 32, 3)))
-        self.model.add(Conv2D(3, 2, activation=tanh))
+        self.model.add(Conv2D(3, 2, activation=self.activation))
         self.model.add(MaxPool2D(pool_size=(2, 2)))
-        self.model.add(Conv2D(3, 2, activation=tanh))
+        self.model.add(Conv2D(3, 2, activation=self.activation))
         self.model.add(MaxPool2D(pool_size=(2, 2)))
-        self.model.add(Dense(128, activation=tanh))
+        self.model.add(Dense(128, activation=self.activation))
         self.model.add(Softmax())
         super().__init__(name)
 
@@ -69,10 +81,11 @@ class KaggleModel(Model):
     ‘We set the learning rate to 0.001, the learning rate decay to
     1e — 07, and the maximum epochs of training to 200.
     """
+    epochs = 200
 
     def __init__(self, name: str) -> None:
         self.model = Sequential()
         self.model.add(Input((600, 1)))
-        self.model.add(Dense(128, activation=tanh))
+        self.model.add(Dense(128, activation=self.activation))
         self.model.add(Softmax())
         super().__init__(name)
