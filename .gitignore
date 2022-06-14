@@ -4,6 +4,9 @@ docs/build/
 # Datasets
 data/
 
+# Models
+models/
+
 # Virtual env
 .venv/
 
