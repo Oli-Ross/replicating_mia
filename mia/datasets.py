@@ -35,8 +35,8 @@ def _dataset_from_split(
     """
     Using the provided split dataset, create a Dataset.
     """
-    features: NDArray = np.append(x_train, x_test, axis=0)
-    labels: NDArray = np.append(y_train, y_test, axis=0)
+    features: NDArray = np.append(x_train, x_test, axis=0).astype(np.float64)
+    labels: NDArray = np.append(y_train, y_test, axis=0).astype(np.int32)
     return Dataset.from_tensor_slices((features, labels))
 
 
