@@ -14,6 +14,7 @@ from typing import Tuple
 import numpy as np
 import sklearn.cluster
 import tensorflow as tf
+from tensorflow.data import Dataset
 from numpy.typing import NDArray
 
 dataDir = join(dirname(__file__), "../data")
@@ -30,21 +31,21 @@ def set_seed(new_seed: int):
 
 
 def _dataset_from_split(
-        x_train, y_train, x_test, y_test) -> tf.data.Dataset:
+        x_train, y_train, x_test, y_test) -> Dataset:
     """
-    Using the provided split dataset, create a tf.data.Dataset.
+    Using the provided split dataset, create a Dataset.
     """
     features: NDArray = np.append(x_train, x_test, axis=0)
     labels: NDArray = np.append(y_train, y_test, axis=0)
-    return tf.data.Dataset.from_tensor_slices((features, labels))
+    return Dataset.from_tensor_slices((features, labels))
 
 
-def _prepare_cifar100() -> tf.data.Dataset:
+def _prepare_cifar100() -> Dataset:
     train, test = tf.keras.datasets.cifar100.load_data()
     return _dataset_from_split(train[0], train[1], test[0], test[1])
 
 
-def _prepare_cifar10() -> tf.data.Dataset:
+def _prepare_cifar10() -> Dataset:
     train, test = tf.keras.datasets.cifar10.load_data()
     return _dataset_from_split(train[0], train[1], test[0], test[1])
 
@@ -65,7 +66,7 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     return features, labels
 
 
-def shuffle_kaggle(kaggle: tf.data.Dataset) -> tf.data.Dataset:
+def shuffle_kaggle(kaggle: Dataset) -> Dataset:
     """
     Shuffles Kaggle Dataset and datasets derived from it via clustering.
     """
@@ -74,12 +75,12 @@ def shuffle_kaggle(kaggle: tf.data.Dataset) -> tf.data.Dataset:
                           reshuffle_each_iteration=False)
 
 
-def _prepare_kaggle() -> tf.data.Dataset:
+def _prepare_kaggle() -> Dataset:
     """
-    Create Kaggle as tf.data.Dataset from Numpy arrays
+    Create Kaggle as Dataset from Numpy arrays
     """
     features, labels = _read_kaggle_data()
-    return tf.data.Dataset.from_tensor_slices((features, labels))
+    return Dataset.from_tensor_slices((features, labels))
 
 
 def _prepare_clustered_kaggle(numberOfClusters: int):
@@ -93,10 +94,10 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     features, _ = _read_kaggle_data()
     kaggleSize = 197324
     labels: NDArray = kmeans.fit_predict(features).reshape(kaggleSize, 1)
-    return tf.data.Dataset.from_tensor_slices((features, labels))
+    return Dataset.from_tensor_slices((features, labels))
 
 
-def load_dataset(datasetName: str) -> tf.data.Dataset:
+def load_dataset(datasetName: str) -> Dataset:
     """
     Load a dataset.
 
