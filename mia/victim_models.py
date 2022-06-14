@@ -39,9 +39,9 @@ class Model:
         self.filePath = join(dirname(__file__), "../models", name)
         print(self.model.summary())
 
-    def train(self, x_train: Dataset, y_train: Dataset):
+    def train(self, x_train: Dataset, y_train: Dataset, epochs=epochs):
         self.model.compile(self.optimizer, self.loss, self.metrics)
-        return self.model.fit(x_train, y_train, self.batchSize, self.epochs)
+        return self.model.fit(x_train, y_train, self.batchSize, epochs)
 
     def save(self):
         self.model.save(self.filePath)
