@@ -129,7 +129,7 @@ def load_dataset(datasetName: str) -> Dataset:
         case "kaggle_100":
             dataset = _prepare_clustered_kaggle(100)
         case _:
-            raise ValueError  # TODO
+            raise ValueError(f"{datasetName} is not a known dataset.")
 
     print(f"Saving {datasetName} to disk.")
     tf.data.experimental.save(dataset, datasetDir)
