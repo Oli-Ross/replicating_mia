@@ -64,7 +64,6 @@ class CifarModel(Model):
 
     def __init__(self, name: str) -> None:
         self.model = Sequential()
-        self.model.add(Input((32, 32, 3)))
         self.model.add(Conv2D(3, 2, activation=self.activation))
         self.model.add(MaxPool2D(pool_size=(2, 2)))
         self.model.add(Conv2D(3, 2, activation=self.activation))
@@ -86,7 +85,6 @@ class KaggleModel(Model):
 
     def __init__(self, name: str) -> None:
         self.model = Sequential()
-        self.model.add(Input((600, 1)))
         self.model.add(Dense(128, activation=self.activation))
         self.model.add(Softmax())
         super().__init__(name)
