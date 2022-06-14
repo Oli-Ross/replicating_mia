@@ -37,11 +37,12 @@ class Model:
     def __init__(self, name: str) -> None:
         self.name = name
         self.filePath = join(dirname(__file__), "../models", name)
-        print(self.model.summary())
+        #  print(self.model.summary())
 
-    def train(self, x_train: Dataset, y_train: Dataset, epochs=epochs):
+    def train(self, dataset: Dataset, epochs=epochs):
         self.model.compile(self.optimizer, self.loss, self.metrics)
-        return self.model.fit(x_train, y_train, self.batchSize, epochs)
+        dataset = dataset.batch(self.batchSize, drop_remainder=True)
+        return self.model.fit(dataset, epochs=epochs)
 
     def save(self):
         self.model.save(self.filePath)
