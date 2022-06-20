@@ -153,5 +153,3 @@ def load_all_datasets():
 
 if __name__ == "__main__":
     load_all_datasets()
-    #  k = load_dataset("kaggle_20")
-    #  print(k.element_spec)
