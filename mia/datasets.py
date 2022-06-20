@@ -15,6 +15,7 @@ import numpy as np
 import sklearn.cluster
 import tensorflow as tf
 from tensorflow.data import Dataset
+from tensorflow.keras.utils import to_categorical
 from numpy.typing import NDArray
 
 dataDir = join(dirname(__file__), "../data")
@@ -37,6 +38,7 @@ def _dataset_from_split(
     """
     features: NDArray = np.append(x_train, x_test, axis=0).astype(np.float64)
     labels: NDArray = np.append(y_train, y_test, axis=0).astype(np.int32)
+    labels = to_categorical(labels)
     return Dataset.from_tensor_slices((features, labels))
 
 
@@ -63,6 +65,7 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
         for index, row in enumerate(reader):
             labels[index, 0] = row[0]
             features[index, :] = row[1:]
+    labels = to_categorical(labels)
     return features, labels
 
 
@@ -80,6 +83,7 @@ def _prepare_kaggle() -> Dataset:
     Create Kaggle as Dataset from Numpy arrays
     """
     features, labels = _read_kaggle_data()
+    labels = to_categorical(labels)
     return Dataset.from_tensor_slices((features, labels))
 
 
