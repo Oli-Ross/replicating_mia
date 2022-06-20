@@ -44,9 +44,12 @@ if __name__ == "__main__":
     download.download_all_datasets()
 
     # Prepare datasets for training
-    kaggle = datasets.load_dataset("kaggle")
-    kaggle = datasets.shuffle_kaggle(kaggle)  # Randomly sample training set
+    cifar10 = datasets.load_dataset("cifar10")
+    trainSize: int = 10000
+    train, test = cifar10.take(trainSize), cifar10.skip(trainSize)
 
     # Train victim model
+    cifar10Model = victim_models.CifarModel()
+    victim_models.train_model(cifar10Model, cifar10, epochs=1)
 
     # Launch MIA attack
