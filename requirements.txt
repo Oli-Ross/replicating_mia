@@ -3,5 +3,6 @@ numpy
 pdoc
 pytest
 pyyaml
+requests
 scikit-learn
 tensorflow
