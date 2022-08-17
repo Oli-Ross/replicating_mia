@@ -6,6 +6,8 @@ against machine learning classifiers.
 
 ## Setup
 
+### Venv
+
 Set up a virtual environment, e.g.: 
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -13,6 +15,33 @@ python -m venv .venv && source .venv/bin/activate
 Install dependencies: 
 ```bash
 python -m pip install -r requirements.txt
+```
+
+### Docker
+
+Alternatively, use the provided dockerfile.
+To leverage the GPU, install the respective NVIDIA driver on the host system, as
+well as the [NVIDIA container toolkit](https://github.com/NVIDIA/nvidia-docker).
+Build the image:
+```bash
+docker build -t mia:0.1 .
+```
+
+Set the gid and uid as environment variables, so that they are set correctly in
+the container.
+```bash
+export UID=$(id -u)
+export GID=$(id -g)
+```
+
+Start a container:
+```bash
+docker compose run mia
+```
+
+Verify that the GPU is available in `tensorflow`:
+```bash
+TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physical_devices ('GPU')"
 ```
 
 ## Usage
