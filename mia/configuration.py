@@ -5,7 +5,7 @@
 import datetime
 import os
 import os.path
-from typing import Dict
+from typing import Dict, Optional
 
 import yaml
 
@@ -22,12 +22,12 @@ class Configuration:
     save a Configuration object to disk.
     """
 
-    def __init__(self, configOptions: Dict | None = None) -> None:
+    def __init__(self, configOptions: Optional[Dict] = None) -> None:
         if configOptions:
             self.seed = configOptions["seed"]
             self.name = configOptions["name"]
 
-    def save_to_file(self, configName: str | None = None):
+    def save_to_file(self, configName: Optional[str] = None):
         """
         Save the Configuration object's content into a yaml file.
 
