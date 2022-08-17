@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  mia:
+    image: mia:0.1
+    volumes:
+      - .:/mia
+    stdin_open: true
+    tty: true
+    user: $UID:$GID
+    entrypoint: /bin/bash
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
