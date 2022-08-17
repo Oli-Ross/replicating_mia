@@ -115,25 +115,24 @@ def load_dataset(datasetName: str) -> Dataset:
 
     print(f"Loading {datasetName}.")
 
-    match datasetName:
-        case "cifar10":
-            dataset = _prepare_cifar10()
-        case "cifar100":
-            dataset = _prepare_cifar100()
-        case "kaggle":
-            dataset = _prepare_kaggle()
-        case "kaggle_2":
-            dataset = _prepare_clustered_kaggle(2)
-        case "kaggle_10":
-            dataset = _prepare_clustered_kaggle(10)
-        case "kaggle_20":
-            dataset = _prepare_clustered_kaggle(20)
-        case "kaggle_50":
-            dataset = _prepare_clustered_kaggle(50)
-        case "kaggle_100":
-            dataset = _prepare_clustered_kaggle(100)
-        case _:
-            raise ValueError(f"{datasetName} is not a known dataset.")
+    if datasetName == "cifar10":
+        dataset = _prepare_cifar10()
+    elif datasetName == "cifar100":
+        dataset = _prepare_cifar100()
+    elif datasetName == "kaggle":
+        dataset = _prepare_kaggle()
+    elif datasetName == "kaggle_2":
+        dataset = _prepare_clustered_kaggle(2)
+    elif datasetName == "kaggle_10":
+        dataset = _prepare_clustered_kaggle(10)
+    elif datasetName == "kaggle_20":
+        dataset = _prepare_clustered_kaggle(20)
+    elif datasetName == "kaggle_50":
+        dataset = _prepare_clustered_kaggle(50)
+    elif datasetName == "kaggle_100":
+        dataset = _prepare_clustered_kaggle(100)
+    else:
+        raise ValueError(f"{datasetName} is not a known dataset.")
 
     print(f"Saving {datasetName} to disk.")
     tf.data.experimental.save(dataset, datasetDir)
