@@ -58,8 +58,9 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     """
     rawData: str = join(dataDir, "kaggle", "raw_data")
     kaggleSize = 197324
+    numFeatures = 600
     labels: NDArray = np.zeros([kaggleSize, 1])
-    features: NDArray = np.zeros([kaggleSize, 600])
+    features: NDArray = np.zeros([kaggleSize, numFeatures])
     with open(rawData) as file:
         reader = csv.reader(file)
         for index, row in enumerate(reader):
