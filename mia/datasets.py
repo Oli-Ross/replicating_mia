@@ -83,7 +83,6 @@ def _prepare_kaggle() -> Dataset:
     Create Kaggle as Dataset from Numpy arrays
     """
     features, labels = _read_kaggle_data()
-    labels = to_categorical(labels)
     return Dataset.from_tensor_slices((features, labels))
 
 
