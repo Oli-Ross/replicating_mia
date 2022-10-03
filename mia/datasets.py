@@ -99,6 +99,7 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     features, _ = _read_kaggle_data()
     kaggleSize = 197324
     labels: NDArray = kmeans.fit_predict(features).reshape(kaggleSize, 1)
+    labels = to_categorical(labels)
     return Dataset.from_tensor_slices((features, labels))
 
 
