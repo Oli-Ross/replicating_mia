@@ -130,8 +130,6 @@ def load_dataset(datasetName: str) -> Dataset:
         dataset = _prepare_clustered_kaggle(20)
     elif datasetName == "kaggle_50":
         dataset = _prepare_clustered_kaggle(50)
-    elif datasetName == "kaggle_100":
-        dataset = _prepare_clustered_kaggle(100)
     else:
         raise ValueError(f"{datasetName} is not a known dataset.")
 
@@ -148,7 +146,6 @@ def load_all_datasets():
     load_dataset("kaggle_10")
     load_dataset("kaggle_20")
     load_dataset("kaggle_50")
-    load_dataset("kaggle_100")
 
 
 if __name__ == "__main__":
