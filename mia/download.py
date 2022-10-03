@@ -4,15 +4,19 @@
 
 import tarfile
 from os import makedirs, path, rename
+from os.path import join, dirname, isdir
 
 import requests
 import tensorflow as tf
 
-kaggleDataDir = path.join(path.dirname(__file__), "../data/kaggle")
+dataDir = join(dirname(__file__), "../data")
+kaggleDir = join(dataDir, "kaggle")
+cifar10DataDir: str = join(dataDir, "cifar10", "dataset")
+cifar100DataDir: str = join(dataDir, "cifar100", "dataset")
 
 
 def _download_raw_kaggle_data():
-    kaggleCompressed = path.join(kaggleDataDir, "raw_data.tgz")
+    kaggleCompressed = path.join(kaggleDir, "raw_data.tgz")
     if not path.isfile(kaggleCompressed):
         url = 'https://github.com/OliverRoss/replicating_mia_datasets/raw/master/dataset_purchase.tgz'
         response = requests.get(url)
@@ -21,15 +25,15 @@ def _download_raw_kaggle_data():
 
 
 def _extract_kaggle_data():
-    if not path.isdir(kaggleDataDir):
-        makedirs(kaggleDataDir)
-    kaggleRaw = path.join(kaggleDataDir, "raw_data")
-    kaggleCompressed = path.join(kaggleDataDir, "raw_data.tgz")
+    if not path.isdir(kaggleDir):
+        makedirs(kaggleDir)
+    kaggleRaw = path.join(kaggleDir, "raw_data")
+    kaggleCompressed = path.join(kaggleDir, "raw_data.tgz")
 
     if not path.isfile(kaggleRaw):
-        tarfile.open(kaggleCompressed).extractall(kaggleDataDir)
+        tarfile.open(kaggleCompressed).extractall(kaggleDir)
         # "dataset_purchase" is the file name, we use the one in kaggleRaw
-        rename(path.join(kaggleDataDir, "dataset_purchase"), kaggleRaw)
+        rename(path.join(kaggleDir, "dataset_purchase"), kaggleRaw)
 
 
 def download_kaggle():
@@ -38,11 +42,13 @@ def download_kaggle():
 
 
 def download_cifar10():
-    (_, _), (_, _) = tf.keras.datasets.cifar10.load_data()
+    if not isdir(cifar10DataDir):
+        (_, _), (_, _) = tf.keras.datasets.cifar10.load_data()
 
 
 def download_cifar100():
-    (_, _), (_, _) = tf.keras.datasets.cifar100.load_data()
+    if not isdir(cifar100DataDir):
+        (_, _), (_, _) = tf.keras.datasets.cifar100.load_data()
 
 
 def download_all_datasets():
