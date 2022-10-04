@@ -41,7 +41,7 @@ docker compose run mia
 
 Verify that the GPU is available in `tensorflow`:
 ```bash
-TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physical_devices ('GPU')"
+TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physical_devices('GPU')"
 ```
 
 ## Usage
