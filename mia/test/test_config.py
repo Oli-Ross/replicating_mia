@@ -1,9 +1,9 @@
-import configuration
+import configuration as con
 
 
 class TestConfiguration():
     def test_from_name(self):
-        con = configuration.Configuration.from_name("example.yml")
+        config = con.from_name("example.yml")
 
-        assert con.seed == 1234
-        assert con.name == "Example Configuration"
+        assert config["seed"] == 1234
+        assert config["name"] == "Example Configuration"
