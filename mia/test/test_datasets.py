@@ -39,8 +39,8 @@ def test_deterministic_shuffling():
 def test_load_dataset():
     cifar = datasets.load_dataset("cifar10")
     assert cifar.element_spec[0].shape == (32, 32, 3)
-    assert cifar.element_spec[1].shape == (1,)
+    assert cifar.element_spec[1].shape == ([10])
 
     cifar = datasets.load_dataset("kaggle")
     assert cifar.element_spec[0].shape == (600,)
-    assert cifar.element_spec[1].shape == (1,)
+    assert cifar.element_spec[1].shape == ([100])
