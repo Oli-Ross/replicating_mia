@@ -1,3 +1,7 @@
+"""
+.. include:: ../docs/victim_models.md
+"""
+
 from os import environ
 
 # Tensorflow C++ backend logging verbosity
