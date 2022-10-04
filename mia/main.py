@@ -4,7 +4,7 @@ from typing import Dict
 import datasets
 import download
 import victim_models
-from configuration import Configuration
+import configuration as con
 
 
 def parse_args() -> Dict:
@@ -18,18 +18,18 @@ def parse_args() -> Dict:
     return vars(parser.parse_args())
 
 
-def set_seeds(config: Configuration):
-    datasets.set_seed(config.seed)
-    victim_models.set_seed(config.seed)
+def set_seeds(config: Dict):
+    datasets.set_seed(config["seed"])
+    victim_models.set_seed(config["seed"])
 
 
-def parse_config() -> Configuration:
+def parse_config() -> Dict:
     options = parse_args()
     try:
-        config = Configuration.from_rel_path(options["config"])
+        config = con.from_rel_path(options["config"])
         print("Using provided configuration.")
     except BaseException:
-        config = Configuration.from_name("example.yml")
+        config = con.from_name("example.yml")
         print("Using default configuration.")
     return config
 
