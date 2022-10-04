@@ -48,7 +48,8 @@ class Configuration:
         """
         Load a Configuration from absolute file path.
         """
-        assert os.path.isfile(absoluteFilePath)
+        assert os.path.isfile(
+            absoluteFilePath), f"{absoluteFilePath} not found"
         with open(absoluteFilePath) as yamlFile:
             yamlContent: Dict = yaml.load(yamlFile, Loader=yaml.Loader)
         return cls(yamlContent)
