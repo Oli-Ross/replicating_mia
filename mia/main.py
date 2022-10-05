@@ -3,7 +3,7 @@ from typing import Dict
 
 import datasets
 import download
-import victim_models
+import target_models
 import configuration as con
 
 
@@ -20,7 +20,7 @@ def parse_args() -> Dict:
 
 def set_seeds(config: Dict):
     datasets.set_seed(config["seed"])
-    victim_models.set_seed(config["seed"])
+    target_models.set_seed(config["seed"])
 
 
 def parse_config() -> Dict:
@@ -48,8 +48,8 @@ if __name__ == "__main__":
     trainSize: int = 10000
     train, test = cifar10.take(trainSize), cifar10.skip(trainSize)
 
-    # Train victim model
-    cifar10Model = victim_models.CifarModel()
-    victim_models.train_model(cifar10Model, cifar10, epochs=1)
+    # Train target model
+    cifar10Model = target_models.CifarModel()
+    target_models.train_model(cifar10Model, cifar10, epochs=1)
 
     # Launch MIA attack
