@@ -1,5 +1,5 @@
 """
-.. include:: ../docs/victim_models.md
+.. include:: ../docs/target_models.md
 """
 
 from os import environ
