@@ -61,12 +61,13 @@ class KaggleModel(Sequential):
     1e — 07, and the maximum epochs of training to 200.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, output_size: int) -> None:
         super().__init__()
         activation = tanh
         batchSize = 100
         self.add(InputLayer(input_shape=(600), batch_size=batchSize))
         self.add(Dense(128, activation=activation))
+        self.add(Dense(output_size, activation=activation))
         self.add(Softmax())
 
 
