@@ -56,16 +56,10 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     """
     Read the Kaggle dataset features and labels from disk into Numpy arrays.
     """
-    rawData: str = join(dataDir, "kaggle", "raw_data")
-    kaggleSize = 197324
-    numFeatures = 600
-    labels: NDArray = np.zeros([kaggleSize, 1])
-    features: NDArray = np.zeros([kaggleSize, numFeatures])
-    with open(rawData) as file:
-        reader = csv.reader(file)
-        for index, row in enumerate(reader):
-            labels[index, 0] = int(row[0])
-            features[index, :] = row[1:]
+    rawDataFile: str = join(dataDir, "kaggle", "raw_data")
+    data: NDArray = np.loadtxt(rawDataFile, dtype=int, delimiter=',')
+    labels: NDArray = data[:, 0]
+    features: NDArray = data[:, 1:]
     # 0-based index
     assert np.min(labels) >= 0
     labels = labels - np.min(labels)
