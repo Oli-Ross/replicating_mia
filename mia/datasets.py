@@ -63,7 +63,7 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     # 0-based index
     assert np.min(labels) >= 0
     labels = labels - np.min(labels)
-    labels = to_categorical(labels)
+    labels = to_categorical(labels, dtype='int64')
     return features, labels
 
 
