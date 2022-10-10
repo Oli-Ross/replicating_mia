@@ -4,6 +4,7 @@ from typing import Dict
 import datasets
 import download
 import target_models
+import shadow_data
 import configuration as con
 
 
@@ -21,6 +22,7 @@ def parse_args() -> Dict:
 def set_seeds(config: Dict):
     datasets.set_seed(config["seed"])
     target_models.set_seed(config["seed"])
+    shadow_data.set_seed(config["seed"])
 
 
 def parse_config() -> Dict:
