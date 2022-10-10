@@ -72,11 +72,21 @@ class KaggleModel(Sequential):
 
 
 def load_model(name: str) -> Sequential:
+    """
+    Load model from disk.
+
+    The file name will be constructed from the `name` argument.
+    """
     filePath: str = join(dirname(__file__), "../models", name)
     return keras.models.load_model(filePath)
 
 
 def save_model(name: str, model: Sequential) -> None:
+    """
+    Save model to disk.
+
+    The file name will be constructed from the `name` argument.
+    """
     filePath: str = join(dirname(__file__), "../models", name)
     model.save(filePath)
 
