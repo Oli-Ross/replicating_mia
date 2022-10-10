@@ -64,9 +64,11 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     with open(rawData) as file:
         reader = csv.reader(file)
         for index, row in enumerate(reader):
-            # offset the labels by 1 to achieve zero-based indexing
-            labels[index, 0] = int(row[0]) - 1
+            labels[index, 0] = int(row[0])
             features[index, :] = row[1:]
+    # 0-based index
+    assert np.min(labels) >= 0
+    labels = labels - np.min(labels)
     labels = to_categorical(labels)
     return features, labels
 
