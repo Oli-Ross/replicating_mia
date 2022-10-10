@@ -2,6 +2,8 @@
 .. include:: ../docs/shadow_data.md
 """
 
+# TODO: Everything (?) in here is Kaggle specific
+
 from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
@@ -63,22 +65,73 @@ def generate_shadow_data_statistic(original_data: Dataset) -> Dataset:
     pass
 
 
-def generate_shadow_data_model(target_model: Sequential) -> Dataset:
+def _generate_labels(classes: int, size: int) -> NDArray:
+    """
+    Generate a numpy array of size `size`, where the values are integers between
+    0 and `classes`, distributed as evenly as possible.
+    """
+
+    records_per_class: int = int(size / classes)
+    extra_records: int = size % classes
+
+    labels: NDArray = np.zeros((size, 1))
+    index: int = 0
+
+    for x in range(classes):
+        if x < extra_records:
+            records_for_this_class = records_per_class + 1
+        else:
+            records_for_this_class = records_per_class
+        for y in range(records_for_this_class):
+            labels[index + y, 0] = x
+        index = index + records_for_this_class
+
+    return labels
+
+
+def _generate_synthetic_record(label: int, numFeatures: int) -> NDArray:
+    """
+    Generate a synthesize data record, using Algorithm 1 from Shokri et als
+    paper "Membership Inference Attacks against Machine Learning Models".
+    """
+
+    assert label < 100 and label >= 0
+    # TODO: Set desired class
+    # TODO: Initialize record randomly
+    # TODO: Query target model
+    # TODO: Randomize some features
+
+    # Placeholder
+    features = np.repeat(label, numFeatures)
+    features = features.reshape((1, numFeatures))
+    return features
+
+
+def generate_shadow_data_model(
+        target_model: Sequential, size: int = 10) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
     for randomly sampled records, in order to find those that are classified
     with high confidence.
     """
-    pass
+    classes: int = 4  # TODO: placeholder
+    numFeatures: int = 5  # TODO: placeholder
+
+    # Generate an array of labels, determining which class to synthesize for
+    labels: NDArray = _generate_labels(classes, size)
+    features: NDArray = np.zeros((size, numFeatures))
+
+    for index, label in enumerate(labels):
+        features[index] = _generate_synthetic_record(label, numFeatures)
+
+    print(features)
+
+    return Dataset.from_tensor_slices((features, labels))
 
 
 if __name__ == "__main__":
-    import datasets
-    kaggle: Dataset = datasets.load_dataset("kaggle").take(10)
-    kaggle_noisy: Dataset = generate_shadow_data_noisy(kaggle)
-    print(tf.data.DatasetSpec.from_value(kaggle_noisy))
-    print(tf.data.DatasetSpec.from_value(kaggle))
-    for x, y in zip(kaggle.as_numpy_iterator(),
-                    kaggle_noisy.as_numpy_iterator()):
-        assert np.all(x[1] == y[1])
-        assert np.all(x[0] == y[0])
+    size = 10
+    import target_models
+    model: target_models.KaggleModel = target_models.load_model("test")
+    my_shadow_data = generate_shadow_data_model(model, size=size)
+    print(tf.data.DatasetSpec.from_value(my_shadow_data))
