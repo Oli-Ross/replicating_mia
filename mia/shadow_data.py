@@ -38,11 +38,11 @@ def generate_shadow_data_sampling(original_data: Dataset) -> Dataset:
     return sample_dataset
 
 
-def _make_data_record_noisy(features, labels):
+def _make_data_record_noisy(features, label):
     print(features.shape)
-    print(labels.shape)
-    # Do something to the data record
-    return features, labels
+    print(label.shape)
+    # Do something to the features
+    return features, label
 
 
 def generate_shadow_data_noisy(original_data: Dataset) -> Dataset:
