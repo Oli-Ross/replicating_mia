@@ -29,7 +29,8 @@ def parse_config() -> Dict:
     options = parse_args()
     try:
         config = con.from_rel_path(options["config"])
-        print("Using provided configuration.")
+        name = config["name"]
+        print(f"Using configuration \"{name}\"")
     except BaseException:
         config = con.from_name("example.yml")
         print("Using default configuration.")
