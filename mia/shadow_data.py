@@ -69,6 +69,9 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     """
     Generate a numpy array of size `size`, where the values are integers between
     0 and `classes`, distributed as evenly as possible.
+
+    This array will be used to generate a synthetic array of features for each
+    array element.
     """
 
     records_per_class: int = int(size / classes)
