@@ -1,4 +1,22 @@
 ---
 name: Example Configuration
 seed: 1234
+
+actions:
+  trainTarget: yes
+  testTarget: yes
+
+targetModel:
+  name: test
+  hyperparameters:
+    epochs: 3
+    batchSize: 100
+    learningRate: 0.001
+
+
+dataset: 
+  name: kaggle
+  trainSize: 10000
+  testSize: 10000
+
 ...

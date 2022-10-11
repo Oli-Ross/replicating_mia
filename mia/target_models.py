@@ -93,12 +93,21 @@ def save_model(name: str, model: Sequential) -> None:
     model.save(filePath)
 
 
-def train_model(model: Sequential, dataset: Dataset, epochs=100):
-    learningRate = 0.01
-    batchSize = 100
+def train_model(model: Sequential, dataset: Dataset, hyperpar: Dict):
+    epochs = hyperpar["epochs"]
+    learningRate = hyperpar["learningRate"]
+    batchSize = hyperpar["batchSize"]
+
     optimizer = keras.optimizers.Adam(learning_rate=learningRate, name="Adam")
     loss = keras.losses.CategoricalCrossentropy()
     metrics = [keras.metrics.CategoricalAccuracy()]
+
     model.compile(optimizer, loss, metrics)
     dataset = dataset.batch(batchSize, drop_remainder=True)
     return model.fit(dataset, epochs=epochs)
+
+
+def evaluate_model(model: Sequential, dataset: Dataset):
+    batchSize = 100
+    dataset = dataset.batch(batchSize, drop_remainder=True)
+    return model.evaluate(dataset)
