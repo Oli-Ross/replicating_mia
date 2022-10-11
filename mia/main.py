@@ -19,10 +19,10 @@ def parse_args() -> Dict:
     return vars(parser.parse_args())
 
 
-def set_seeds(config: Dict):
-    datasets.set_seed(config["seed"])
-    target_models.set_seed(config["seed"])
-    shadow_data.set_seed(config["seed"])
+def set_seeds(seed: int):
+    datasets.set_seed(seed)
+    target_models.set_seed(seed)
+    shadow_data.set_seed(seed)
 
 
 def parse_config() -> Dict:
@@ -41,16 +41,15 @@ if __name__ == "__main__":
 
     # Meta/Preparing
     config = parse_config()
-    set_seeds(config)
+    set_seeds(config["seed"])
 
     # Download datasets
     download.download_all_datasets()
 
     # Prepare dataset for training
-    datasetName = config["dataset"]["name"]
+    dataset = datasets.load_dataset(config["dataset"]["name"])
     trainSize: int = config["dataset"]["trainSize"]
     testSize: int = config["dataset"]["testSize"]
-    dataset = datasets.load_dataset(datasetName)
     train, test = dataset.take(trainSize), dataset.skip(
         trainSize).take(testSize)
 
