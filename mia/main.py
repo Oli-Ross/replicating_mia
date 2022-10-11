@@ -46,13 +46,38 @@ if __name__ == "__main__":
     # Download datasets
     download.download_all_datasets()
 
-    # Prepare datasets for training
-    cifar10 = datasets.load_dataset("cifar10")
-    trainSize: int = 10000
-    train, test = cifar10.take(trainSize), cifar10.skip(trainSize)
+    # Prepare dataset for training
+    datasetName = config["dataset"]["name"]
+    trainSize: int = config["dataset"]["trainSize"]
+    testSize: int = config["dataset"]["testSize"]
+    dataset = datasets.load_dataset(datasetName)
+    train, test = dataset.take(trainSize), dataset.skip(
+        trainSize).take(testSize)
 
-    # Train target model
-    cifar10Model = target_models.CifarModel()
-    target_models.train_model(cifar10Model, cifar10, epochs=1)
+    # Construct target model
+    model_name: str = config["targetModel"]["name"]
 
+    if config["actions"]["trainTarget"]:
+        model: target_models.KaggleModel = target_models.KaggleModel(100)
+        target_models.train_model(model, dataset,
+                                  config["targetModel"]["hyperparameters"])
+        target_models.save_model(model_name, model)
+    else:
+        model: target_models.KaggleModel = target_models.load_model(model_name)
+
+    # Evaluate target model
+    if config["actions"]["testTarget"]:
+        result = target_models.evaluate_model(model, test)
+
+    # Generate shadow data
+    # (Skipped for now)
+    #  my_shadow_data = shadow_data.generate_shadow_data_model(model, size=3)
+
+    # Train shadow models
+    # (Skipped for now)
+
+    # Generate attack data
+
+    # Set up attack model
+    # Train attack model
     # Launch MIA attack
