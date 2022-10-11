@@ -57,7 +57,15 @@ if __name__ == "__main__":
     model_name: str = config["targetModel"]["name"]
 
     if config["actions"]["trainTarget"]:
-        model: target_models.KaggleModel = target_models.KaggleModel(100)
+        modelType: str = config["targetModel"]["type"]
+        if modelType == "kaggle":
+            model: target_models.KaggleModel = target_models.KaggleModel(
+                config["targetModel"]["classes"])
+        elif modelType == "cifar":
+            model: target_models.KaggleModel = target_models.CifarModel()
+        else:
+            raise ValueError(f"{modelType} not known model type.")
+
         target_models.train_model(model, dataset,
                                   config["targetModel"]["hyperparameters"])
         target_models.save_model(model_name, model)
