@@ -8,13 +8,14 @@ actions:
 
 targetModel:
   name: test
+  type: kaggle
+  classes: 100
   hyperparameters:
     epochs: 3
     batchSize: 100
     learningRate: 0.001
 
-
-dataset: 
+dataset:
   name: kaggle
   trainSize: 10000
   testSize: 10000
