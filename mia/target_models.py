@@ -77,7 +77,8 @@ def load_model(name: str) -> Sequential:
 
     The file name will be constructed from the `name` argument.
     """
-    filePath: str = join(dirname(__file__), "../models", name)
+    # TODO: make dir if it doesn't exist
+    filePath: str = join(dirname(__file__), "../models/target", name)
     return keras.models.load_model(filePath)
 
 
@@ -87,7 +88,8 @@ def save_model(name: str, model: Sequential) -> None:
 
     The file name will be constructed from the `name` argument.
     """
-    filePath: str = join(dirname(__file__), "../models", name)
+    # TODO: make dir if it doesn't exist
+    filePath: str = join(dirname(__file__), "../models/target", name)
     model.save(filePath)
 
 
