@@ -88,7 +88,8 @@ if __name__ == "__main__":
     # (Skipped for now)
 
     # Generate attack data
-    attackData: datasets.Dataset = attack_data.generate()
+    attackTrainData, attackTestData = attack_data.from_target_data(
+        targetTrainData, targetTestData, targetModel)
 
     # Set up attack model
     attackModelName: str = config["attackModel"]["name"]
@@ -96,7 +97,9 @@ if __name__ == "__main__":
         if targetModelType == "kaggle":
             attackModel = attack_model.KaggleAttackModel(
                 config["targetModel"]["classes"])
-            attack_model.train_model(attackModel, attackData)
+            attack_model.train_model(
+                attackModel, attackTrainData, batchSize=100)
+            attack_model.save_model(attackModelName, attackModel)
         else:
             raise NotImplementedError
     else:
