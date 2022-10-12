@@ -54,27 +54,28 @@ if __name__ == "__main__":
         trainSize).take(testSize)
 
     # Construct target model
-    model_name: str = config["targetModel"]["name"]
+    targetModelName: str = config["targetModel"]["name"]
 
+    targetModelType: str = config["targetModel"]["type"]
     if config["actions"]["trainTarget"]:
-        modelType: str = config["targetModel"]["type"]
-        if modelType == "kaggle":
-            model: target_models.KaggleModel = target_models.KaggleModel(
+        if targetModelType == "kaggle":
+            targetModel: target_models.KaggleModel = target_models.KaggleModel(
                 config["targetModel"]["classes"])
-        elif modelType == "cifar":
-            model: target_models.KaggleModel = target_models.CifarModel()
+        elif targetModelType == "cifar":
+            targetModel: target_models.KaggleModel = target_models.CifarModel()
         else:
-            raise ValueError(f"{modelType} not known model type.")
+            raise ValueError(f"{targetModelType} not known model type.")
 
-        target_models.train_model(model, dataset,
+        target_models.train_model(targetModel, dataset,
                                   config["targetModel"]["hyperparameters"])
-        target_models.save_model(model_name, model)
+        target_models.save_model(targetModelName, targetModel)
     else:
-        model: target_models.KaggleModel = target_models.load_model(model_name)
+        targetModel: target_models.KaggleModel = target_models.load_model(
+            targetModelName)
 
     # Evaluate target model
     if config["actions"]["testTarget"]:
-        result = target_models.evaluate_model(model, test)
+        result = target_models.evaluate_model(targetModel, test)
 
     # Generate shadow data
     # (Skipped for now)
