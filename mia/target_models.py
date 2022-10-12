@@ -110,6 +110,7 @@ def train_model(model: Sequential, dataset: Dataset, hyperpar: Dict):
 
 
 def evaluate_model(model: Sequential, dataset: Dataset):
+    # TODO: batchSize is hardcoded
     batchSize = 100
     dataset = dataset.batch(batchSize, drop_remainder=True)
     return model.evaluate(dataset)
