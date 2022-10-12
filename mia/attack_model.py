@@ -79,3 +79,10 @@ def train_model(model: Sequential, dataset: Dataset, epochs=100,
     # TODO: drop_remainder: make sure dataset is still 50/50 in/out
     dataset = dataset.batch(batchSize, drop_remainder=True)
     return model.fit(dataset, epochs=epochs)
+
+
+def evaluate_model(model: Sequential, dataset: Dataset):
+    # TODO: batchSize is hardcoded
+    batchSize = 100
+    dataset = dataset.batch(batchSize, drop_remainder=True)
+    return model.evaluate(dataset)
