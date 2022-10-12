@@ -3,9 +3,10 @@ name: Example Configuration
 seed: 1234
 
 actions:
-  trainTarget: yes
-  testTarget: yes
+  trainTarget: no
+  testTarget: no
   trainAttack: yes
+  testAttack: yes
 
 attackModel:
   name: test
