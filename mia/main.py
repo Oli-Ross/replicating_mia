@@ -95,7 +95,7 @@ if __name__ == "__main__":
     if config["actions"]["trainAttack"]:
         if targetModelType == "kaggle":
             attackModel = attack_model.KaggleAttackModel(
-                config["targetModel"]["numClasses"])
+                config["targetModel"]["classes"])
             attack_model.train_model(attackModel, attackData)
         else:
             raise NotImplementedError
