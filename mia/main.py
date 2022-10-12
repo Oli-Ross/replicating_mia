@@ -53,7 +53,7 @@ if __name__ == "__main__":
     dataset = datasets.load_dataset(config["dataset"]["name"])
     trainSize: int = config["dataset"]["trainSize"]
     testSize: int = config["dataset"]["testSize"]
-    train, test = dataset.take(trainSize), dataset.skip(
+    targetTrainData, targetTestData = dataset.take(trainSize), dataset.skip(
         trainSize).take(testSize)
 
     # Construct target model
@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     # Evaluate target model
     if config["actions"]["testTarget"]:
-        result = target_models.evaluate_model(targetModel, test)
+        result = target_models.evaluate_model(targetModel, targetTestData)
 
     # Generate shadow data
     # (Skipped for now)
