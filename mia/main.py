@@ -69,7 +69,7 @@ if __name__ == "__main__":
         else:
             raise ValueError(f"{targetModelType} not known model type.")
 
-        target_models.train_model(targetModel, dataset,
+        target_models.train_model(targetModel, targetTrainData,
                                   config["targetModel"]["hyperparameters"])
         target_models.save_model(targetModelName, targetModel)
     else:
