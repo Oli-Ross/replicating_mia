@@ -9,6 +9,7 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import dirname, join
 
+from typing import Dict
 from tensorflow import keras
 from tensorflow.data import Dataset
 from tensorflow.keras.activations import tanh
@@ -94,6 +95,7 @@ def save_model(name: str, model: Sequential) -> None:
 
 
 def train_model(model: Sequential, dataset: Dataset, hyperpar: Dict):
+    # TODO: Is batchSize really a hyperparameter here?
     epochs = hyperpar["epochs"]
     learningRate = hyperpar["learningRate"]
     batchSize = hyperpar["batchSize"]
