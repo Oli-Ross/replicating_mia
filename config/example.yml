@@ -5,6 +5,10 @@ seed: 1234
 actions:
   trainTarget: yes
   testTarget: yes
+  trainAttack: yes
+
+attackModel:
+  name: test
 
 targetModel:
   name: test

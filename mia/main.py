@@ -4,7 +4,9 @@ from typing import Dict
 import datasets
 import download
 import target_models
+import attack_model
 import shadow_data
+import attack_data
 import configuration as con
 
 
@@ -22,6 +24,7 @@ def parse_args() -> Dict:
 def set_seeds(seed: int):
     datasets.set_seed(seed)
     target_models.set_seed(seed)
+    attack_model.set_seed(seed)
     shadow_data.set_seed(seed)
 
 
@@ -85,7 +88,19 @@ if __name__ == "__main__":
     # (Skipped for now)
 
     # Generate attack data
+    attackData: datasets.Dataset = attack_data.generate()
 
     # Set up attack model
+    attackModelName: str = config["attackModel"]["name"]
+    if config["actions"]["trainAttack"]:
+        if targetModelType == "kaggle":
+            attackModel = attack_model.KaggleAttackModel(
+                config["targetModel"]["numClasses"])
+            attack_model.train_model(attackModel, attackData)
+        else:
+            raise NotImplementedError
+    else:
+        attackModel = attack_model.load_model(attackModelName)
+
     # Train attack model
     # Launch MIA attack
