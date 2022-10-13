@@ -20,9 +20,14 @@ targetModel:
     batchSize: 100
     learningRate: 0.001
 
+attackDataset:
+  name: attack_kaggle
+  split: 0.8
+  generate: no
+
 targetDataset:
   name: kaggle
-  trainSize: 10000
-  testSize: 10000
+  trainSize: 80000
+  testSize: 80000
 
 ...
