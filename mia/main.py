@@ -1,6 +1,11 @@
 import argparse
 from typing import Dict
 
+from os import environ
+
+# Tensorflow C++ backend logging verbosity
+environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
+
 import datasets
 import download
 import target_models
@@ -8,6 +13,8 @@ import attack_model
 import shadow_data
 import attack_data
 import configuration as con
+import tensorflow as tf
+from os.path import join
 
 
 def parse_args() -> Dict:
@@ -88,8 +95,20 @@ if __name__ == "__main__":
     # (Skipped for now)
 
     # Generate attack data
-    attackTrainData, attackTestData = attack_data.from_target_data(
-        targetTrainData, targetTestData, targetModel)
+    attackDataName = config["attackDataset"]["name"]
+    attackDataNameTest = attackDataName + "_test"
+    attackDataNameTrain = attackDataName + "_train"
+
+    if config["attackDataset"]["generate"]:
+        attackTrainData, attackTestData = attack_data.from_target_data(
+            targetTrainData, targetTestData, targetModel)
+        # Save
+        datasets.save_attack(attackTrainData, attackDataNameTrain)
+        datasets.save_attack(attackTestData, attackDataNameTest)
+    else:
+        # Load
+        attackTestData = datasets.load_attack(attackDataNameTest)
+        attackTrainData = datasets.load_attack(attackDataNameTrain)
 
     # Set up attack model
     attackModelName: str = config["attackModel"]["name"]
