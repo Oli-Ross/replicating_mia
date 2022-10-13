@@ -40,7 +40,7 @@ class KaggleAttackModel(Sequential):
 
     def __init__(self, numClasses: int) -> None:
         super().__init__()
-        batchSize: int = 100
+        batchSize: int = 1
         activation = relu
         self.add(InputLayer(input_shape=(100), batch_size=batchSize))
         self.add(Dense(64, activation=activation))
@@ -71,11 +71,11 @@ def save_model(name: str, model: Sequential) -> None:
 
 
 def train_model(model: Sequential, dataset: Dataset, epochs=100,
-                learningRate=0.01, batchSize=100):
+                learningRate=0.01, batchSize=1):
     # TODO: Everything is hardcoded
     epochs = 10
     learningRate = 0.001
-    batchSize = 100
+    batchSize = 1
 
     optimizer = keras.optimizers.Adam(learning_rate=learningRate, name="Adam")
     loss = keras.losses.CategoricalCrossentropy()
@@ -89,6 +89,6 @@ def train_model(model: Sequential, dataset: Dataset, epochs=100,
 
 def evaluate_model(model: Sequential, dataset: Dataset):
     # TODO: batchSize is hardcoded
-    batchSize = 100
-    dataset = dataset.batch(batchSize, drop_remainder=True)
+    batchSize = 1
+    dataset = dataset.batch(batchSize, drop_remainder=False)
     return model.evaluate(dataset)
