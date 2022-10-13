@@ -50,9 +50,9 @@ if __name__ == "__main__":
     download.download_all_datasets()
 
     # Prepare dataset for training
-    dataset = datasets.load_dataset(config["dataset"]["name"])
-    trainSize: int = config["dataset"]["trainSize"]
-    testSize: int = config["dataset"]["testSize"]
+    dataset = datasets.load_dataset(config["targetDataset"]["name"])
+    trainSize: int = config["targetDataset"]["trainSize"]
+    testSize: int = config["targetDataset"]["testSize"]
     targetTrainData, targetTestData = dataset.take(trainSize), dataset.skip(
         trainSize).take(testSize)
 

@@ -20,7 +20,7 @@ targetModel:
     batchSize: 100
     learningRate: 0.001
 
-dataset:
+targetDataset:
   name: kaggle
   trainSize: 10000
   testSize: 10000
