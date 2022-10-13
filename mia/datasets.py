@@ -99,6 +99,18 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     return Dataset.from_tensor_slices((features, labels))
 
 
+def load_attack(datasetName: str) -> Dataset:
+    datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
+    if isdir(datasetDir):
+        print(f"Loading {datasetName} from disk.")
+        return tf.data.experimental.load(datasetDir)
+
+
+def save_attack(dataset: Dataset, datasetName: str):
+    datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
+    tf.data.experimental.save(dataset, datasetDir)
+
+
 def load_dataset(datasetName: str) -> Dataset:
     """
     Load a dataset.
