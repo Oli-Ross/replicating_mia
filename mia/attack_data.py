@@ -74,6 +74,4 @@ def from_target_data(targetTrainData: Dataset,
     attackTrainData = Dataset.from_tensor_slices((featuresTrain, labelsTrain))
     attackTestData = Dataset.from_tensor_slices((featuresTest, labelsTest))
 
-    # TODO: sort the data by its ground truth and only return partitions
-
     return attackTrainData, attackTestData
