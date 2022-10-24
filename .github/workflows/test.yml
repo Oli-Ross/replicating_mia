@@ -36,7 +36,7 @@ jobs:
 
       - name: Download datasets 
         if: steps.cache-data.outputs.cache-hit != 'true'
-        run: python download.py
+        run: python mia/download.py
 
       - name: Test
-        run: pytest
+        run: cd mia && pytest
