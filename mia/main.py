@@ -124,8 +124,6 @@ if __name__ == "__main__":
     else:
         attackModel = attack_model.load_model(attackModelName)
 
+    # Launch MIA attack
     if config["actions"]["testAttack"]:
         resultAttack = attack_model.evaluate_model(attackModel, attackTestData)
-
-    # Train attack model
-    # Launch MIA attack
