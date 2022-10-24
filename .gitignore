@@ -12,5 +12,7 @@ models/
 
 __pycache__/
 
-# My temporary test file
+# My temporary test file(s)
 test.py
+main.py
+
