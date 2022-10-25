@@ -10,6 +10,9 @@ models/
 # Virtual env
 .venv/
 
+# Tensorboard logs
+mia/logs
+
 __pycache__/
 
 # My temporary test file(s)
