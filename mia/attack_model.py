@@ -83,14 +83,16 @@ def train_model(model: Sequential, trainData: Dataset,
 
     model.compile(optimizer, loss, metrics)
     # TODO: drop_remainder: make sure dataset is still 50/50 in/out
-    dataset = dataset.batch(batchSize, drop_remainder=True)
-    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    trainData = trainData.batch(batchSize, drop_remainder=True)
+    testData = testData.batch(batchSize, drop_remainder=True)
+    log_dir = "logs/attack/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     cb = keras.callbacks.TensorBoard(histogram_freq=1, log_dir=log_dir)
-    return model.fit(dataset, epochs=epochs, callbacks=[cb])
+    return model.fit(trainData, epochs=epochs,
+                     callbacks=[cb], validation_data=testData)
 
 
 def evaluate_model(model: Sequential, dataset: Dataset):
     # TODO: batchSize is hardcoded
-    batchSize = 1
+    batchSize = 10
     dataset = dataset.batch(batchSize, drop_remainder=False)
     return model.evaluate(dataset)
