@@ -34,12 +34,11 @@ def _get_filter_fn(label: int):
     return _filter_fn
 
 
-def from_target_data(targetTrainData: Dataset,
-                     targetTestData: Dataset, targetModel: Sequential) -> Dataset:
+def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
+                     targetModel: Sequential, label: int) -> Dataset:
     # TODO: don't hardcode dataset size
     # TODO assertions about disjoint sets, and equal set sizes
     # TODO: Make this understandable without my piece of paper
-    label = 2
     targetTrainData = targetTrainData.filter(_get_filter_fn(label))
     targetTestData = targetTestData.filter(_get_filter_fn(label))
 
