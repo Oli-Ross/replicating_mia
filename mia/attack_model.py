@@ -70,12 +70,12 @@ def save_model(name: str, model: Sequential) -> None:
     model.save(filePath)
 
 
-def train_model(model: Sequential, dataset: Dataset, epochs=100,
-                learningRate=0.01, batchSize=1):
+def train_model(model: Sequential, trainData: Dataset,
+                testData: Dataset, epochs=100, learningRate=0.01, batchSize=1):
     # TODO: Everything is hardcoded
     epochs = 200
     learningRate = 0.0001
-    batchSize = 548
+    batchSize = 10
 
     optimizer = keras.optimizers.Adam(name="Adam", learning_rate=learningRate)
     loss = keras.losses.CategoricalCrossentropy()
