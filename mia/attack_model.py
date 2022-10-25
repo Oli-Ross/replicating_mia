@@ -72,13 +72,13 @@ def save_model(name: str, model: Sequential) -> None:
 def train_model(model: Sequential, dataset: Dataset, epochs=100,
                 learningRate=0.01, batchSize=1):
     # TODO: Everything is hardcoded
-    epochs = 10
-    learningRate = 0.001
-    batchSize = 1
+    epochs = 200
+    learningRate = 0.0001
+    batchSize = 548
 
-    optimizer = keras.optimizers.Adam(learning_rate=learningRate, name="Adam")
+    optimizer = keras.optimizers.Adam(name="Adam", learning_rate=learningRate)
     loss = keras.losses.CategoricalCrossentropy()
-    metrics = [keras.metrics.CategoricalAccuracy()]
+    metrics = ["accuracy"]
 
     model.compile(optimizer, loss, metrics)
     # TODO: drop_remainder: make sure dataset is still 50/50 in/out
