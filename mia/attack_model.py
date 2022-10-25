@@ -75,7 +75,7 @@ def train_model(model: Sequential, trainData: Dataset,
     # TODO: Everything is hardcoded
     epochs = 200
     learningRate = 0.0001
-    batchSize = 10
+    batchSize = 100
 
     optimizer = keras.optimizers.Adam(name="Adam", learning_rate=learningRate)
     loss = keras.losses.CategoricalCrossentropy()
