@@ -83,7 +83,9 @@ def train_model(model: Sequential, dataset: Dataset, epochs=100,
     model.compile(optimizer, loss, metrics)
     # TODO: drop_remainder: make sure dataset is still 50/50 in/out
     dataset = dataset.batch(batchSize, drop_remainder=True)
-    return model.fit(dataset, epochs=epochs)
+    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    cb = keras.callbacks.TensorBoard(histogram_freq=1, log_dir=log_dir)
+    return model.fit(dataset, epochs=epochs, callbacks=[cb])
 
 
 def evaluate_model(model: Sequential, dataset: Dataset):
