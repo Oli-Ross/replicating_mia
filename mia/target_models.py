@@ -8,6 +8,7 @@ from os import environ
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import dirname, join
+import datetime
 
 from typing import Dict
 from tensorflow import keras
@@ -94,7 +95,8 @@ def save_model(name: str, model: Sequential) -> None:
     model.save(filePath)
 
 
-def train_model(model: Sequential, dataset: Dataset, hyperpar: Dict):
+def train_model(model: Sequential, trainData: Dataset,
+                testData: Dataset, hyperpar: Dict):
     # TODO: Is batchSize really a hyperparameter here?
     epochs = hyperpar["epochs"]
     learningRate = hyperpar["learningRate"]
@@ -105,8 +107,12 @@ def train_model(model: Sequential, dataset: Dataset, hyperpar: Dict):
     metrics = [keras.metrics.CategoricalAccuracy()]
 
     model.compile(optimizer, loss, metrics)
-    dataset = dataset.batch(batchSize, drop_remainder=True)
-    return model.fit(dataset, epochs=epochs)
+    trainData = trainData.batch(batchSize, drop_remainder=True)
+    testData = testData.batch(batchSize, drop_remainder=True)
+    log_dir = "logs/target/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    cb = keras.callbacks.TensorBoard(histogram_freq=1, log_dir=log_dir)
+    return model.fit(trainData, epochs=epochs,
+                     callbacks=[cb], validation_data=testData)
 
 
 def evaluate_model(model: Sequential, dataset: Dataset):
