@@ -67,13 +67,12 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     return features, labels
 
 
-def shuffle_kaggle(kaggle: Dataset) -> Dataset:
+def shuffle_dataset(dataset: Dataset, datasetSize: int) -> Dataset:
     """
     Shuffles Kaggle Dataset and datasets derived from it via clustering.
     """
-    kaggleSize = 197324
-    return kaggle.shuffle(kaggleSize, seed=global_seed,
-                          reshuffle_each_iteration=False)
+    return dataset.shuffle(datasetSize, seed=global_seed,
+                           reshuffle_each_iteration=False)
 
 
 def _prepare_kaggle() -> Dataset:
