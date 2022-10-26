@@ -16,18 +16,19 @@ targetModel:
   type: kaggle
   classes: 100
   hyperparameters:
-    epochs: 3
+    epochs: 200
     batchSize: 100
     learningRate: 0.001
 
 attackDataset:
   name: attack_kaggle
   split: 0.8
-  generate: no
+  generate: yes
 
 targetDataset:
   name: kaggle
-  trainSize: 80000
-  testSize: 80000
+  trainSize: 10000
+  testSize: 10000
+  shuffle: True
 
 ...
