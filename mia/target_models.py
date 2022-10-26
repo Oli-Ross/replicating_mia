@@ -80,6 +80,7 @@ def load_model(name: str) -> Sequential:
     The file name will be constructed from the `name` argument.
     """
     # TODO: make dir if it doesn't exist
+    print(f"Loading model {name} from disk.")
     filePath: str = join(dirname(__file__), "../models/target", name)
     return keras.models.load_model(filePath)
 
