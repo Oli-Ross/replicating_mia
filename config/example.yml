@@ -7,6 +7,7 @@ actions:
   testTarget: no
   trainAttack: yes
   testAttack: yes
+  generateAttackData: no
 
 attackModel:
   name: attack_311022_best_run
@@ -27,7 +28,6 @@ targetModel:
 attackDataset:
   name: attack_kaggle
   split: 0.8
-  generate: yes
 
 targetDataset:
   name: kaggle

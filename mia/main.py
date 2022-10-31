@@ -107,7 +107,7 @@ if __name__ == "__main__":
     attackDataNameTest = attackDataName + "_test"
     attackDataNameTrain = attackDataName + "_train"
 
-    if config["attackDataset"]["generate"]:
+    if config["actions"]["generateAttackData"]:
         attackTrainData, attackTestData = attack_data.from_target_data(
             targetTrainData, targetTestData, targetModel, label)
         # Save
