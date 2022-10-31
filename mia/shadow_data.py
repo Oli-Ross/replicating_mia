@@ -13,8 +13,8 @@ import numpy as np
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import tensorflow as tf
-from tensorflow.data import Dataset
-from tensorflow.keras import Sequential
+from tensorflow.data import Dataset  # pyright: ignore
+from tensorflow.keras import Sequential  # pyright: ignore
 
 global_seed: int = 1234
 

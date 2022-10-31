@@ -9,9 +9,9 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.data import Dataset
-from tensorflow.keras import Sequential
-from tensorflow.keras.utils import to_categorical
+from tensorflow.data import Dataset  # pyright: ignore
+from tensorflow.keras import Sequential  # pyright: ignore
+from tensorflow.keras.utils import to_categorical  # pyright: ignore
 
 
 def _prepare_subset(superset: Dataset, size: int,

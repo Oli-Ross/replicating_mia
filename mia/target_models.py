@@ -12,10 +12,11 @@ import datetime
 
 from typing import Dict
 from tensorflow import keras
-from tensorflow.data import Dataset
-from tensorflow.keras.activations import tanh
-from tensorflow.keras.layers import Conv2D, Dense, InputLayer, MaxPool2D, Softmax, Flatten
-from tensorflow.keras import Sequential
+from tensorflow.data import Dataset  # pyright: ignore
+from tensorflow.keras.activations import tanh  # pyright: ignore
+from tensorflow.keras.layers import Conv2D, Dense, InputLayer  # pyright: ignore
+from tensorflow.keras.layers import MaxPool2D, Softmax, Flatten  # pyright: ignore
+from tensorflow.keras import Sequential  # pyright: ignore
 
 global_seed: int = 1234
 
