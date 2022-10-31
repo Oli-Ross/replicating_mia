@@ -10,7 +10,7 @@ actions:
   generateAttackData: no
 
 attackModel:
-  name: attack_311022_best_run
+  name: test
   hyperparameters:
     epochs: 1000
     batchSize: 20
@@ -26,12 +26,12 @@ targetModel:
     learningRate: 0.001
 
 attackDataset:
-  name: attack_kaggle
+  name: target_train_311022
   split: 0.8
 
 targetDataset:
   name: kaggle
-  trainSize: 10000
+  trainSize: 80000
   testSize: 10000
   shuffle: True
 
