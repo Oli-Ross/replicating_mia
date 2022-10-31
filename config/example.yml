@@ -9,7 +9,11 @@ actions:
   testAttack: yes
 
 attackModel:
-  name: test
+  name: attack_311022_best_run
+  hyperparameters:
+    epochs: 1000
+    batchSize: 20
+    learningRate: 0.0001
 
 targetModel:
   name: test

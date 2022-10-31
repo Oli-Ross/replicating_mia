@@ -125,7 +125,10 @@ if __name__ == "__main__":
             attackModel = attack_model.KaggleAttackModel(
                 config["targetModel"]["classes"])
             attack_model.train_model(
-                attackModel, attackTrainData, attackTestData, batchSize=100)
+                attackModel,
+                attackTrainData,
+                attackTestData,
+                config["attackModel"]["hyperparameters"])
             attack_model.save_model(attackModelName, attackModel)
         else:
             raise NotImplementedError
