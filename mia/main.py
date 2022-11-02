@@ -32,6 +32,7 @@ def set_seeds(seed: int):
     datasets.set_seed(seed)
     target_models.set_seed(seed)
     attack_model.set_seed(seed)
+    attack_data.set_seed(seed)
     shadow_data.set_seed(seed)
 
 

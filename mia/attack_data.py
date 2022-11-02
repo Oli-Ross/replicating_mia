@@ -13,6 +13,17 @@ from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.keras import Sequential  # pyright: ignore
 from tensorflow.keras.utils import to_categorical  # pyright: ignore
 
+global_seed: int = 1234
+
+
+def set_seed(new_seed: int):
+    """
+    Set the global seed that will be used for all functions that include
+    randomness.
+    """
+    global global_seed
+    global_seed = new_seed
+
 
 def _prepare_subset(superset: Dataset, size: int,
                     model: Sequential, inTraining: bool):
