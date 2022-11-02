@@ -13,6 +13,7 @@ import numpy as np
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import tensorflow as tf
+from tensorflow.python.framework import random_seed
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.keras import Sequential  # pyright: ignore
 
@@ -26,6 +27,8 @@ def set_seed(new_seed: int):
     """
     global global_seed
     global_seed = new_seed
+    np.random.seed(global_seed)
+    random_seed.set_seed(global_seed)
 
 
 def generate_shadow_data_sampling(original_data: Dataset) -> Dataset:
