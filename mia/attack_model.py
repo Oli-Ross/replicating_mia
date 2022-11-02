@@ -78,9 +78,9 @@ def save_model(name: str, model: Sequential) -> None:
 
 def train_model(model: Sequential, trainData: Dataset,
                 testData: Dataset, hyperpar: Dict):
-    epochs = hyperpar["epochs"]
-    learningRate = hyperpar["learningRate"]
-    batchSize = hyperpar["batchSize"]
+    epochs: int = int(hyperpar["epochs"])
+    learningRate: float = float(hyperpar["learningRate"])
+    batchSize: int = int(hyperpar["batchSize"])
 
     optimizer = keras.optimizers.Adam(name="Adam", learning_rate=learningRate)
     loss = keras.losses.CategoricalCrossentropy()
