@@ -12,6 +12,7 @@ import datetime
 
 from typing import Dict
 from tensorflow import keras
+from tensorflow.python.framework import random_seed
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.keras.activations import tanh  # pyright: ignore
 from tensorflow.keras.layers import Conv2D, Dense, InputLayer  # pyright: ignore
@@ -28,6 +29,7 @@ def set_seed(new_seed: int):
     """
     global global_seed
     global_seed = new_seed
+    random_seed.set_seed(global_seed)
 
 
 class CifarModel(Sequential):

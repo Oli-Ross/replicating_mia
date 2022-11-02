@@ -16,6 +16,7 @@ import sklearn.cluster
 import tensorflow as tf
 from tensorflow.data import Dataset
 from tensorflow.keras.utils import to_categorical
+from tensorflow.python.framework import random_seed
 from numpy.typing import NDArray
 
 dataDir = join(dirname(__file__), "../data")
@@ -29,6 +30,8 @@ def set_seed(new_seed: int):
     """
     global global_seed
     global_seed = new_seed
+    np.random.seed(global_seed)
+    random_seed.set_seed(global_seed)
 
 
 def _dataset_from_split(

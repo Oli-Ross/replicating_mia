@@ -10,6 +10,7 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 import numpy as np
 import tensorflow as tf
 from tensorflow.data import Dataset  # pyright: ignore
+from tensorflow.python.framework import random_seed
 from tensorflow.keras import Sequential  # pyright: ignore
 from tensorflow.keras.utils import to_categorical  # pyright: ignore
 
@@ -23,6 +24,8 @@ def set_seed(new_seed: int):
     """
     global global_seed
     global_seed = new_seed
+    np.random.seed(global_seed)
+    random_seed.set_seed(global_seed)
 
 
 def _prepare_subset(superset: Dataset, size: int,
