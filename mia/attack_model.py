@@ -76,7 +76,7 @@ def save_model(name: str, model: Sequential) -> None:
     model.save(filePath)
 
 
-def train_model(model: Sequential, trainData: Dataset,
+def train_model(model: Sequential, modelName: str, trainData: Dataset,
                 testData: Dataset, hyperpar: Dict):
     epochs: int = int(hyperpar["epochs"])
     learningRate: float = float(hyperpar["learningRate"])
@@ -90,7 +90,7 @@ def train_model(model: Sequential, trainData: Dataset,
     # TODO: drop_remainder: make sure dataset is still 50/50 in/out
     trainData = trainData.batch(batchSize, drop_remainder=True)
     testData = testData.batch(batchSize, drop_remainder=True)
-    log_dir = "logs/attack/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_dir = "logs/attack/" + modelName
     cb = keras.callbacks.TensorBoard(histogram_freq=1, log_dir=log_dir)
     return model.fit(trainData, epochs=epochs,
                      callbacks=[cb], validation_data=testData)

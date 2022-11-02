@@ -120,13 +120,19 @@ if __name__ == "__main__":
         attackTrainData = datasets.load_attack(attackDataNameTrain)
 
     # Set up attack model
-    attackModelName: str = config["attackModel"]["name"]
+
+    epochs: int = config["attackModel"]["hyperparameters"]["epochs"]
+    batchSize: int = config["attackModel"]["hyperparameters"]["batchSize"]
+    learningRate: float = config["attackModel"]["hyperparameters"]["learningRate"]
+    attackModelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}"
+
     if config["actions"]["trainAttack"]:
         if targetModelType == "kaggle":
             attackModel = attack_model.KaggleAttackModel(
                 config["targetModel"]["classes"])
             attack_model.train_model(
                 attackModel,
+                attackModelName,
                 attackTrainData,
                 attackTestData,
                 config["attackModel"]["hyperparameters"])
@@ -134,6 +140,7 @@ if __name__ == "__main__":
         else:
             raise NotImplementedError
     else:
+        attackModelName: str = config["attackModel"]["name"]
         attackModel = attack_model.load_model(attackModelName)
 
     # Launch MIA attack
