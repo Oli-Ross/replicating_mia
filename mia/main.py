@@ -62,11 +62,11 @@ if __name__ == "__main__":
     trainSize: int = config["targetDataset"]["trainSize"]
     testSize: int = config["targetDataset"]["testSize"]
 
-    if config["targetDataset"]["shuffle"]:
-        dataset = datasets.shuffle_dataset(dataset, trainSize)
-
     targetTrainData, targetTestData = dataset.take(
         trainSize), dataset.skip(trainSize).take(testSize)
+
+    if config["targetDataset"]["shuffle"]:
+        targetTrainData = datasets.shuffle_dataset(targetTrainData, trainSize)
 
     # Construct target model
     targetEpochs: int = config["targetModel"]["hyperparameters"]["epochs"]
