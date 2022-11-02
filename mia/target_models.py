@@ -101,10 +101,9 @@ def save_model(name: str, model: Sequential) -> None:
 
 def train_model(model: Sequential, trainData: Dataset,
                 testData: Dataset, hyperpar: Dict):
-    # TODO: Is batchSize really a hyperparameter here?
-    epochs = hyperpar["epochs"]
-    learningRate = hyperpar["learningRate"]
-    batchSize = hyperpar["batchSize"]
+    epochs: int = int(hyperpar["epochs"])
+    learningRate: float = float(hyperpar["learningRate"])
+    batchSize: int = int(hyperpar["batchSize"])
 
     optimizer = keras.optimizers.Adam(learning_rate=learningRate, name="Adam")
     loss = keras.losses.CategoricalCrossentropy()
