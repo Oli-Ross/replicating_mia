@@ -69,7 +69,11 @@ if __name__ == "__main__":
         trainSize), dataset.skip(trainSize).take(testSize)
 
     # Construct target model
-    targetModelName: str = config["targetModel"]["name"]
+    targetEpochs: int = config["targetModel"]["hyperparameters"]["epochs"]
+    targetBatchSize: int = config["targetModel"]["hyperparameters"]["batchSize"]
+    targetLearningRate: float = config["targetModel"]["hyperparameters"]["learningRate"]
+    targetTrainSize: int = config["targetDataset"]["trainSize"]
+    targetModelName: str = f"lr_{targetLearningRate}_bs_{targetBatchSize}_epochs_{targetEpochs}_trainsize_{targetTrainSize}"
 
     targetModelType: str = config["targetModel"]["type"]
     if config["actions"]["trainTarget"]:
@@ -83,11 +87,13 @@ if __name__ == "__main__":
 
         target_models.train_model(
             targetModel,
+            targetModelName,
             targetTrainData,
             targetTestData,
             config["targetModel"]["hyperparameters"])
         target_models.save_model(targetModelName, targetModel)
     else:
+        targetModelName: str = config["targetModel"]["name"]
         targetModel: target_models.KaggleModel = target_models.load_model(
             targetModelName)
 
