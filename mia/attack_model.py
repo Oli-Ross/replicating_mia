@@ -15,6 +15,7 @@ from tensorflow import keras
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.python.framework import random_seed
 from tensorflow.keras.activations import relu  # pyright: ignore
+from tensorflow.keras.initializers import he_normal  # pyright: ignore
 from tensorflow.keras.layers import Dense, InputLayer, Softmax  # pyright: ignore
 from tensorflow.keras import Sequential  # pyright: ignore
 
@@ -45,9 +46,11 @@ class KaggleAttackModel(Sequential):
     def __init__(self, numClasses: int) -> None:
         super().__init__()
         activation = relu
+        initializer = he_normal
         self.add(InputLayer(input_shape=(numClasses)))
-        self.add(Dense(64, activation=activation))
-        self.add(Dense(2))
+        self.add(Dense(64, activation=activation,
+                 kernel_initializer=initializer))
+        self.add(Dense(2, kernel_initializer=initializer))
         self.add(Softmax())
 
 
