@@ -46,11 +46,14 @@ TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physic
 
 ## Usage
 
-For each step of the MIA pipeline, there's one module:
+The code is split into submodules:
 1. `mia/download`: Download datasets
 2. `mia/datasets`: Data preprocessing
-3. `mia/?`: Victim model training
-4. `mia/?`: Launch MIA
+3. `mia/configuration`: Parse config YAML file
+4. `mia/target_models`: Target model definition
+5. `mia/attack_model`: Attack model definition
+6. `mia/attack_data`: Generate shadow data from original data
+7. `mia/shadow_data`: Generate shadow data using paper's methods
 
 Refer to the documentation of each module on how to use it. 
 An example script, which ties the modules together is given at `mia/main.py`.
