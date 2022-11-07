@@ -13,8 +13,6 @@ import attack_model
 import shadow_data
 import attack_data
 import configuration as con
-import tensorflow as tf
-from os.path import join
 
 
 def parse_args() -> Dict:
@@ -75,15 +73,9 @@ if __name__ == "__main__":
     targetTrainSize: int = config["targetDataset"]["trainSize"]
     targetModelName: str = f"lr_{targetLearningRate}_bs_{targetBatchSize}_epochs_{targetEpochs}_trainsize_{targetTrainSize}"
 
-    targetModelType: str = config["targetModel"]["type"]
     if config["actions"]["trainTarget"]:
-        if targetModelType == "kaggle":
-            targetModel: target_models.KaggleModel = target_models.KaggleModel(
-                config["targetModel"]["classes"])
-        elif targetModelType == "cifar":
-            targetModel: target_models.KaggleModel = target_models.CifarModel()
-        else:
-            raise ValueError(f"{targetModelType} not known model type.")
+        targetModel: target_models.KaggleModel = target_models.KaggleModel(
+            config["targetModel"]["classes"])
 
         target_models.train_model(
             targetModel,
@@ -101,54 +93,58 @@ if __name__ == "__main__":
     if config["actions"]["testTarget"]:
         result = target_models.evaluate_model(targetModel, targetTestData)
 
-    # Generate shadow data
-    # (Skipped for now)
-    #  my_shadow_data = shadow_data.generate_shadow_data_model(model, size=3)
-
-    # Train shadow models
-    # (Skipped for now)
+    label_range = range(29, 99)
 
     # Generate attack data
-    label: int = 18
     attackDataName = config["attackDataset"]["name"]
-    attackDataNameTest = attackDataName + "_test"
-    attackDataNameTrain = attackDataName + "_train"
 
     if config["actions"]["generateAttackData"]:
-        attackTrainData, attackTestData = attack_data.from_target_data(
-            targetTrainData, targetTestData, targetModel, label)
-        # Save
-        datasets.save_attack(attackTrainData, attackDataNameTrain)
-        datasets.save_attack(attackTestData, attackDataNameTest)
-    else:
-        # Load
-        attackTestData = datasets.load_attack(attackDataNameTest)
-        attackTrainData = datasets.load_attack(attackDataNameTrain)
+        for label in label_range:
+            try:
+                attackTrainData, attackTestData = attack_data.from_target_data(
+                    targetTrainData, targetTestData, targetModel, label)
+            except BaseException:
+                continue
+            # Save
+            attackDataNameTest = attackDataName + "_test" + f"_label_{label}"
+            attackDataNameTrain = attackDataName + "_train" + f"_label_{label}"
+            datasets.save_attack(attackTrainData, attackDataNameTrain)
+            datasets.save_attack(attackTestData, attackDataNameTest)
 
     # Set up attack model
-
     epochs: int = config["attackModel"]["hyperparameters"]["epochs"]
     batchSize: int = config["attackModel"]["hyperparameters"]["batchSize"]
     learningRate: float = config["attackModel"]["hyperparameters"]["learningRate"]
-    attackModelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}"
 
+    accs = []
     if config["actions"]["trainAttack"]:
-        if targetModelType == "kaggle":
+        for label in label_range:
+            attackDataNameTest = attackDataName + \
+                "_test" + f"_label_{label}"
+            attackDataNameTrain = attackDataName + \
+                "_train" + f"_label_{label}"
+
+            try:
+                attackTestData = datasets.load_attack(attackDataNameTest)
+                attackTrainData = datasets.load_attack(attackDataNameTrain)
+            except BaseException:
+                print(f"Aborting for label {label}.")
+                continue
+            attackModelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}_label{label}"
             attackModel = attack_model.KaggleAttackModel(
                 config["targetModel"]["classes"])
-            attack_model.train_model(
-                attackModel,
-                attackModelName,
-                attackTrainData,
-                attackTestData,
-                config["attackModel"]["hyperparameters"])
-            attack_model.save_model(attackModelName, attackModel)
-        else:
-            raise NotImplementedError
+            try:
+                attack_model.train_model(
+                    attackModel,
+                    attackModelName,
+                    attackTrainData,
+                    attackTestData,
+                    config["attackModel"]["hyperparameters"])
+            except BaseException:
+                print(f"Aborting for label {label}.")
+                continue
+            #  attack_model.save_model(attackModelName, attackModel)
+            #  attack_model.evaluate_model(attackModel, attackTestData)
     else:
         attackModelName: str = config["attackModel"]["name"]
         attackModel = attack_model.load_model(attackModelName)
-
-    # Launch MIA attack
-    if config["actions"]["testAttack"]:
-        resultAttack = attack_model.evaluate_model(attackModel, attackTestData)
