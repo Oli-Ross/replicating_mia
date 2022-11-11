@@ -93,7 +93,7 @@ if __name__ == "__main__":
     if config["actions"]["testTarget"]:
         result = target_models.evaluate_model(targetModel, targetTestData)
 
-    label_range = range(29, 99)
+    label_range = range(0, 100)
 
     # Generate attack data
     attackDataName = config["attackDataset"]["name"]
