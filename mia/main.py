@@ -51,14 +51,7 @@ def parse_config() -> Dict:
     return config
 
 
-if __name__ == "__main__":
-
-    # Meta/Preparing
-    config = parse_config()
-    set_seeds(config["seed"])
-
-    # Download datasets
-    download.download_all_datasets()
+def set_up_target_data(config: Dict):
 
     # Load + split dataset for training
     targetDataset = datasets.load_dataset(config["targetDataset"]["name"])
@@ -70,6 +63,11 @@ if __name__ == "__main__":
 
     if config["targetDataset"]["shuffle"]:
         targetTrainData = datasets.shuffle_dataset(targetTrainData, trainSize)
+
+    return targetTrainData, targetTestData
+
+
+def set_up_target_model(config: Dict, targetTrainData, targetTestData):
 
     # Construct target model
     targetEpochs: int = config["targetModel"]["hyperparameters"]["epochs"]
@@ -96,60 +94,90 @@ if __name__ == "__main__":
 
     # Evaluate target model
     if config["actions"]["testTarget"]:
-        result = target_models.evaluate_model(targetModel, targetTestData)
+        target_models.evaluate_model(targetModel, targetTestData)
+
+    return targetModel
+
+
+def train_attack_model(config: Dict, attackDataName: str, label_range):
+
+    for label in label_range:
+        attackDataNameTest = attackDataName + "_test" + f"_label_{label}"
+        attackDataNameTrain = attackDataName + "_train" + f"_label_{label}"
+
+        try:
+            attackTestData = datasets.load_attack(attackDataNameTest)
+            attackTrainData = datasets.load_attack(attackDataNameTrain)
+        except BaseException:
+            print(f"Aborting for label {label}.")
+            continue
+        epochs: int = config["attackModel"]["hyperparameters"]["epochs"]
+        batchSize: int = config["attackModel"]["hyperparameters"]["batchSize"]
+        learningRate: float = config["attackModel"]["hyperparameters"]["learningRate"]
+        attackModelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}_label{label}"
+        attackModel = attack_model.KaggleAttackModel(
+            config["targetModel"]["classes"])
+        try:
+            attack_model.train_model(
+                attackModel,
+                attackModelName,
+                attackTrainData,
+                attackTestData,
+                config["attackModel"]["hyperparameters"])
+        except BaseException:
+            print(f"Aborting for label {label}.")
+            continue
+        #  attack_model.save_model(attackModelName, attackModel)
+        #  attack_model.evaluate_model(attackModel, attackTestData)
+
+
+def load_attack_model(config: Dict):
+    attackModelName: str = config["attackModel"]["name"]
+    return attack_model.load_model(attackModelName)
+
+
+def generate_attack_data(attackDataName,
+                         label_range, targetTrainData, targetTestData, targetModel):
+    for label in label_range:
+        try:
+            attackTrainData, attackTestData = attack_data.from_target_data(
+                targetTrainData, targetTestData, targetModel, label)
+        except BaseException:
+            continue
+        # Save
+        attackDataNameTest = attackDataName + "_test" + f"_label_{label}"
+        attackDataNameTrain = attackDataName + "_train" + f"_label_{label}"
+        datasets.save_attack(attackTrainData, attackDataNameTrain)
+        datasets.save_attack(attackTestData, attackDataNameTest)
+
+
+def main():
+
+    config = parse_config()
+    set_seeds(config["seed"])
+
+    download.download_all_datasets()
+
+    targetTrainData, targetTestData = set_up_target_data(config)
+    targetModel = set_up_target_model(config, targetTrainData, targetTestData)
 
     label_range = range(0, 100)
 
-    # Generate attack data
     attackDataName = config["attackDataset"]["name"]
 
     if config["actions"]["generateAttackData"]:
-        for label in label_range:
-            try:
-                attackTrainData, attackTestData = attack_data.from_target_data(
-                    targetTrainData, targetTestData, targetModel, label)
-            except BaseException:
-                continue
-            # Save
-            attackDataNameTest = attackDataName + "_test" + f"_label_{label}"
-            attackDataNameTrain = attackDataName + "_train" + f"_label_{label}"
-            datasets.save_attack(attackTrainData, attackDataNameTrain)
-            datasets.save_attack(attackTestData, attackDataNameTest)
+        generate_attack_data(
+            attackDataName,
+            label_range,
+            targetTrainData,
+            targetTestData,
+            targetModel)
 
-    # Set up attack model
-    epochs: int = config["attackModel"]["hyperparameters"]["epochs"]
-    batchSize: int = config["attackModel"]["hyperparameters"]["batchSize"]
-    learningRate: float = config["attackModel"]["hyperparameters"]["learningRate"]
-
-    accs = []
     if config["actions"]["trainAttack"]:
-        for label in label_range:
-            attackDataNameTest = attackDataName + \
-                "_test" + f"_label_{label}"
-            attackDataNameTrain = attackDataName + \
-                "_train" + f"_label_{label}"
-
-            try:
-                attackTestData = datasets.load_attack(attackDataNameTest)
-                attackTrainData = datasets.load_attack(attackDataNameTrain)
-            except BaseException:
-                print(f"Aborting for label {label}.")
-                continue
-            attackModelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}_label{label}"
-            attackModel = attack_model.KaggleAttackModel(
-                config["targetModel"]["classes"])
-            try:
-                attack_model.train_model(
-                    attackModel,
-                    attackModelName,
-                    attackTrainData,
-                    attackTestData,
-                    config["attackModel"]["hyperparameters"])
-            except BaseException:
-                print(f"Aborting for label {label}.")
-                continue
-            #  attack_model.save_model(attackModelName, attackModel)
-            #  attack_model.evaluate_model(attackModel, attackTestData)
+        train_attack_model(config, attackDataName, label_range)
     else:
-        attackModelName: str = config["attackModel"]["name"]
-        attackModel = attack_model.load_model(attackModelName)
+        attackModel = load_attack_model(config)
+
+
+if __name__ == "__main__":
+    main()
