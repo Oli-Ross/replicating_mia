@@ -2,6 +2,7 @@ import argparse
 from typing import Dict
 
 from os import environ
+from os.path import isabs
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
@@ -36,8 +37,12 @@ def set_seeds(seed: int):
 
 def parse_config() -> Dict:
     options = parse_args()
+    configFile = options["config"]
     try:
-        config = con.from_rel_path(options["config"])
+        if isabs(configFile):
+            config = con.from_abs_path(configFile)
+        else:
+            config = con.from_rel_path(configFile)
         name = config["name"]
         print(f"Using configuration \"{name}\"")
     except BaseException:
