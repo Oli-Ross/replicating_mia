@@ -61,12 +61,12 @@ if __name__ == "__main__":
     download.download_all_datasets()
 
     # Load + split dataset for training
-    dataset = datasets.load_dataset(config["targetDataset"]["name"])
+    targetDataset = datasets.load_dataset(config["targetDataset"]["name"])
     trainSize: int = config["targetDataset"]["trainSize"]
     testSize: int = config["targetDataset"]["testSize"]
 
-    targetTrainData, targetTestData = dataset.take(
-        trainSize), dataset.skip(trainSize).take(testSize)
+    targetTrainData, targetTestData = targetDataset.take(
+        trainSize), targetDataset.skip(trainSize).take(testSize)
 
     if config["targetDataset"]["shuffle"]:
         targetTrainData = datasets.shuffle_dataset(targetTrainData, trainSize)
