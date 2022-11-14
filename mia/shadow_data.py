@@ -127,7 +127,6 @@ def _generate_synthetic_record(
     # TODO: Query target model
     prediction = targetModel.predict(features, batch_size=1)
 
-    # TODO: Randomize some features
     features = _randomize_features(features, k)
 
     # Placeholder
