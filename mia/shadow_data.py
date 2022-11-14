@@ -114,19 +114,21 @@ def _generate_synthetic_record(label: int, numFeatures: int) -> NDArray:
     return features
 
 
-def hill_climbing(target_model: Sequential, size: int,
+def hill_climbing(target_model: Sequential, numRecords: int,
                   hyperpars: Dict) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
     for randomly sampled records, in order to find those that are classified
     with high confidence.
+
+    `numRecords`: size of generated dataset
     """
     numClasses: int = hyperpars["numClasses"]
     numFeatures: int = hyperpars["numClasses"]
 
     # Generate an array of labels, determining which class to synthesize for
-    labels: NDArray = _generate_labels(numClasses, size)
-    features: NDArray = np.zeros((size, numFeatures))
+    labels: NDArray = _generate_labels(numClasses, numRecords)
+    features: NDArray = np.zeros((numRecords, numFeatures))
 
     for index, label in enumerate(labels):
         features[index] = _generate_synthetic_record(label, numFeatures)
