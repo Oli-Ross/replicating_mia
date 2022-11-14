@@ -114,15 +114,16 @@ def _generate_synthetic_record(
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
     """
+    assert label < 100 and label >= 0
 
+    # Init
     numFeatures: int = 600
     k = hyperpars["k_max"]
 
-    assert label < 100 and label >= 0
-
-    # Initialize record randomly
-    features = np.repeat(0, numFeatures)
+    # Initialize first record randomly
+    features = np.repeat([0, 1], int(numFeatures / 2))
     features = features.reshape((1, numFeatures))
+    features = np.random.default_rng(global_seed).permutation(features, axis=1)
 
     # TODO: Query target model
     prediction = targetModel.predict(features, batch_size=1)
