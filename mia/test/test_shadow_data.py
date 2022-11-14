@@ -2,6 +2,7 @@ from numpy.testing import assert_equal
 import shadow_data as sd
 import numpy as np
 sd.set_seed(1234)
+# Magic numbers (and arrays) come from seeded RNG, should hopefully be portable
 
 
 class TestHillClimbing():
@@ -36,4 +37,9 @@ class TestHillClimbing():
         assert b[0, 0] == 1
         assert b[0, 11] == 1
         assert b[0, 74] == 1
-        # Magic numbers in the assert statements come from seeded RNG
+
+    def test__get_random_record(self):
+        a = sd._get_random_record(20)
+        b = np.array([1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+                     0, 1, 0, 1, 1, 1, 0]).reshape((1, 20))
+        assert_equal(a, b)
