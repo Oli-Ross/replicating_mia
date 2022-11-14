@@ -125,7 +125,6 @@ def _generate_synthetic_record(
     features = features.reshape((1, numFeatures))
     features = np.random.default_rng(global_seed).permutation(features, axis=1)
 
-    # TODO: Query target model
     prediction = targetModel.predict(features, batch_size=1)
 
     features = _randomize_features(features, k)
