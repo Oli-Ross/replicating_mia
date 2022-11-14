@@ -96,7 +96,8 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     return labels
 
 
-def _generate_synthetic_record(label: int, hyperpars: Dict) -> NDArray:
+def _generate_synthetic_record(
+        label: int, targetModel: Sequential, hyperpars: Dict) -> NDArray:
     """
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -104,18 +105,19 @@ def _generate_synthetic_record(label: int, hyperpars: Dict) -> NDArray:
     numFeatures: int = 600
 
     assert label < 100 and label >= 0
-    # TODO: Set desired class
-    # TODO: Initialize record randomly
+
+    # Initialize record randomly
+    features = np.repeat(0, numFeatures)
+    features = features.reshape((1, numFeatures))
+
     # TODO: Query target model
     # TODO: Randomize some features
 
     # Placeholder
-    features = np.repeat(label, numFeatures)
-    features = features.reshape((1, numFeatures))
     return features
 
 
-def hill_climbing(target_model: Sequential, numRecords: int,
+def hill_climbing(targetModel: Sequential, numRecords: int,
                   hyperpars: Union[Dict, None] = None) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
@@ -143,7 +145,8 @@ def hill_climbing(target_model: Sequential, numRecords: int,
     features: NDArray = np.zeros((numRecords, numFeatures))
 
     for index, label in enumerate(labels):
-        features[index] = _generate_synthetic_record(label, hyperpars)
+        features[index] = _generate_synthetic_record(
+            label, targetModel, hyperpars)
 
     print(features)
 
