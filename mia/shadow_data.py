@@ -96,7 +96,8 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     return labels
 
 
-def _generate_synthetic_record(label: int, numFeatures: int) -> NDArray:
+def _generate_synthetic_record(
+        label: int, numFeatures: int, hyperpars: Dict) -> NDArray:
     """
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -131,7 +132,8 @@ def hill_climbing(target_model: Sequential, numRecords: int,
     features: NDArray = np.zeros((numRecords, numFeatures))
 
     for index, label in enumerate(labels):
-        features[index] = _generate_synthetic_record(label, numFeatures)
+        features[index] = _generate_synthetic_record(label,
+                                                     numFeatures, hyperpars)
 
     print(features)
 
