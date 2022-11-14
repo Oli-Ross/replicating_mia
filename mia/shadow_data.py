@@ -116,16 +116,24 @@ def _generate_synthetic_record(
 
 
 def hill_climbing(target_model: Sequential, numRecords: int,
-                  hyperpars: Dict) -> Dataset:
+                  hyperpars: Dict | None = None) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
     for randomly sampled records, in order to find those that are classified
     with high confidence.
 
     `numRecords`: size of generated dataset
+    `hyperpars` has the following keys (taken from the paper:
+    k_max,k_min,y_c_star,rej_max,conf_min)
     """
     numClasses: int = 100
     numFeatures: int = 600
+    if hyperpars is None:
+        hyperpars = {"k_max": 30,
+                     "k_min": 5,
+                     "y_c_star": 0.8,
+                     "rej_max": 10,
+                     "conf_min": 0.5}
 
     # Generate an array of labels, determining which class to synthesize for
     labels: NDArray = _generate_labels(numClasses, numRecords)
@@ -141,8 +149,7 @@ def hill_climbing(target_model: Sequential, numRecords: int,
 
 
 if __name__ == "__main__":
-    size = 10
     import target_models
     model: target_models.KaggleModel = target_models.load_model("test")
-    my_shadow_data = hill_climbing(model, size=size)
+    my_shadow_data = hill_climbing(model, 10)
     print(tf.data.DatasetSpec.from_value(my_shadow_data))
