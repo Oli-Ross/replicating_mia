@@ -121,11 +121,11 @@ def hill_climbing(target_model: Sequential, size: int,
     for randomly sampled records, in order to find those that are classified
     with high confidence.
     """
-    classes: int = 4  # TODO: placeholder
-    numFeatures: int = 5  # TODO: placeholder
+    numClasses: int = hyperpars["numClasses"]
+    numFeatures: int = hyperpars["numClasses"]
 
     # Generate an array of labels, determining which class to synthesize for
-    labels: NDArray = _generate_labels(classes, size)
+    labels: NDArray = _generate_labels(numClasses, size)
     features: NDArray = np.zeros((size, numFeatures))
 
     for index, label in enumerate(labels):
