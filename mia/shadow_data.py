@@ -96,12 +96,12 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     return labels
 
 
-def _generate_synthetic_record(
-        label: int, numFeatures: int, hyperpars: Dict) -> NDArray:
+def _generate_synthetic_record(label: int, hyperpars: Dict) -> NDArray:
     """
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
     """
+    numFeatures: int = 600
 
     assert label < 100 and label >= 0
     # TODO: Set desired class
@@ -126,8 +126,6 @@ def hill_climbing(target_model: Sequential, numRecords: int,
     `hyperpars` has the following keys (taken from the paper:
     k_max,k_min,y_c_star,rej_max,conf_min)
     """
-    numClasses: int = 100
-    numFeatures: int = 600
     if hyperpars is None:
         hyperpars = {"k_max": 30,
                      "k_min": 5,
@@ -136,12 +134,16 @@ def hill_climbing(target_model: Sequential, numRecords: int,
                      "conf_min": 0.5}
 
     # Generate an array of labels, determining which class to synthesize for
+    # TODO: just append newly generated data (since algorithm can also fail)
+
+    numClasses: int = 100
     labels: NDArray = _generate_labels(numClasses, numRecords)
+
+    numFeatures: int = 600
     features: NDArray = np.zeros((numRecords, numFeatures))
 
     for index, label in enumerate(labels):
-        features[index] = _generate_synthetic_record(label,
-                                                     numFeatures, hyperpars)
+        features[index] = _generate_synthetic_record(label, hyperpars)
 
     print(features)
 
