@@ -108,29 +108,60 @@ def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
     return data
 
 
+def _get_random_record(numFeatures: int):
+    # TODO: since RNG inside function, always same record on each invocation.
+    # Good for this use case?
+    randomGen = np.random.default_rng(global_seed)
+    x = np.repeat(1, numFeatures)
+    for i in range(numFeatures):
+        x[i] = randomGen.integers(0, 1, endpoint=True)
+    x = x.reshape((1, numFeatures))
+    return x
+
+
 def _generate_synthetic_record(
-        label: int, targetModel: Sequential, hyperpars: Dict) -> NDArray:
+        label: int, targetModel: Sequential, hyperpars: Dict) -> Union[NDArray, None]:
     """
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
     """
     assert label < 100 and label >= 0
 
-    # Init
+    # Initalization
+    randomGen = np.random.default_rng(global_seed)
     numFeatures: int = 600
     k = hyperpars["k_max"]
+    k_min = hyperpars["k_max"]
+    conf_min = hyperpars["conf_min"]
+    rej_max = hyperpars["rej_max"]
+    y_c_star = 0
+    j = 0
+    x = _get_random_record(numFeatures)
+    x_star = x
 
-    # Initialize first record randomly
-    features = np.repeat([0, 1], int(numFeatures / 2))
-    features = features.reshape((1, numFeatures))
-    features = np.random.default_rng(global_seed).permutation(features, axis=1)
+    # Controls number of iterations
+    for i in range(100):
 
-    prediction = targetModel.predict(features, batch_size=1)
+        prediction = targetModel.predict(x, batch_size=1)
+        y_c = np.max(prediction, axis=1)[0]
+        predictedClass = np.argmax(prediction, axis=1)[0]
 
-    features = _randomize_features(features, k)
+        if y_c >= y_c_star:
+            if y_c > conf_min and predictedClass == label:
+                if y_c > randomGen.random():
+                    return x
 
-    # Placeholder
-    return features
+            x_star = x
+            y_c_star = y_c
+            j = 0
+        else:
+            j = j + 1
+            if j > rej_max:
+                k = max(k_min, np.ceil(k / 2))
+                j = 0
+        x = _randomize_features(x_star, k)
+
+    return None
 
 
 def hill_climbing(targetModel: Sequential, numRecords: int,
