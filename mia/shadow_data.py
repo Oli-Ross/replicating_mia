@@ -138,7 +138,7 @@ def _generate_synthetic_record(
     x_star = x
 
     # Controls number of iterations
-    for i in range(100):
+    for i in range(200):
 
         prediction = targetModel.predict(x, batch_size=1)
         y_c = np.max(prediction, axis=1)[0]
@@ -158,6 +158,7 @@ def _generate_synthetic_record(
                 k = max(k_min, np.ceil(k / 2))
                 j = 0
         x = _randomize_features(x_star, k)
+        print(f"Label {label}, got {predictedClass},y_c = {y_c}")
 
     return None
 
@@ -174,13 +175,14 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
     k_max,k_min,y_c_star,rej_max,conf_min)
     """
     if hyperpars is None:
-        hyperpars = {"k_max": 30,
+        hyperpars = {"k_max": 200,
                      "k_min": 5,
-                     "rej_max": 10,
-                     "conf_min": 0.5}
+                     "rej_max": 20,
+                     "conf_min": 0.05}
 
     # Generate an array of labels, determining which class to synthesize for
-    # TODO: just append newly generated data (since algorithm can also fail)
+    # TODO: initializing and then changing `features` array might not be most
+    # efficient solution
 
     numClasses: int = 100
     labels: NDArray = _generate_labels(numClasses, numRecords)
@@ -189,9 +191,15 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
     features: NDArray = np.zeros((numRecords, numFeatures))
 
     for index, label in enumerate(labels):
-        features[index] = _generate_synthetic_record(
-            label, targetModel, hyperpars)
+        label = int(label[0])
+        new_record = _generate_synthetic_record(label, targetModel, hyperpars)
+        while new_record is None:
+            new_record = _generate_synthetic_record(
+                label, targetModel, hyperpars)
+        features[index] = new_record.reshape((1, numFeatures))
 
+    features = features.reshape((numRecords, numFeatures))
+    labels = labels.reshape((numRecords, 1))
     return Dataset.from_tensor_slices((features, labels))
 
 
@@ -201,4 +209,9 @@ if __name__ == "__main__":
     model: tm.KaggleModel = tm.load_model(
         "lr_1e-3_bs_100_epochs_200_trainsize_10000")
 
-    hill_climbing(model, 1)
+    size = 2
+    shadow_data = hill_climbing(model, size)
+    for elem in shadow_data.as_numpy_iterator():
+        print(elem[0].shape)
+        print(elem[1].shape)
+    model.predict(shadow_data, batch_size=size)
