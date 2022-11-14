@@ -98,9 +98,9 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     return labels
 
 
-def _randomize_features(data: NDArray, k: int):
+def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
 
-    featuresToFlip = random.sample(range(600), k)
+    featuresToFlip = random.sample(range(numFeatures), k)
 
     for index in featuresToFlip:
         data[0, index] = (data[0, index] + 1) % 2
