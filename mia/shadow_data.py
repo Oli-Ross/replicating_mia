@@ -168,6 +168,9 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
 
 if __name__ == "__main__":
-    import target_models
-    model: target_models.KaggleModel = target_models.load_model("test")
-    my_shadow_data = hill_climbing(model, 10)
+    set_seed(1234)
+    import target_models as tm
+    model: tm.KaggleModel = tm.load_model(
+        "lr_1e-3_bs_100_epochs_200_trainsize_10000")
+
+    hill_climbing(model, 1)
