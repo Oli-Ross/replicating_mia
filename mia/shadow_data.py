@@ -8,6 +8,7 @@ from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
 from typing import Dict, Union
+import random
 import numpy as np
 
 # Tensorflow C++ backend logging verbosity
@@ -29,6 +30,7 @@ def set_seed(new_seed: int):
     global global_seed
     global_seed = new_seed
     np.random.seed(global_seed)
+    random.seed(global_seed)
     random_seed.set_seed(global_seed)
 
 
@@ -96,13 +98,25 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     return labels
 
 
+def _randomize_features(data: NDArray, k: int):
+
+    featuresToFlip = random.sample(range(600), k)
+
+    for index in featuresToFlip:
+        data[0, index] = (data[0, index] + 1) % 2
+
+    return data
+
+
 def _generate_synthetic_record(
         label: int, targetModel: Sequential, hyperpars: Dict) -> NDArray:
     """
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
     """
+
     numFeatures: int = 600
+    k = hyperpars["k_max"]
 
     assert label < 100 and label >= 0
 
@@ -111,7 +125,10 @@ def _generate_synthetic_record(
     features = features.reshape((1, numFeatures))
 
     # TODO: Query target model
+    prediction = targetModel.predict(features, batch_size=1)
+
     # TODO: Randomize some features
+    features = _randomize_features(features, k)
 
     # Placeholder
     return features
