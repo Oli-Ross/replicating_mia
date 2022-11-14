@@ -148,8 +148,6 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
         features[index] = _generate_synthetic_record(
             label, targetModel, hyperpars)
 
-    print(features)
-
     return Dataset.from_tensor_slices((features, labels))
 
 
@@ -157,4 +155,3 @@ if __name__ == "__main__":
     import target_models
     model: target_models.KaggleModel = target_models.load_model("test")
     my_shadow_data = hill_climbing(model, 10)
-    print(tf.data.DatasetSpec.from_value(my_shadow_data))
