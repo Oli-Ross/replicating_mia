@@ -20,6 +20,7 @@ from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.keras import Sequential  # pyright: ignore
 
 global_seed: int = 1234
+globalRandomGen = np.random.default_rng(global_seed)
 
 
 def set_seed(new_seed: int):
@@ -109,12 +110,9 @@ def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
 
 
 def _get_random_record(numFeatures: int):
-    # TODO: since RNG inside function, always same record on each invocation.
-    # Good for this use case?
-    randomGen = np.random.default_rng(global_seed)
     x = np.repeat(1, numFeatures)
     for i in range(numFeatures):
-        x[i] = randomGen.integers(0, 1, endpoint=True)
+        x[i] = globalRandomGen.integers(0, 1, endpoint=True)
     x = x.reshape((1, numFeatures))
     return x
 
