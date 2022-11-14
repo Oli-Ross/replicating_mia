@@ -147,7 +147,6 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
     if hyperpars is None:
         hyperpars = {"k_max": 30,
                      "k_min": 5,
-                     "y_c_star": 0.8,
                      "rej_max": 10,
                      "conf_min": 0.5}
 
