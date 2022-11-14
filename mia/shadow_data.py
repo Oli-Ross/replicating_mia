@@ -7,7 +7,7 @@
 from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
-from typing import Dict
+from typing import Dict, Union
 import numpy as np
 
 # Tensorflow C++ backend logging verbosity
@@ -116,7 +116,7 @@ def _generate_synthetic_record(
 
 
 def hill_climbing(target_model: Sequential, numRecords: int,
-                  hyperpars: Dict | None = None) -> Dataset:
+                  hyperpars: Union[Dict, None] = None) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
     for randomly sampled records, in order to find those that are classified
