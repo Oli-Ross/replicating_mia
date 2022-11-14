@@ -124,8 +124,8 @@ def hill_climbing(target_model: Sequential, numRecords: int,
 
     `numRecords`: size of generated dataset
     """
-    numClasses: int = hyperpars["numClasses"]
-    numFeatures: int = hyperpars["numClasses"]
+    numClasses: int = 100
+    numFeatures: int = 600
 
     # Generate an array of labels, determining which class to synthesize for
     labels: NDArray = _generate_labels(numClasses, numRecords)
