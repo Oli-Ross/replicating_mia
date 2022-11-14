@@ -113,8 +113,7 @@ def _generate_synthetic_record(label: int, numFeatures: int) -> NDArray:
     return features
 
 
-def generate_shadow_data_model(
-        target_model: Sequential, size: int = 10) -> Dataset:
+def hill_climbing(target_model: Sequential, size: int = 10) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
     for randomly sampled records, in order to find those that are classified
@@ -139,5 +138,5 @@ if __name__ == "__main__":
     size = 10
     import target_models
     model: target_models.KaggleModel = target_models.load_model("test")
-    my_shadow_data = generate_shadow_data_model(model, size=size)
+    my_shadow_data = hill_climbing(model, size=size)
     print(tf.data.DatasetSpec.from_value(my_shadow_data))
