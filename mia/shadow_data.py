@@ -117,8 +117,13 @@ def _get_random_record(numFeatures: int):
     return x
 
 
-def _generate_synthetic_record(
-        label: int, targetModel: Sequential, hyperpars: Dict) -> Union[NDArray, None]:
+def _generate_synthetic_record(label: int,
+                               targetModel: Sequential,
+                               k_max: int = 200,
+                               k_min: int = 5,
+                               conf_min: float = 0.05,
+                               rej_max: int = 20,
+                               iter_max: int = 200) -> Union[NDArray, None]:
     """
     Generate a synthesize data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -127,11 +132,7 @@ def _generate_synthetic_record(
 
     # Initalization
     numFeatures: int = 600
-    k = hyperpars["k_max"]
-    k_min = hyperpars["k_min"]
-    conf_min = hyperpars["conf_min"]
-    rej_max = hyperpars["rej_max"]
-    iter_max = hyperpars["iter_max"]
+    k = k_max
     y_c_star = 0
     j = 0
     x = _get_random_record(numFeatures)
@@ -163,7 +164,7 @@ def _generate_synthetic_record(
 
 
 def hill_climbing(targetModel: Sequential, numRecords: int,
-                  hyperpars: Union[Dict, None] = None) -> Dataset:
+                  **hyperpars) -> Dataset:
     """
     Generate synthetic data for the shadow models by querying the target model
     for randomly sampled records, in order to find those that are classified
@@ -171,14 +172,8 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
     `numRecords`: size of generated dataset
     `hyperpars` has the following keys (taken from the paper:
-    k_max,k_min,y_c_star,rej_max,conf_min)
+    k_max,k_min,rej_max,conf_min,iter_max)
     """
-    if hyperpars is None:
-        hyperpars = {"k_max": 200,
-                     "k_min": 5,
-                     "rej_max": 20,
-                     "conf_min": 0.05,
-                     "iter_max": 200}
 
     # Generate an array of labels, determining which class to synthesize for
     # TODO: initializing and then changing `features` array might not be most
@@ -192,10 +187,11 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
     for index, label in enumerate(labels):
         label = int(label[0])
-        new_record = _generate_synthetic_record(label, targetModel, hyperpars)
+        new_record = _generate_synthetic_record(
+            label, targetModel, **hyperpars)
         while new_record is None:
             new_record = _generate_synthetic_record(
-                label, targetModel, hyperpars)
+                label, targetModel, **hyperpars)
         features[index] = new_record.reshape((1, numFeatures))
 
     features = features.reshape((numRecords, numFeatures))
