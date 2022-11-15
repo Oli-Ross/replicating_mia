@@ -30,11 +30,11 @@ attackDataset:
 
 shadowData:
   hyperparameters:
-    k_max: 200
-    k_min: 5
-    conf_min: 0.05
-    rej_max: 20
-    iter_max: 200
+    k_max: 128
+    k_min: 4
+    conf_min: 0.2
+    rej_max: 10
+    iter_max: 500
 
 targetDataset:
   name: kaggle
