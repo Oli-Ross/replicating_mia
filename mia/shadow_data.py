@@ -103,8 +103,7 @@ def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
 
     featuresToFlip = random.sample(range(numFeatures), k)
 
-    for index in featuresToFlip:
-        data[0, index] = (data[0, index] + 1) % 2
+    data[0][featuresToFlip] ^= 1
 
     return data
 
