@@ -141,9 +141,9 @@ def _generate_synthetic_record(
     # Controls number of iterations
     for i in range(iter_max):
 
-        prediction = targetModel.predict(x, batch_size=1)
-        y_c = np.max(prediction, axis=1)[0]
-        predictedClass = np.argmax(prediction, axis=1)[0]
+        y = targetModel.predict(x, batch_size=1)
+        y_c = np.max(y, axis=1)[0]
+        predictedClass = np.argmax(y, axis=1)[0]
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
