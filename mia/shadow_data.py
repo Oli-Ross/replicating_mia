@@ -132,13 +132,14 @@ def _generate_synthetic_record(
     k_min = hyperpars["k_min"]
     conf_min = hyperpars["conf_min"]
     rej_max = hyperpars["rej_max"]
+    iter_max = hyperpars["iter_max"]
     y_c_star = 0
     j = 0
     x = _get_random_record(numFeatures)
     x_star = x
 
     # Controls number of iterations
-    for i in range(200):
+    for i in range(iter_max):
 
         prediction = targetModel.predict(x, batch_size=1)
         y_c = np.max(prediction, axis=1)[0]
@@ -178,7 +179,8 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
         hyperpars = {"k_max": 200,
                      "k_min": 5,
                      "rej_max": 20,
-                     "conf_min": 0.05}
+                     "conf_min": 0.05,
+                     "iter_max": 200}
 
     # Generate an array of labels, determining which class to synthesize for
     # TODO: initializing and then changing `features` array might not be most
