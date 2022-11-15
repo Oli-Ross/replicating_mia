@@ -28,6 +28,14 @@ attackDataset:
   name: placeholder
   split: 0.8
 
+shadowData:
+  hyperparameters:
+    k_max: 200
+    k_min: 5
+    conf_min: 0.05
+    rej_max: 20
+    iter_max: 200
+
 targetDataset:
   name: kaggle
   trainSize: 10000

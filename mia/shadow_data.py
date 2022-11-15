@@ -202,12 +202,16 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 if __name__ == "__main__":
     set_seed(1234)
     import target_models as tm
-    model: tm.KaggleModel = tm.load_model(
-        "lr_1e-3_bs_100_epochs_200_trainsize_10000")
+    import configuration as con
 
-    size = 2
-    shadow_data = hill_climbing(model, size)
-    for elem in shadow_data.as_numpy_iterator():
+    config = con.from_name("example.yml")
+
+    hyperpars = config["shadowData"]["hyperparameters"]
+    model: tm.KaggleModel = tm.load_model(config["targetModel"]["name"])
+
+    shadowDataSize = 2
+    shadowData = hill_climbing(model, shadowDataSize, **hyperpars)
+    for elem in shadowData.as_numpy_iterator():
         print(elem[0].shape)
         print(elem[1].shape)
-    model.predict(shadow_data, batch_size=size)
+    model.predict(shadowData, batch_size=shadowDataSize)
