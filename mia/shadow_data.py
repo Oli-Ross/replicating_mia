@@ -141,7 +141,7 @@ def _generate_synthetic_record(label: int,
     for i in range(iter_max):
 
         y = targetModel.predict(x, batch_size=1)
-        y_c = np.max(y, axis=1)[0]
+        y_c = y[0][label]
         predictedClass = np.argmax(y, axis=1)[0]
 
         if y_c >= y_c_star:
