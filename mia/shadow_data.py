@@ -155,7 +155,7 @@ def _generate_synthetic_record(label: int,
         else:
             j = j + 1
             if j > rej_max:
-                k = max(k_min, np.ceil(k / 2))
+                k = int(max(k_min, np.ceil(k / 2)))
                 j = 0
         x = _randomize_features(x_star, k)  # pyright: ignore
         print(f"Label {label}, got {predictedClass},y_c = {y_c}")
