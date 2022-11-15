@@ -215,9 +215,5 @@ if __name__ == "__main__":
     hyperpars = config["shadowData"]["hyperparameters"]
     model: tm.KaggleModel = tm.load_model(config["targetModel"]["name"])
 
-    shadowDataSize = 2
+    shadowDataSize = 100
     shadowData = hill_climbing(model, shadowDataSize, **hyperpars)
-    for elem in shadowData.as_numpy_iterator():
-        print(elem[0].shape)
-        print(elem[1].shape)
-    model.predict(shadowData, batch_size=shadowDataSize)
