@@ -125,7 +125,7 @@ def _generate_synthetic_record(label: int,
                                rej_max: int = 20,
                                iter_max: int = 200) -> Union[NDArray, None]:
     """
-    Generate a synthesize data record, using Algorithm 1 from Shokri et als
+    Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
     """
     assert label < 100 and label >= 0
