@@ -140,12 +140,13 @@ def _generate_synthetic_record(label: int,
     # Controls number of iterations
     for i in range(iter_max):
 
-        y = targetModel.predict(x, batch_size=1)
+        y = targetModel.predict(x, batch_size=1, verbose=0)
         y_c = y[0][label]
         predictedClass = np.argmax(y, axis=1)[0]
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
+                print("Now sampling!")
                 if y_c > globalRandomGen.random():
                     return x
 
@@ -158,6 +159,9 @@ def _generate_synthetic_record(label: int,
                 k = int(max(k_min, np.ceil(k / 2)))
                 j = 0
         x = _randomize_features(x_star, k)  # pyright: ignore
+        if (i % 20) == 0:
+            print(
+                f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, class: {predictedClass}")
 
     return None
 
@@ -191,6 +195,9 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
         while new_record is None:
             new_record = _generate_synthetic_record(
                 label, targetModel, **hyperpars)
+        print(80 * "-")
+        print(20 * "-" + "Generated new record!" + 20 * "-")
+        print(80 * "-")
         features[index] = new_record.reshape((1, numFeatures))
 
     features = features.reshape((numRecords, numFeatures))
