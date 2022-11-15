@@ -59,6 +59,7 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     """
     Read the Kaggle dataset features and labels from disk into Numpy arrays.
     """
+    print("Reading Kaggle from raw file.")
     rawDataFile: str = join(dataDir, "kaggle", "raw_data")
     data: NDArray = np.loadtxt(rawDataFile, dtype=int, delimiter=',')
     labels: NDArray = data[:, 0]
