@@ -199,12 +199,12 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
 
 if __name__ == "__main__":
-    set_seed(1234)
     import target_models as tm
     import configuration as con
 
     config = con.from_name("example.yml")
 
+    set_seed(config["seed"])
     hyperpars = config["shadowData"]["hyperparameters"]
     model: tm.KaggleModel = tm.load_model(config["targetModel"]["name"])
 
