@@ -129,7 +129,7 @@ def _generate_synthetic_record(
     randomGen = np.random.default_rng(global_seed)
     numFeatures: int = 600
     k = hyperpars["k_max"]
-    k_min = hyperpars["k_max"]
+    k_min = hyperpars["k_min"]
     conf_min = hyperpars["conf_min"]
     rej_max = hyperpars["rej_max"]
     y_c_star = 0
