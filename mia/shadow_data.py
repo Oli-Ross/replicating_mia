@@ -126,7 +126,6 @@ def _generate_synthetic_record(
     assert label < 100 and label >= 0
 
     # Initalization
-    randomGen = np.random.default_rng(global_seed)
     numFeatures: int = 600
     k = hyperpars["k_max"]
     k_min = hyperpars["k_min"]
@@ -146,7 +145,7 @@ def _generate_synthetic_record(
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
-                if y_c > randomGen.random():
+                if y_c > globalRandomGen.random():
                     return x
 
             x_star = x
