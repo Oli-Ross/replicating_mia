@@ -1,6 +1,6 @@
 ---
 name: Example Configuration
-seed: 1234
+seed: 3333
 
 actions:
   trainTarget: no
@@ -17,7 +17,7 @@ attackModel:
     learningRate: 1e-2
 
 targetModel:
-  name: lr_1e-3_bs_100_epochs_200_trainsize_10000
+  name: target_train_311022
   classes: 100
   hyperparameters:
     epochs: 200
@@ -32,9 +32,9 @@ shadowData:
   hyperparameters:
     k_max: 128
     k_min: 4
-    conf_min: 0.2
+    conf_min: 0.01
     rej_max: 10
-    iter_max: 500
+    iter_max: 400
 
 targetDataset:
   name: kaggle
