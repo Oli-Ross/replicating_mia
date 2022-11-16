@@ -7,6 +7,7 @@
 from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
+from numpy.testing import assert_equal
 from typing import Dict, Union
 import random
 import numpy as np
@@ -115,6 +116,112 @@ def _get_random_record(numFeatures: int):
     return x.reshape((1, numFeatures))
 
 
+def _get_random_records(numFeatures: int, numRecords: int):
+
+    size = numFeatures * numRecords
+
+    x = globalRandomGen.integers(0, high=1, endpoint=True, size=size)
+
+    return x.reshape((numRecords, numFeatures))
+
+
+def _randomize_features_batched(
+        data: NDArray, k: int, batchSize: int, numFeatures: int = 600):
+
+    outputdata = np.repeat(
+        data,
+        batchSize,
+        axis=1).reshape(
+        numFeatures,
+        batchSize).transpose()
+
+    import numpy.testing as tt
+    tt.assert_equal(outputdata[0], data[0])
+    breakpoint()
+
+    featuresToFlip = np.repeat(0, batchSize * k).reshape(batchSize, k)
+
+    for i in range(batchSize):
+        featuresToFlip[i] = np.array(random.sample(range(numFeatures), k))
+
+    breakpoint()
+    outputdata[featuresToFlip, 0] ^= 1
+    breakpoint()
+
+    return outputdata
+
+
+def _rebatch(x, k, batchSize, targetModel):
+    xs = _randomize_features_batched(x, k, batchSize)
+    ys = targetModel.predict(xs, batch_size=batchSize, verbose=0)
+    return xs, ys, 0
+
+
+def _generate_synthetic_record_batched(label: int,
+                                       targetModel: Sequential,
+                                       k_max: int = 200,
+                                       k_min: int = 5,
+                                       conf_min: float = 0.05,
+                                       rej_max: int = 20,
+                                       iter_max: int = 200) -> Union[NDArray, None]:
+    """
+    Synthesize a data record, using Algorithm 1 from Shokri et als
+    paper "Membership Inference Attacks against Machine Learning Models".
+    """
+    assert label < 100 and label >= 0
+
+    # Initalization
+    batchSize: int = 100
+    batchIndex: int = 0
+    numFeatures: int = 600
+    kWasUpdated = False
+    kIsFinal = False
+    k = k_max
+    y_c_star = 0
+    j = 0
+    x = _get_random_record(numFeatures)
+
+    xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
+
+    # Controls number of iterations
+    for i in range(iter_max):
+
+        y = ys[batchIndex]  # pyright: ignore
+        y_c = y[label]
+        predictedClass = np.argmax(y, axis=0)
+
+        if y_c >= y_c_star:
+            if y_c > conf_min and predictedClass == label:
+                print("Now sampling!")
+                if y_c > globalRandomGen.random():
+                    return xs[batchIndex]  # pyright: ignore
+
+            xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
+            y_c_star = y_c
+            j = 0
+            continue
+        else:
+            j = j + 1
+            if j > rej_max:
+                k = int(max(k_min, np.ceil(k / 2)))
+                if k == k_min:
+                    kIsFinal = True
+                kWasUpdated = True
+                j = 0
+        if batchIndex == (batchSize - 1) or (kWasUpdated and not kIsFinal):
+            xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
+            kWasUpdated = False
+        else:
+            batchIndex += 1
+        x = xs[batchIndex].reshape(1, numFeatures)  # pyright: ignore
+
+        if (i % 20) == 0:
+            print(
+                f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
+
+    return None
+
+
 def _generate_synthetic_record(label: int,
                                targetModel: Sequential,
                                k_max: int = 200,
@@ -157,6 +264,7 @@ def _generate_synthetic_record(label: int,
                 k = int(max(k_min, np.ceil(k / 2)))
                 j = 0
         x = _randomize_features(x_star, k)  # pyright: ignore
+
         if (i % 20) == 0:
             print(
                 f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
@@ -203,6 +311,32 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
     return Dataset.from_tensor_slices((features, labels))
 
 
+def test_generate_synthetic_record(targetModel, **hyperpars):
+    for label in range(1, 100):
+        i = 0
+        records = 0
+        new_record = None
+        while (new_record is None) and i < 3:
+            new_record = _generate_synthetic_record_batched(
+                label, targetModel, **hyperpars)
+            i = i + 1
+        if new_record is not None:
+            records += 1
+            print(80 * "-" + "\nGenerated new record!\n" + 80 * "-" + "\n")
+            print(f"Now have {records} records.\n")
+
+
+def test_batched_hillclimbing(targetModel, **hyperpars):
+    label = 0
+    #  record = None
+    record_batched = None
+    #  while record is None:
+    #      record = _generate_synthetic_record(label, targetModel, **hyperpars)
+    while record_batched is None:
+        record = _generate_synthetic_record_batched(
+            label, targetModel, **hyperpars)
+
+
 if __name__ == "__main__":
     import target_models as tm
     import configuration as con
@@ -213,5 +347,8 @@ if __name__ == "__main__":
     hyperpars = config["shadowData"]["hyperparameters"]
     model: tm.KaggleModel = tm.load_model(config["targetModel"]["name"])
 
-    shadowDataSize = 100
-    shadowData = hill_climbing(model, shadowDataSize, **hyperpars)
+    test_batched_hillclimbing(model, **hyperpars)
+    #  test_generate_synthetic_record(model, **hyperpars)
+
+    #  shadowDataSize = 2
+    #  shadowData = hill_climbing(model, shadowDataSize, **hyperpars)
