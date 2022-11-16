@@ -109,11 +109,10 @@ def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
 
 
 def _get_random_record(numFeatures: int):
-    x = np.repeat(1, numFeatures)
-    for i in range(numFeatures):
-        x[i] = globalRandomGen.integers(0, 1, endpoint=True)
-    x = x.reshape((1, numFeatures))
-    return x
+
+    x = globalRandomGen.integers(0, high=1, endpoint=True, size=numFeatures)
+
+    return x.reshape((1, numFeatures))
 
 
 def _generate_synthetic_record(label: int,
