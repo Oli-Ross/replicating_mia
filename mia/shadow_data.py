@@ -159,7 +159,7 @@ def _generate_synthetic_record(label: int,
         x = _randomize_features(x_star, k)  # pyright: ignore
         if (i % 20) == 0:
             print(
-                f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, class: {predictedClass}")
+                f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
 
     return None
 
