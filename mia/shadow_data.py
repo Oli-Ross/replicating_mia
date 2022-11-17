@@ -128,25 +128,15 @@ def _get_random_records(numFeatures: int, numRecords: int):
 def _randomize_features_batched(
         data: NDArray, k: int, batchSize: int, numFeatures: int = 600):
 
-    outputdata = np.repeat(
-        data,
-        batchSize,
-        axis=1).reshape(
-        numFeatures,
-        batchSize).transpose()
+    outputdata = np.repeat(data.reshape((numFeatures, 1)), batchSize,
+                           axis=1).transpose()
 
     import numpy.testing as tt
     tt.assert_equal(outputdata[0], data[0])
-    breakpoint()
-
-    featuresToFlip = np.repeat(0, batchSize * k).reshape(batchSize, k)
 
     for i in range(batchSize):
-        featuresToFlip[i] = np.array(random.sample(range(numFeatures), k))
-
-    breakpoint()
-    outputdata[featuresToFlip, 0] ^= 1
-    breakpoint()
+        featuresToFlip = np.array(random.sample(range(numFeatures), k))
+        outputdata[i, featuresToFlip] ^= 1
 
     return outputdata
 
