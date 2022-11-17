@@ -162,7 +162,7 @@ def _generate_synthetic_record_batched(label: int,
     assert label < 100 and label >= 0
 
     # Initalization
-    batchSize: int = 100
+    batchSize: int = 1
     batchIndex: int = 0
     numFeatures: int = 600
     kWasUpdated = False
