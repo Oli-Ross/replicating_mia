@@ -316,15 +316,24 @@ def test_generate_synthetic_record(targetModel, **hyperpars):
             print(f"Now have {records} records.\n")
 
 
-def test_batched_hillclimbing(targetModel, **hyperpars):
-    label = 0
-    #  record = None
+def get_record(label: int, model, **hyperpars):
+    record = None
+    while record is None:
+        record = _generate_synthetic_record(label, model, **hyperpars)
+    return record
+
+
+def get_record_batched(label: int, model, **hyperpars):
     record_batched = None
-    #  while record is None:
-    #      record = _generate_synthetic_record(label, targetModel, **hyperpars)
     while record_batched is None:
         record = _generate_synthetic_record_batched(
-            label, targetModel, **hyperpars)
+            label, model, **hyperpars)
+
+
+def test_batched_hillclimbing(targetModel, **hyperpars):
+    label = 0
+    a = get_record(label, targetModel, **hyperpars)
+    #  a = get_record_batched(label, targetModel, **hyperpars)
 
 
 if __name__ == "__main__":
