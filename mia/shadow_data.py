@@ -246,7 +246,6 @@ def _generate_synthetic_record(label: int,
                 if y_c > globalRandomGen.random():
                     return x
 
-            x_star = x
             y_c_star = y_c
             j = 0
         else:
@@ -254,7 +253,8 @@ def _generate_synthetic_record(label: int,
             if j > rej_max:
                 k = int(max(k_min, np.ceil(k / 2)))
                 j = 0
-        x = _randomize_features(x_star, k)  # pyright: ignore
+
+        x = _randomize_features(x, k)  # pyright: ignore
 
         if (i % 20) == 0:
             print(
