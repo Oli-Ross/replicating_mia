@@ -136,7 +136,7 @@ def _randomize_features_batched(
     tt.assert_equal(outputdata[0], data[0])
 
     for i in range(batchSize):
-        featuresToFlip = np.array(random.sample(range(numFeatures), k))
+        featuresToFlip = random.sample(range(numFeatures), k)
         outputdata[i, featuresToFlip] ^= 1
 
     return outputdata
