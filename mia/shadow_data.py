@@ -188,7 +188,8 @@ def _generate_synthetic_record_batched(label: int,
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
-                print("Now sampling!")
+                assert y_c_star != 0
+                print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
                 if y_c > globalRandomGen.random():
                     return xs[batchIndex]  # pyright: ignore
 
