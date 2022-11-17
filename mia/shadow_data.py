@@ -344,6 +344,8 @@ if __name__ == "__main__":
     config = con.from_name("example.yml")
 
     set_seed(config["seed"])
+    tm.set_seed(config["seed"])
+
     hyperpars = config["shadowData"]["hyperparameters"]
     model: tm.KaggleModel = tm.load_model(config["targetModel"]["name"])
 
