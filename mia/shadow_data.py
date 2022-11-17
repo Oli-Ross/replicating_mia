@@ -109,18 +109,19 @@ def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
     return data
 
 
-def _get_random_record(numFeatures: int):
+def _get_random_record(numFeatures: int, randomGenerator=globalRandomGen):
 
-    x = globalRandomGen.integers(0, high=1, endpoint=True, size=numFeatures)
+    x = randomGenerator.integers(0, high=1, endpoint=True, size=numFeatures)
 
     return x.reshape((1, numFeatures))
 
 
-def _get_random_records(numFeatures: int, numRecords: int):
+def _get_random_records(numFeatures: int, numRecords:
+                        int, randomGenerator=globalRandomGen):
 
     size = numFeatures * numRecords
 
-    x = globalRandomGen.integers(0, high=1, endpoint=True, size=size)
+    x = randomGenerator.integers(0, high=1, endpoint=True, size=size)
 
     return x.reshape((numRecords, numFeatures))
 
