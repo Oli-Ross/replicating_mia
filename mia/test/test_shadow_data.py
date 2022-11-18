@@ -32,7 +32,6 @@ class TestHillClimbing():
 
         a = np.repeat(0, 100).reshape((1, 100))
         b = sd._randomize_features(a, 3, numFeatures=100)
-        print(b)
 
         assert b[0, 0] == 1
         assert b[0, 11] == 1
