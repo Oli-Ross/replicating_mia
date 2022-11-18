@@ -135,14 +135,9 @@ def _randomize_features_batched(
     import numpy.testing as tt
     tt.assert_equal(outputdata[0], data[0])
 
-    # Initial x
-    featuresToFlip = random.sample(range(numFeatures), k)
-    outputdata[0, featuresToFlip] ^= 1
-
-    # Subsequent xs depending on their predecessor
-    for i in range(1, batchSize):
+    for i in range(batchSize):
         featuresToFlip = random.sample(range(numFeatures), k)
-        outputdata[i, featuresToFlip] = outputdata[i - 1, featuresToFlip] ^ 1
+        outputdata[i, featuresToFlip] ^= 1
 
     return outputdata
 
