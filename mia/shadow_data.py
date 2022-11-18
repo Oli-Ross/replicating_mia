@@ -166,7 +166,6 @@ def _generate_synthetic_record_batched(label: int,
     batchIndex: int = 0
     numFeatures: int = 600
     kWasUpdated = False
-    kIsFinal = False
     k = k_max
     y_c_star = 0
     j = 0
@@ -177,36 +176,35 @@ def _generate_synthetic_record_batched(label: int,
     # Controls number of iterations
     for i in range(iter_max):
 
-        y = ys[batchIndex]  # pyright: ignore
+        x = xs[batchIndex]
+        y = ys[batchIndex]
         y_c = y[label]
         predictedClass = np.argmax(y, axis=0)
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
-                assert y_c_star != 0
                 print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
                 if y_c > globalRandomGen.random():
-                    return xs[batchIndex]  # pyright: ignore
+                    return x
 
-            x = xs[batchIndex]
             xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
             y_c_star = y_c
             j = 0
             continue
         else:
             j = j + 1
-            if j > rej_max:
+            if j > rej_max and (k != k_min):
                 k = int(max(k_min, np.ceil(k / 2)))
-                if k == k_min:
-                    kIsFinal = True
-                kWasUpdated = True
                 j = 0
-        if batchIndex == (batchSize - 1) or (kWasUpdated and not kIsFinal):
+                kWasUpdated = True
+
+        batchExhausted = (batchIndex == batchSize - 1)
+
+        if batchExhausted or kWasUpdated:
             xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
             kWasUpdated = False
         else:
             batchIndex += 1
-        x = xs[batchIndex].reshape(1, numFeatures)  # pyright: ignore
 
         if (i % 20) == 0:
             print(
