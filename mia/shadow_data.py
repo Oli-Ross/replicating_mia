@@ -133,7 +133,7 @@ def _randomize_features_batched(
                            axis=1).transpose()
 
     import numpy.testing as tt
-    tt.assert_equal(outputdata[0], data[0])
+    tt.assert_equal(outputdata[0], data.reshape(numFeatures))
 
     for i in range(batchSize):
         featuresToFlip = random.sample(range(numFeatures), k)
