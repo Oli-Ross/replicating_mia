@@ -252,7 +252,7 @@ def _generate_synthetic_record(label: int,
             j = 0
         else:
             j = j + 1
-            if j > rej_max:
+            if j > rej_max and (k != k_min):
                 k = int(max(k_min, np.ceil(k / 2)))
                 j = 0
 
