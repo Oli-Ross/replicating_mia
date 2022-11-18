@@ -189,7 +189,7 @@ def _generate_synthetic_record_batched(label: int,
             if y_c > conf_min and predictedClass == label:
                 print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
                 if y_c > globalRandomGen.random():
-                    return x
+                    return x.reshape((1, numFeatures))
 
             xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
             y_c_star = y_c
