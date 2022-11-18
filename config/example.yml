@@ -35,6 +35,7 @@ shadowData:
     conf_min: 0.05
     rej_max: 10
     iter_max: 300
+    batchSize: 100
 
 targetDataset:
   name: kaggle

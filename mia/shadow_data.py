@@ -154,7 +154,8 @@ def _generate_synthetic_record_batched(label: int,
                                        k_min: int = 5,
                                        conf_min: float = 0.05,
                                        rej_max: int = 20,
-                                       iter_max: int = 200) -> Union[NDArray, None]:
+                                       iter_max: int = 200,
+                                       batchSize: int = 1) -> Union[NDArray, None]:
     """
     Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -162,7 +163,6 @@ def _generate_synthetic_record_batched(label: int,
     assert label < 100 and label >= 0
 
     # Initalization
-    batchSize: int = 1
     batchIndex: int = 0
     numFeatures: int = 600
     kWasUpdated = False
@@ -291,10 +291,10 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
     for index, label in enumerate(labels):
         label = int(label[0])
-        new_record = _generate_synthetic_record(
+        new_record = _generate_synthetic_record_batched(
             label, targetModel, **hyperpars)
         while new_record is None:
-            new_record = _generate_synthetic_record(
+            new_record = _generate_synthetic_record_batched(
                 label, targetModel, **hyperpars)
         print(80 * "-")
         print(20 * "-" + "Generated new record!" + 20 * "-")
