@@ -171,7 +171,11 @@ def _generate_synthetic_record_batched(label: int,
     j = 0
     x = _get_random_record(numFeatures)
 
-    xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
+    if batchSize == 1:
+        xs = x.reshape((1, 600))
+        ys = targetModel.predict(xs, batch_size=batchSize, verbose=0)
+    else:
+        xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
 
     # Controls number of iterations
     for i in range(iter_max):
