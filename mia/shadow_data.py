@@ -193,6 +193,7 @@ def _generate_synthetic_record_batched(label: int,
                 if y_c > globalRandomGen.random():
                     return xs[batchIndex]  # pyright: ignore
 
+            x = xs[batchIndex]
             xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
             y_c_star = y_c
             j = 0
