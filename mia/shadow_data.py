@@ -329,8 +329,9 @@ def get_record(label: int, model, **hyperpars):
 def get_record_batched(label: int, model, **hyperpars):
     record_batched = None
     while record_batched is None:
-        record = _generate_synthetic_record_batched(
+        record_batched = _generate_synthetic_record_batched(
             label, model, **hyperpars)
+    return record_batched
 
 
 def test_batched_hillclimbing(targetModel, **hyperpars):
