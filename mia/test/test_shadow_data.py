@@ -51,3 +51,23 @@ class TestHillClimbing():
         y = sd._get_random_records(600, 2, gen2)
         assert_equal(x[0], y[0])
         assert_equal(x2[0], y[1])
+
+    def test_generate_shadow_data_noisy(self):
+        data = ds.load_dataset("kaggle")
+        inputSize = data.cardinality().numpy()
+
+        size = 100
+        noisy = sd.generate_shadow_data_noisy(data, size)
+        assert noisy.cardinality().numpy() == size
+
+        size = inputSize
+        noisy = sd.generate_shadow_data_noisy(data, size)
+        assert noisy.cardinality().numpy() == size
+
+        size = inputSize * 2
+        noisy = sd.generate_shadow_data_noisy(data, size)
+        assert noisy.cardinality().numpy() == size
+
+        size = inputSize * 2 + 3
+        noisy = sd.generate_shadow_data_noisy(data, size)
+        assert noisy.cardinality().numpy() == size

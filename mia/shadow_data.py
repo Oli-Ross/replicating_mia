@@ -51,16 +51,44 @@ def _make_data_record_noisy(features, label):
     return _randomize_features(features, k=60), label
 
 
-def generate_shadow_data_noisy(original_data: Dataset) -> Dataset:
+def _make_dataset_noisy(original_data: Dataset) -> Dataset:
     """
-    Generate synthetic data for the shadow models by using a noisy version of
-    the original data.
+    Returns new dataset, where each element has a fraction of its features
+    flipped.
     """
     return original_data.map(
         lambda x, y: tf.numpy_function(
             func=_make_data_record_noisy,
             inp=(x, y),
             Tout=[tf.int64, tf.int64]))
+
+
+def generate_shadow_data_noisy(
+        original_data: Dataset, outputSize: int) -> Dataset:
+    """
+    Generate synthetic data for the shadow models by using a noisy version of
+    the original data.
+    Returns only the noisy data, no the oririnal data.
+    """
+    inputSize = original_data.cardinality().numpy()
+    # Since outputSize % inputSize not always 0, we have to fill the gap with a subset
+    # of the full input data. To avoid bias, shuffle the input data.
+    noisySet = _make_dataset_noisy(original_data.shuffle(inputSize))
+
+    if inputSize >= outputSize:
+        return noisySet.take(outputSize)
+
+    numNoisyVersions = int(np.floor(outputSize / inputSize))
+    # How many records to add after collecting numNoisyVersions sets
+    offset = outputSize % inputSize
+
+    for _ in range(numNoisyVersions - 1):
+        newNoisySet = _make_dataset_noisy(original_data.shuffle(inputSize))
+        noisySet = noisySet.concatenate(newNoisySet)
+
+    offsetSet = _make_dataset_noisy(
+        original_data.shuffle(inputSize)).take(offset)
+    return noisySet.concatenate(offsetSet)
 
 
 def generate_shadow_data_statistic(original_data: Dataset) -> Dataset:
