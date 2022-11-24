@@ -46,12 +46,14 @@ def generate_shadow_data_sampling(original_data: Dataset) -> Dataset:
     return sample_dataset
 
 
-def _make_data_record_noisy(features, label):
-    # TODO: Flipping hardcoded to 10% of features
-    return _randomize_features(features, k=60), label
+def _make_data_record_noisy(features, label, fraction):
+    # TODO: numFeatures is hardcoded
+    numFeatures = 600
+    k = int(numFeatures * fraction)
+    return _randomize_features(features, k=k), label
 
 
-def _make_dataset_noisy(original_data: Dataset) -> Dataset:
+def _make_dataset_noisy(original_data: Dataset, fraction: float) -> Dataset:
     """
     Returns new dataset, where each element has a fraction of its features
     flipped.
@@ -59,21 +61,25 @@ def _make_dataset_noisy(original_data: Dataset) -> Dataset:
     return original_data.map(
         lambda x, y: tf.numpy_function(
             func=_make_data_record_noisy,
-            inp=(x, y),
+            inp=(x, y, fraction),
             Tout=[tf.int64, tf.int64]))
 
 
 def generate_shadow_data_noisy(
-        original_data: Dataset, outputSize: int) -> Dataset:
+        original_data: Dataset, outputSize: int, fraction: float = 0.1) -> Dataset:
     """
     Generate synthetic data for the shadow models by using a noisy version of
     the original data.
     Returns only the noisy data, no the oririnal data.
+
+    Arguments:
+        fraction: percentage of labels that will be flipped per data record to
+                  make it "noisy"
     """
     inputSize = original_data.cardinality().numpy()
     # Since outputSize % inputSize not always 0, we have to fill the gap with a subset
     # of the full input data. To avoid bias, shuffle the input data.
-    noisySet = _make_dataset_noisy(original_data.shuffle(inputSize))
+    noisySet = _make_dataset_noisy(original_data.shuffle(inputSize), fraction)
 
     if inputSize >= outputSize:
         return noisySet.take(outputSize)
@@ -83,11 +89,12 @@ def generate_shadow_data_noisy(
     offset = outputSize % inputSize
 
     for _ in range(numNoisyVersions - 1):
-        newNoisySet = _make_dataset_noisy(original_data.shuffle(inputSize))
+        newNoisySet = _make_dataset_noisy(
+            original_data.shuffle(inputSize), fraction)
         noisySet = noisySet.concatenate(newNoisySet)
 
     offsetSet = _make_dataset_noisy(
-        original_data.shuffle(inputSize)).take(offset)
+        original_data.shuffle(inputSize), fraction).take(offset)
     return noisySet.concatenate(offsetSet)
 
 
