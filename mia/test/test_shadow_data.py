@@ -2,6 +2,8 @@ from numpy.testing import assert_equal
 import shadow_data as sd
 import datasets as ds
 import numpy as np
+import pytest
+import itertools
 sd.set_seed(1234)
 # Magic numbers (and arrays) come from seeded RNG, should hopefully be portable
 
@@ -53,7 +55,7 @@ class TestHillClimbing():
         assert_equal(x[0], y[0])
         assert_equal(x2[0], y[1])
 
-    def test_generate_shadow_data_noisy(self):
+    def test_generate_shadow_data_noisy_dimensionality(self):
         data = ds.load_dataset("kaggle")
         inputSize = data.cardinality().numpy()
 
@@ -72,3 +74,34 @@ class TestHillClimbing():
         size = inputSize * 2 + 3
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
         assert noisy.cardinality().numpy() == size
+
+    def test_generate_shadow_data_noisy_content(self):
+        # TODO: Since datasets are shuffled this test somewhat trivial
+        data = ds.load_dataset("kaggle")
+        inputSize = data.cardinality().numpy()
+        compSize = 3
+        data_subset = data.take(compSize)
+
+        size = 100
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
+        for a, b in itertools.zip_longest(data_subset, noisy):
+            with pytest.raises(AssertionError):
+                np.testing.assert_equal(a, b)
+
+        size = inputSize
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
+        for a, b in itertools.zip_longest(data_subset, noisy):
+            with pytest.raises(AssertionError):
+                np.testing.assert_equal(a, b)
+
+        size = inputSize * 2
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
+        for a, b in itertools.zip_longest(data_subset, noisy):
+            with pytest.raises(AssertionError):
+                np.testing.assert_equal(a, b)
+
+        size = inputSize * 2 + 3
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
+        for a, b in itertools.zip_longest(data_subset, noisy):
+            with pytest.raises(AssertionError):
+                np.testing.assert_equal(a, b)
