@@ -1,5 +1,6 @@
 from numpy.testing import assert_equal
 import shadow_data as sd
+import datasets as ds
 import numpy as np
 sd.set_seed(1234)
 # Magic numbers (and arrays) come from seeded RNG, should hopefully be portable
@@ -57,17 +58,17 @@ class TestHillClimbing():
         inputSize = data.cardinality().numpy()
 
         size = 100
-        noisy = sd.generate_shadow_data_noisy(data, size)
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
         assert noisy.cardinality().numpy() == size
 
         size = inputSize
-        noisy = sd.generate_shadow_data_noisy(data, size)
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
         assert noisy.cardinality().numpy() == size
 
         size = inputSize * 2
-        noisy = sd.generate_shadow_data_noisy(data, size)
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
         assert noisy.cardinality().numpy() == size
 
         size = inputSize * 2 + 3
-        noisy = sd.generate_shadow_data_noisy(data, size)
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
         assert noisy.cardinality().numpy() == size
