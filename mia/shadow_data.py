@@ -203,6 +203,7 @@ def _generate_synthetic_record_batched(label: int,
     y_c_star = 0
     j = 0
     x = _get_random_record(numFeatures)
+    haveSampled = False
 
     if batchSize == 1:
         xs = x.reshape((1, 600))
@@ -221,6 +222,7 @@ def _generate_synthetic_record_batched(label: int,
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
                 print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
+                haveSampled = True
                 if y_c > globalRandomGen.random():
                     return x.reshape((1, numFeatures))
 
@@ -230,7 +232,7 @@ def _generate_synthetic_record_batched(label: int,
             continue
         else:
             j = j + 1
-            if j > rej_max and (k != k_min):
+            if j > rej_max and (k != k_min) and haveSampled:
                 k = int(max(k_min, np.ceil(k / 2)))
                 j = 0
                 kWasUpdated = True
