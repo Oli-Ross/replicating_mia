@@ -102,18 +102,23 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
 
 def load_attack(datasetName: str) -> Dataset:
     datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
-    print(f"Loading {datasetName} from disk.")
-    try:
-        dataset = tf.data.experimental.load(datasetDir)
-        if dataset is None:
-            raise FileNotFoundError
-    except BaseException:
-        raise FileNotFoundError(f"Dataset {datasetName} couldn't be found.")
-    return dataset
+    print(f"Loading dataset \"{datasetName}\" from disk.")
+    return tf.data.experimental.load(datasetDir)
+
+
+def load_shadow(datasetName: str) -> Dataset:
+    datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
+    print(f"Loading dataset \"{datasetName}\" from disk.")
+    return tf.data.experimental.load(datasetDir)
 
 
 def save_attack(dataset: Dataset, datasetName: str):
     datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
+    tf.data.experimental.save(dataset, datasetDir)
+
+
+def save_shadow(dataset: Dataset, datasetName: str):
+    datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
     tf.data.experimental.save(dataset, datasetDir)
 
 

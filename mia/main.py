@@ -51,22 +51,6 @@ def parse_config() -> Dict:
     return config
 
 
-def set_up_target_data(config: Dict):
-
-    # Load + split dataset for training
-    targetDataset = datasets.load_dataset(config["targetDataset"]["name"])
-    trainSize: int = config["targetDataset"]["trainSize"]
-    testSize: int = config["targetDataset"]["testSize"]
-
-    targetTrainData = targetDataset.take(trainSize)
-    targetTestData = targetDataset.skip(trainSize).take(testSize)
-
-    if config["targetDataset"]["shuffle"]:
-        targetTrainData = datasets.shuffle(targetTrainData)
-
-    return targetTrainData, targetTestData
-
-
 def _get_target_model_name(config: Dict) -> str:
     epochs: int = config["targetModel"]["hyperparameters"]["epochs"]
     batchSize: int = config["targetModel"]["hyperparameters"]["batchSize"]
@@ -76,7 +60,16 @@ def _get_target_model_name(config: Dict) -> str:
     return modelName
 
 
-def set_up_target_model(config: Dict, targetTrainData, targetTestData):
+def set_up_target_model(config: Dict, targetDataset):
+
+    trainSize: int = config["targetDataset"]["trainSize"]
+    testSize: int = config["targetDataset"]["testSize"]
+
+    targetTrainData = targetDataset.take(trainSize)
+    targetTestData = targetDataset.skip(trainSize).take(testSize)
+
+    if config["targetDataset"]["shuffle"]:
+        targetTrainData = datasets.shuffle(targetTrainData)
 
     if config["actions"]["trainTarget"]:
         targetModel: target_models.KaggleModel = target_models.KaggleModel(
@@ -110,53 +103,30 @@ def _get_attack_model_name(label: int, config: Dict) -> str:
     return modelName
 
 
-def train_attack_model(config: Dict, attackDataName: str, label_range):
-
-    for label in label_range:
-        attackDataNameTest = attackDataName + "_test" + f"_label_{label}"
-        attackDataNameTrain = attackDataName + "_train" + f"_label_{label}"
-
-        try:
-            attackTestData = datasets.load_attack(attackDataNameTest)
-            attackTrainData = datasets.load_attack(attackDataNameTrain)
-        except BaseException:
-            print(f"Aborting for label {label}.")
-            continue
-        attackModelName: str = _get_attack_model_name(label, config)
-        attackModel = attack_model.KaggleAttackModel(
-            config["targetModel"]["classes"])
-        try:
-            attack_model.train_model(
-                attackModel,
-                attackModelName,
-                attackTrainData,
-                attackTestData,
-                config["attackModel"]["hyperparameters"])
-        except BaseException:
-            print(f"Aborting for label {label}.")
-            continue
-        #  attack_model.save_model(attackModelName, attackModel)
-        #  attack_model.evaluate_model(attackModel, attackTestData)
-
-
 def load_attack_model(config: Dict):
     attackModelName: str = config["attackModel"]["name"]
     return attack_model.load_model(attackModelName)
 
 
-def generate_attack_data(attackDataName,
-                         label_range, targetTrainData, targetTestData, targetModel):
-    for label in label_range:
-        try:
-            attackTrainData, attackTestData = attack_data.from_target_data(
-                targetTrainData, targetTestData, targetModel, label)
-        except BaseException:
-            continue
-        # Save
-        attackDataNameTest = attackDataName + "_test" + f"_label_{label}"
-        attackDataNameTrain = attackDataName + "_train" + f"_label_{label}"
-        datasets.save_attack(attackTrainData, attackDataNameTrain)
-        datasets.save_attack(attackTestData, attackDataNameTest)
+def get_shadow_data(config: Dict, targetDataset,
+                    targetModel) -> datasets.Dataset:
+    shadowDataName: str = config["shadowDataset"]["name"]
+    if config["actions"]["generateShadowData"]:
+        method = config["shadowDataset"]["method"]
+        if method == "noisy":
+            shadowDataset: datasets.Dataset = shadow_data.generate_shadow_data_noisy(
+                targetDataset, outputSize=500000)
+        elif method == "hill_climbing":
+            shadowDataset: datasets.Dataset = shadow_data.hill_climbing(
+                targetModel,
+                config["shadowDataset"]["size"],
+                **config["shadowDataset"]["hill_climbing"]["hyperparameters"])
+        else:
+            raise ValueError(f"{method} is not a valid shadow data method.")
+        datasets.save_shadow(shadowDataset, shadowDataName)
+    else:
+        shadowDataset: datasets.Dataset = datasets.load_shadow(shadowDataName)
+    return shadowDataset
 
 
 def main():
@@ -166,25 +136,9 @@ def main():
 
     download.download_all_datasets()
 
-    targetTrainData, targetTestData = set_up_target_data(config)
-    targetModel = set_up_target_model(config, targetTrainData, targetTestData)
-
-    label_range = range(0, 100)
-
-    attackDataName = config["attackDataset"]["name"]
-
-    if config["actions"]["generateAttackData"]:
-        generate_attack_data(
-            attackDataName,
-            label_range,
-            targetTrainData,
-            targetTestData,
-            targetModel)
-
-    if config["actions"]["trainAttack"]:
-        train_attack_model(config, attackDataName, label_range)
-    else:
-        attackModel = load_attack_model(config)
+    targetDataset = datasets.load_dataset(config["targetDataset"]["name"])
+    targetModel = set_up_target_model(config, targetDataset)
+    shadowDataset = get_shadow_data(config, targetDataset, targetModel)
 
 
 if __name__ == "__main__":
