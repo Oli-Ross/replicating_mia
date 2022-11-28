@@ -62,7 +62,7 @@ def set_up_target_data(config: Dict):
         trainSize), targetDataset.skip(trainSize).take(testSize)
 
     if config["targetDataset"]["shuffle"]:
-        targetTrainData = datasets.shuffle_dataset(targetTrainData, trainSize)
+        targetTrainData = datasets.shuffle(targetTrainData)
 
     return targetTrainData, targetTestData
 
