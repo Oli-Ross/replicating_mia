@@ -75,33 +75,35 @@ class TestHillClimbing():
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
         assert noisy.cardinality().numpy() == size
 
+    @pytest.mark.skip("Takes long.")
     def test_generate_shadow_data_noisy_content(self):
         # TODO: Since datasets are shuffled this test somewhat trivial
         data = ds.load_dataset("kaggle")
         inputSize = data.cardinality().numpy()
-        compSize = 3
+        compSize = 2
         data_subset = data.take(compSize)
+        def ar(x): return x[0].numpy()
 
         size = 100
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                assert_equal(a, b)
+                assert_equal(ar(a), ar(b))
 
         size = inputSize
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                assert_equal(a, b)
+                assert_equal(ar(a), ar(b))
 
         size = inputSize * 2
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                assert_equal(a, b)
+                assert_equal(ar(a), ar(b))
 
         size = inputSize * 2 + 3
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                assert_equal(a, b)
+                assert_equal(ar(a), ar(b))
