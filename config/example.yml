@@ -17,7 +17,7 @@ attackModel:
     learningRate: 1e-2
 
 targetModel:
-  name: target_train_311022
+  name: lr_1e-3_bs_100_epochs_100_trainsize_10000
   classes: 100
   hyperparameters:
     epochs: 200
