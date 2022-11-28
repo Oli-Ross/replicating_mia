@@ -9,6 +9,7 @@ from typing import Tuple
 from numpy.typing import NDArray
 from numpy.testing import assert_equal
 from typing import Dict, Union
+import datasets as ds
 import random
 import numpy as np
 
@@ -79,7 +80,7 @@ def generate_shadow_data_noisy(
     inputSize = original_data.cardinality().numpy()
     # Since outputSize % inputSize not always 0, we have to fill the gap with a subset
     # of the full input data. To avoid bias, shuffle the input data.
-    noisySet = _make_dataset_noisy(original_data.shuffle(inputSize), fraction)
+    noisySet = _make_dataset_noisy(ds.shuffle(original_data), fraction)
 
     if inputSize >= outputSize:
         return noisySet.take(outputSize)
@@ -89,12 +90,11 @@ def generate_shadow_data_noisy(
     offset = outputSize % inputSize
 
     for _ in range(numNoisyVersions - 1):
-        newNoisySet = _make_dataset_noisy(
-            original_data.shuffle(inputSize), fraction)
+        newNoisySet = _make_dataset_noisy(ds.shuffle(original_data), fraction)
         noisySet = noisySet.concatenate(newNoisySet)
 
     offsetSet = _make_dataset_noisy(
-        original_data.shuffle(inputSize), fraction).take(offset)
+        ds.shuffle(original_data), fraction).take(offset)
     return noisySet.concatenate(offsetSet)
 
 
