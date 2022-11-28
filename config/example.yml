@@ -5,9 +5,10 @@ seed: 1234
 actions:
   trainTarget: no
   testTarget: no
-  trainAttack: yes
+  trainAttack: no
   testAttack: no
-  generateAttackData: no
+  generateShadowData: no
+
 
 attackModel:
   name: placeholder
@@ -28,14 +29,21 @@ attackDataset:
   name: placeholder
   split: 0.8
 
-shadowData:
-  hyperparameters:
-    k_max: 128
-    k_min: 4
-    conf_min: 0.05
-    rej_max: 10
-    iter_max: 300
-    batchSize: 100
+shadowDataset:
+  name: placeholder
+  size: 100000
+  method: noisy
+  noisy:
+    hyperparameters:
+      fraction: 0.1
+  hill_climbing:
+    hyperparameters:
+      k_max: 128
+      k_min: 4
+      conf_min: 0.05
+      rej_max: 10
+      iter_max: 300
+      batchSize: 100
 
 targetDataset:
   name: kaggle
