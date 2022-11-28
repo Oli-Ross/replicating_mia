@@ -16,7 +16,7 @@ def test_seed():
 @pytest.mark.skip("Takes long.")
 def test_shuffle():
     kaggle = datasets.load_dataset("kaggle")
-    shuffled = datasets.shuffle_dataset(kaggle, 197324)
+    shuffled = datasets.shuffle_dataset(kaggle)
     kaggle = kaggle.take(COMPARE_SIZE).as_numpy_iterator()
     shuffled = shuffled.take(COMPARE_SIZE).as_numpy_iterator()
 
@@ -27,9 +27,9 @@ def test_shuffle():
 
 @pytest.mark.skip("Takes long.")
 def test_deterministic_shuffling():
-    kaggle = datasets.shuffle_dataset(datasets.load_dataset("kaggle"), 197324)
+    kaggle = datasets.shuffle_dataset(datasets.load_dataset("kaggle"))
     kaggle_2 = datasets.shuffle_dataset(
-        datasets.load_dataset("kaggle"), 197324)
+        datasets.load_dataset("kaggle"))
     kaggle = kaggle.take(COMPARE_SIZE).as_numpy_iterator()
     kaggle_2 = kaggle_2.take(COMPARE_SIZE).as_numpy_iterator()
 

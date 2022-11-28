@@ -71,10 +71,8 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
     return features, labels
 
 
-def shuffle_dataset(dataset: Dataset, datasetSize: int) -> Dataset:
-    """
-    Shuffles Kaggle Dataset and datasets derived from it via clustering.
-    """
+def shuffle_dataset(dataset: Dataset) -> Dataset:
+    datasetSize = dataset.cardinality().numpy()
     return dataset.shuffle(datasetSize, seed=global_seed,
                            reshuffle_each_iteration=False)
 
