@@ -58,8 +58,8 @@ def set_up_target_data(config: Dict):
     trainSize: int = config["targetDataset"]["trainSize"]
     testSize: int = config["targetDataset"]["testSize"]
 
-    targetTrainData, targetTestData = targetDataset.take(
-        trainSize), targetDataset.skip(trainSize).take(testSize)
+    targetTrainData = targetDataset.take(trainSize)
+    targetTestData = targetDataset.skip(trainSize).take(testSize)
 
     if config["targetDataset"]["shuffle"]:
         targetTrainData = datasets.shuffle(targetTrainData)
@@ -67,18 +67,21 @@ def set_up_target_data(config: Dict):
     return targetTrainData, targetTestData
 
 
-def set_up_target_model(config: Dict, targetTrainData, targetTestData):
+def _get_target_model_name(config: Dict) -> str:
+    epochs: int = config["targetModel"]["hyperparameters"]["epochs"]
+    batchSize: int = config["targetModel"]["hyperparameters"]["batchSize"]
+    learningRate: float = config["targetModel"]["hyperparameters"]["learningRate"]
+    trainSize: int = config["targetDataset"]["trainSize"]
+    modelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}_trainsize_{trainSize}"
+    return modelName
 
-    # Construct target model
-    targetEpochs: int = config["targetModel"]["hyperparameters"]["epochs"]
-    targetBatchSize: int = config["targetModel"]["hyperparameters"]["batchSize"]
-    targetLearningRate: float = config["targetModel"]["hyperparameters"]["learningRate"]
-    targetTrainSize: int = config["targetDataset"]["trainSize"]
-    targetModelName: str = f"lr_{targetLearningRate}_bs_{targetBatchSize}_epochs_{targetEpochs}_trainsize_{targetTrainSize}"
+
+def set_up_target_model(config: Dict, targetTrainData, targetTestData):
 
     if config["actions"]["trainTarget"]:
         targetModel: target_models.KaggleModel = target_models.KaggleModel(
             config["targetModel"]["classes"])
+        targetModelName: str = _get_target_model_name(config)
 
         target_models.train_model(
             targetModel,
@@ -99,6 +102,14 @@ def set_up_target_model(config: Dict, targetTrainData, targetTestData):
     return targetModel
 
 
+def _get_attack_model_name(label: int, config: Dict) -> str:
+    epochs: int = config["attackModel"]["hyperparameters"]["epochs"]
+    batchSize: int = config["attackModel"]["hyperparameters"]["batchSize"]
+    learningRate: float = config["attackModel"]["hyperparameters"]["learningRate"]
+    modelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}_label{label}"
+    return modelName
+
+
 def train_attack_model(config: Dict, attackDataName: str, label_range):
 
     for label in label_range:
@@ -111,10 +122,7 @@ def train_attack_model(config: Dict, attackDataName: str, label_range):
         except BaseException:
             print(f"Aborting for label {label}.")
             continue
-        epochs: int = config["attackModel"]["hyperparameters"]["epochs"]
-        batchSize: int = config["attackModel"]["hyperparameters"]["batchSize"]
-        learningRate: float = config["attackModel"]["hyperparameters"]["learningRate"]
-        attackModelName: str = f"lr_{learningRate}_bs_{batchSize}_epochs_{epochs}_label{label}"
+        attackModelName: str = _get_attack_model_name(label, config)
         attackModel = attack_model.KaggleAttackModel(
             config["targetModel"]["classes"])
         try:
