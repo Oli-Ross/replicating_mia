@@ -86,22 +86,22 @@ class TestHillClimbing():
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                np.testing.assert_equal(a, b)
+                assert_equal(a, b)
 
         size = inputSize
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                np.testing.assert_equal(a, b)
+                assert_equal(a, b)
 
         size = inputSize * 2
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                np.testing.assert_equal(a, b)
+                assert_equal(a, b)
 
         size = inputSize * 2 + 3
         noisy = sd.generate_shadow_data_noisy(data, size, 0.1).take(compSize)
         for a, b in itertools.zip_longest(data_subset, noisy):
             with pytest.raises(AssertionError):
-                np.testing.assert_equal(a, b)
+                assert_equal(a, b)
