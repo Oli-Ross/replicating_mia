@@ -14,8 +14,8 @@ from typing import Tuple
 import numpy as np
 import sklearn.cluster
 import tensorflow as tf
-from tensorflow.data import Dataset
-from tensorflow.keras.utils import to_categorical
+from tensorflow.data import Dataset  # pyright: ignore
+from tensorflow.keras.utils import to_categorical  # pyright: ignore
 from tensorflow.python.framework import random_seed
 from numpy.typing import NDArray
 
