@@ -23,8 +23,7 @@ attackDataset:
   split: 0.8
 
 shadowDataset:
-  name: placeholder
-  size: 100000
+  size: 10
   method: noisy
   noisy:
     hyperparameters:
