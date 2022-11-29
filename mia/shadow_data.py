@@ -7,8 +7,7 @@
 from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
-from numpy.testing import assert_equal
-from typing import Dict, Union
+from typing import Union
 import datasets as ds
 import random
 import numpy as np
