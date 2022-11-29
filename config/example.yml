@@ -3,22 +3,15 @@ name: Example Configuration
 seed: 1234
 
 actions:
-  trainTarget: no
-  testTarget: no
-  trainAttack: no
-  testAttack: no
   generateShadowData: no
 
-
 attackModel:
-  name: placeholder
   hyperparameters:
     epochs: 50
     batchSize: 4 
     learningRate: 1e-2
 
 targetModel:
-  name: lr_1e-3_bs_100_epochs_100_trainsize_10000
   classes: 100
   hyperparameters:
     epochs: 200
