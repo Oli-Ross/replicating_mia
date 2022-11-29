@@ -28,6 +28,9 @@ targetDataset:
   testSize: 10000
   shuffle: True
 
+shadowModels:
+  number: 5
+
 shadowDataset:
   size: 10
   method: noisy

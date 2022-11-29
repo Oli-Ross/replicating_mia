@@ -16,6 +16,7 @@ import tensorflow as tf
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.keras.utils import to_categorical  # pyright: ignore
 from tensorflow.python.framework import random_seed
+from typing import List
 from numpy.typing import NDArray
 
 dataDir = join(dirname(__file__), "../data")
@@ -155,6 +156,13 @@ def load_dataset(datasetName: str) -> Dataset:
     print(f"Saving {datasetName} to disk.")
     tf.data.experimental.save(dataset, datasetDir)
     return dataset
+
+
+def split_dataset(dataset: Dataset, numSubsets: int) -> List[Dataset]:
+    datasets = []
+    for i in range(numSubsets):
+        datasets.append(dataset.shard(numSubsets, i))
+    return datasets
 
 
 def load_all_datasets():
