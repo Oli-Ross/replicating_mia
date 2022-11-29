@@ -133,7 +133,8 @@ def _generate_labels(classes: int, size: int) -> NDArray:
     return labels
 
 
-def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
+def _randomize_features(data: NDArray, k: int,
+                        numFeatures: int = 600) -> NDArray:
 
     featuresToFlip = random.sample(range(numFeatures), k)
 
@@ -144,7 +145,8 @@ def _randomize_features(data: NDArray, k: int, numFeatures: int = 600):
     return data
 
 
-def _get_random_record(numFeatures: int, randomGenerator=globalRandomGen):
+def _get_random_record(numFeatures: int,
+                       randomGenerator=globalRandomGen) -> NDArray:
 
     x = randomGenerator.integers(0, high=1, endpoint=True, size=numFeatures)
 
@@ -152,7 +154,7 @@ def _get_random_record(numFeatures: int, randomGenerator=globalRandomGen):
 
 
 def _randomize_features_batched(
-        data: NDArray, k: int, batchSize: int, numFeatures: int = 600):
+        data: NDArray, k: int, batchSize: int, numFeatures: int = 600) -> NDArray:
 
     outputdata = np.repeat(data.reshape((numFeatures, 1)), batchSize,
                            axis=1).transpose()
@@ -167,7 +169,7 @@ def _randomize_features_batched(
     return outputdata
 
 
-def _rebatch(x, k, batchSize, targetModel):
+def _rebatch(x, k, batchSize, targetModel) -> Tuple[NDArray, NDArray, int]:
     xs = _randomize_features_batched(x, k, batchSize)
     ys = targetModel.predict(xs, batch_size=batchSize, verbose=0)
     return xs, ys, 0
