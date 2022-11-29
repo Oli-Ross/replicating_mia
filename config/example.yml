@@ -11,6 +11,10 @@ attackModel:
     batchSize: 4 
     learningRate: 1e-2
 
+attackDataset:
+  name: placeholder
+  split: 0.8
+
 targetModel:
   classes: 100
   hyperparameters:
@@ -18,9 +22,11 @@ targetModel:
     batchSize: 100
     learningRate: 1e-3
 
-attackDataset:
-  name: placeholder
-  split: 0.8
+targetDataset:
+  name: kaggle
+  trainSize: 10000
+  testSize: 10000
+  shuffle: True
 
 shadowDataset:
   size: 10
@@ -36,11 +42,5 @@ shadowDataset:
       rej_max: 10
       iter_max: 300
       batchSize: 100
-
-targetDataset:
-  name: kaggle
-  trainSize: 10000
-  testSize: 10000
-  shuffle: True
 
 ...
