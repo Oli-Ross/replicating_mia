@@ -7,7 +7,6 @@ from os import environ
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
-import csv
 from os.path import dirname, isdir, join
 from typing import Tuple
 
