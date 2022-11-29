@@ -151,16 +151,6 @@ def _get_random_record(numFeatures: int, randomGenerator=globalRandomGen):
     return x.reshape((1, numFeatures))
 
 
-def _get_random_records(numFeatures: int, numRecords:
-                        int, randomGenerator=globalRandomGen):
-
-    size = numFeatures * numRecords
-
-    x = randomGenerator.integers(0, high=1, endpoint=True, size=size)
-
-    return x.reshape((numRecords, numFeatures))
-
-
 def _randomize_features_batched(
         data: NDArray, k: int, batchSize: int, numFeatures: int = 600):
 
