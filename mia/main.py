@@ -1,7 +1,7 @@
 from os import environ
 from os.path import isabs
 import argparse
-from typing import Dict
+from typing import Dict, List
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
@@ -122,6 +122,13 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
     return shadowData
 
 
+def split_shadow_data(
+        config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
+    print("Splitting shadow data into subsets.")
+    numSubsets = config["shadowModels"]["number"]
+    return ds.split_dataset(shadowData, numSubsets)
+
+
 def main():
 
     config = parse_config()
@@ -132,6 +139,7 @@ def main():
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
     targetModel = get_target_model(config, targetDataset)
     shadowDataset = get_shadow_data(config, targetDataset, targetModel)
+    shadowDatasets = split_shadow_data(config, shadowDataset)
 
 
 if __name__ == "__main__":
