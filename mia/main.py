@@ -2,6 +2,7 @@ from os import environ
 from os.path import isabs
 import argparse
 from typing import Dict, List
+import numpy as np
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
@@ -49,16 +50,59 @@ def parse_config() -> Dict:
     return config
 
 
-def get_target_model(config: Dict, targetDataset):
-    dataConfig = config["targetDataset"]
+def get_target_model_name(config: Dict) -> str:
     modelConfig = config["targetModel"]["hyperparameters"]
-
-    modelName = \
-        f'{dataConfig["name"]}_' + \
+    return \
+        f'{config["targetDataset"]["name"]}_' + \
         f'lr_{modelConfig["learningRate"]}_' + \
         f'bs_{modelConfig["batchSize"]}_' + \
         f'epochs_{modelConfig["epochs"]}_' + \
-        f'trainsize_{dataConfig["trainSize"]}'
+        f'trainsize_{config["targetDataset"]["trainSize"]}'
+
+
+def get_shadow_models(config: Dict, shadowDatasets:
+                      List[ds.Dataset]) -> List[tm.Sequential]:
+    numModels: int = config["shadowModels"]["number"]
+    split: float = config["shadowModels"]["split"]
+    dataSize = shadowDatasets[0].cardinality().numpy()
+    trainSize = np.ceil(split * dataSize)
+    testSize = dataSize - trainSize
+    models = []
+
+    for i in range(numModels):
+        modelName = "shadow_" + \
+            get_target_model_name(config) + f"_split_{split}_{i}"
+
+        try:
+            print(f"Trying to load shadow model \"{modelName}\" from disk.")
+            model: tm.KaggleModel = tm.load_model(modelName)
+        except BaseException:
+            print(f"Didn't work, training shadow model {i}.")
+            dataset = shadowDatasets[i]
+            trainData = dataset.take(trainSize)
+            testData = dataset.skip(trainSize).take(testSize)
+
+            # Shadow models have same architecture as target model
+            model = tm.KaggleModel(config["targetModel"]["classes"])
+            modelConfig = config["targetModel"]["hyperparameters"]
+
+            # TODO: this currently fails
+            tm.train_model(model, modelName, trainData, testData, modelConfig)
+
+            print(f"Saving shadow model {i} to disk.")
+            tm.save_model(modelName, model)
+            print(f"Evaluating shadow model {i}")
+            tm.evaluate_model(model, testData)
+
+        models.append(model)
+
+    return models
+
+
+def get_target_model(config: Dict, targetDataset):
+    dataConfig = config["targetDataset"]
+    modelConfig = config["targetModel"]["hyperparameters"]
+    modelName = get_target_model_name(config)
 
     try:
         print(f"Trying to load model \"{modelName}\" from disk.")
@@ -138,8 +182,9 @@ def main():
 
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
     targetModel = get_target_model(config, targetDataset)
-    shadowDataset = get_shadow_data(config, targetDataset, targetModel)
-    shadowDatasets = split_shadow_data(config, shadowDataset)
+    shadowData = get_shadow_data(config, targetDataset, targetModel)
+    shadowDatasets = split_shadow_data(config, shadowData)
+    shadowModels = get_shadow_models(config, shadowDatasets)
 
 
 if __name__ == "__main__":
