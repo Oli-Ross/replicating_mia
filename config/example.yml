@@ -29,10 +29,11 @@ targetDataset:
   shuffle: True
 
 shadowModels:
-  number: 5
+  number: 10
+  split: 0.8
 
 shadowDataset:
-  size: 10
+  size: 20000
   method: noisy
   noisy:
     hyperparameters:
