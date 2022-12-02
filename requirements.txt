@@ -5,5 +5,5 @@ pytest
 pyyaml
 requests
 scikit-learn
-tensorflow
+tensorflow==2.9.1
 tensorboard
