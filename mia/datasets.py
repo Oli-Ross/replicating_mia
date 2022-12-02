@@ -103,23 +103,23 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
 def load_attack(datasetName: str) -> Dataset:
     datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
     print(f"Loading dataset \"{datasetName}\" from disk.")
-    return tf.data.Dataset.load(datasetDir)
+    return tf.data.experimental.load(datasetDir)
 
 
 def load_shadow(datasetName: str) -> Dataset:
     datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
     print(f"Loading dataset \"{datasetName}\" from disk.")
-    return tf.data.Dataset.load(datasetDir)
+    return tf.data.experimental.load(datasetDir)
 
 
 def save_attack(dataset: Dataset, datasetName: str):
     datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
-    tf.data.Dataset.save(dataset, datasetDir)
+    tf.data.experimental.save(dataset, datasetDir)
 
 
 def save_shadow(dataset: Dataset, datasetName: str):
     datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
-    tf.data.Dataset.save(dataset, datasetDir)
+    tf.data.experimental.save(dataset, datasetDir)
 
 
 def load_dataset(datasetName: str) -> Dataset:
@@ -132,7 +132,7 @@ def load_dataset(datasetName: str) -> Dataset:
     datasetDir: str = join(dataDir, datasetName, "dataset")
     if isdir(datasetDir):
         print(f"Loading {datasetName} from disk.")
-        return tf.data.Dataset.load(datasetDir)
+        return tf.data.experimental.load(datasetDir)
 
     print(f"Loading {datasetName}.")
 
@@ -154,7 +154,7 @@ def load_dataset(datasetName: str) -> Dataset:
         raise ValueError(f"{datasetName} is not a known dataset.")
 
     print(f"Saving {datasetName} to disk.")
-    tf.data.Dataset.save(dataset, datasetDir)
+    tf.data.experimental.save(dataset, datasetDir)
     return dataset
 
 
