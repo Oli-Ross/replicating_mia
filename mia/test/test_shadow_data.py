@@ -48,6 +48,14 @@ class TestHillClimbing():
 
 
 class TestNoisy():
+    def test_generate_shadow_data_noisy_dimensions(self):
+        data = ds.load_dataset("kaggle")
+        size = 1
+        noisy = sd.generate_shadow_data_noisy(data, size, 0.1)
+        record = data.as_numpy_iterator().next()[0]
+        record_noisy = noisy.as_numpy_iterator().next()[0]
+        assert record.shape == record_noisy.shape
+
     def test_generate_shadow_data_noisy_size(self):
         data = ds.load_dataset("kaggle")
         inputSize = data.cardinality().numpy()
