@@ -69,7 +69,7 @@ class KaggleModel(Sequential):
     def __init__(self, output_size: int) -> None:
         super().__init__()
         activation = tanh
-        batchSize = 100
+        batchSize = 100  # TODO: hardcoded
         self.add(InputLayer(input_shape=(600), batch_size=batchSize))
         self.add(Dense(128, activation=activation))
         self.add(Dense(output_size, activation=activation))
