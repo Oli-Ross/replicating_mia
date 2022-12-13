@@ -46,15 +46,6 @@ class TestHillClimbing():
                      0, 1, 0, 1, 1, 1, 0]).reshape((1, 20))
         assert_equal(a, b)
 
-    def test__randomize_features_batched(self):
-        gen = np.random.default_rng(1234)
-        gen2 = np.random.default_rng(1234)
-        x = sd._get_random_record(600, gen)
-        x2 = sd._get_random_record(600, gen)
-        y = sd._get_random_records(600, 2, gen2)
-        assert_equal(x[0], y[0])
-        assert_equal(x2[0], y[1])
-
 
 class TestNoisy():
     def test_generate_shadow_data_noisy_size(self):
