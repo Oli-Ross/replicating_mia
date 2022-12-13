@@ -50,7 +50,7 @@ def _make_data_record_noisy(features, label, fraction):
     # TODO: numFeatures is hardcoded
     numFeatures = 600
     k = int(numFeatures * fraction)
-    return _randomize_features(features, k=k), label
+    return _randomize_features(features, k=k).reshape(numFeatures), label
 
 
 def _make_dataset_noisy(original_data: Dataset, fraction: float) -> Dataset:
