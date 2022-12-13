@@ -55,7 +55,9 @@ class TestHillClimbing():
         assert_equal(x[0], y[0])
         assert_equal(x2[0], y[1])
 
-    def test_generate_shadow_data_noisy_dimensionality(self):
+
+class TestNoisy():
+    def test_generate_shadow_data_noisy_size(self):
         data = ds.load_dataset("kaggle")
         inputSize = data.cardinality().numpy()
 
