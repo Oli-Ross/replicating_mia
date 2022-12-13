@@ -190,7 +190,7 @@ train them.</p>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="n">activation</span> <span class="o">=</span> <span class="n">tanh</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># TODO: hardcoded</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">InputLayer</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">600</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batchSize</span><span class="p">))</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">))</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">))</span>
@@ -380,7 +380,6 @@ maximum epochs of training to 100.</p>
                 <dd id="CifarModel.input_shape" class="variable">input_shape</dd>
                 <dd id="CifarModel.output" class="variable">output</dd>
                 <dd id="CifarModel.output_shape" class="variable">output_shape</dd>
-                <dd id="CifarModel.get_weight_paths" class="function">get_weight_paths</dd>
 
             </div>
             <div><dt>keras.engine.training.Model</dt>
@@ -389,11 +388,9 @@ maximum epochs of training to 100.</p>
                 <dd id="CifarModel.metrics_names" class="variable">metrics_names</dd>
                 <dd id="CifarModel.distribute_strategy" class="variable">distribute_strategy</dd>
                 <dd id="CifarModel.run_eagerly" class="variable">run_eagerly</dd>
-                <dd id="CifarModel.distribute_reduction_method" class="variable">distribute_reduction_method</dd>
                 <dd id="CifarModel.train_step" class="function">train_step</dd>
                 <dd id="CifarModel.compute_loss" class="function">compute_loss</dd>
                 <dd id="CifarModel.compute_metrics" class="function">compute_metrics</dd>
-                <dd id="CifarModel.get_metrics_result" class="function">get_metrics_result</dd>
                 <dd id="CifarModel.make_train_function" class="function">make_train_function</dd>
                 <dd id="CifarModel.fit" class="function">fit</dd>
                 <dd id="CifarModel.test_step" class="function">test_step</dd>
@@ -491,7 +488,7 @@ maximum epochs of training to 100.</p>
 </span><span id="KaggleModel-70"><a href="#KaggleModel-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="KaggleModel-71"><a href="#KaggleModel-71"><span class="linenos">71</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span id="KaggleModel-72"><a href="#KaggleModel-72"><span class="linenos">72</span></a>        <span class="n">activation</span> <span class="o">=</span> <span class="n">tanh</span>
-</span><span id="KaggleModel-73"><a href="#KaggleModel-73"><span class="linenos">73</span></a>        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span id="KaggleModel-73"><a href="#KaggleModel-73"><span class="linenos">73</span></a>        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># TODO: hardcoded</span>
 </span><span id="KaggleModel-74"><a href="#KaggleModel-74"><span class="linenos">74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">InputLayer</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">600</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batchSize</span><span class="p">))</span>
 </span><span id="KaggleModel-75"><a href="#KaggleModel-75"><span class="linenos">75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">))</span>
 </span><span id="KaggleModel-76"><a href="#KaggleModel-76"><span class="linenos">76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">))</span>
@@ -520,7 +517,7 @@ and a SoftMax layer. We use Tanh as the activation function.
             <div class="pdoc-code codehilite"><pre><span></span><span id="KaggleModel.__init__-70"><a href="#KaggleModel.__init__-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="KaggleModel.__init__-71"><a href="#KaggleModel.__init__-71"><span class="linenos">71</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span id="KaggleModel.__init__-72"><a href="#KaggleModel.__init__-72"><span class="linenos">72</span></a>        <span class="n">activation</span> <span class="o">=</span> <span class="n">tanh</span>
-</span><span id="KaggleModel.__init__-73"><a href="#KaggleModel.__init__-73"><span class="linenos">73</span></a>        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span id="KaggleModel.__init__-73"><a href="#KaggleModel.__init__-73"><span class="linenos">73</span></a>        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># TODO: hardcoded</span>
 </span><span id="KaggleModel.__init__-74"><a href="#KaggleModel.__init__-74"><span class="linenos">74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">InputLayer</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">600</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batchSize</span><span class="p">))</span>
 </span><span id="KaggleModel.__init__-75"><a href="#KaggleModel.__init__-75"><span class="linenos">75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">))</span>
 </span><span id="KaggleModel.__init__-76"><a href="#KaggleModel.__init__-76"><span class="linenos">76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">))</span>
@@ -558,7 +555,6 @@ and a SoftMax layer. We use Tanh as the activation function.
                 <dd id="KaggleModel.input_shape" class="variable">input_shape</dd>
                 <dd id="KaggleModel.output" class="variable">output</dd>
                 <dd id="KaggleModel.output_shape" class="variable">output_shape</dd>
-                <dd id="KaggleModel.get_weight_paths" class="function">get_weight_paths</dd>
 
             </div>
             <div><dt>keras.engine.training.Model</dt>
@@ -567,11 +563,9 @@ and a SoftMax layer. We use Tanh as the activation function.
                 <dd id="KaggleModel.metrics_names" class="variable">metrics_names</dd>
                 <dd id="KaggleModel.distribute_strategy" class="variable">distribute_strategy</dd>
                 <dd id="KaggleModel.run_eagerly" class="variable">run_eagerly</dd>
-                <dd id="KaggleModel.distribute_reduction_method" class="variable">distribute_reduction_method</dd>
                 <dd id="KaggleModel.train_step" class="function">train_step</dd>
                 <dd id="KaggleModel.compute_loss" class="function">compute_loss</dd>
                 <dd id="KaggleModel.compute_metrics" class="function">compute_metrics</dd>
-                <dd id="KaggleModel.get_metrics_result" class="function">get_metrics_result</dd>
                 <dd id="KaggleModel.make_train_function" class="function">make_train_function</dd>
                 <dd id="KaggleModel.fit" class="function">fit</dd>
                 <dd id="KaggleModel.test_step" class="function">test_step</dd>
