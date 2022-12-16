@@ -2,6 +2,7 @@ from os import environ
 from os.path import isabs
 import argparse
 from typing import Dict, List, Tuple
+from tensorflow.keras.utils import to_categorical  # pyright: ignore
 import numpy as np
 
 # Tensorflow C++ backend logging verbosity
@@ -192,6 +193,44 @@ def split_shadow_data(
     return ds.split_dataset(shadowData, numSubsets)
 
 
+def predict_and_label_shadow_data(config: Dict, shadowModels:
+                                  List[tm.Sequential], shadowDatasets:
+                                  List[Tuple[ds.Dataset, ds.Dataset]]) -> Tuple[ds.Dataset, ds.Dataset]:
+    """
+    Predicts the shadow data on the shadow models themselves and labels it with
+    "in" and "out", for the attack model to train on.
+    """
+    numModels: int = config["shadowModels"]["number"]
+    inData = []
+    outData = []
+    for i in range(numModels):
+        model = shadowModels[i]
+        trainData, testData = shadowDatasets[i]
+        trainDataSize = trainData.cardinality().numpy()
+        testDataSize = testData.cardinality().numpy()
+        assert trainDataSize >= testDataSize, "Code assumes this."
+
+        trainData = trainData.batch(trainDataSize)
+        testData = testData.batch(testDataSize)
+        trainPredictions = model.predict(trainData, batch_size=trainDataSize)
+        testPredictions = model.predict(testData, batch_size=testDataSize)
+
+        # Ensure arrays have same size
+        trainPredictions = trainPredictions[:testDataSize]
+        inData.append(trainPredictions)
+        outData.append(testPredictions)
+
+    # Merge into 1 array
+    inData = np.array(inData).reshape((-1, 100))
+    outData = np.array(outData).reshape((-1, 100))
+
+    inLabels = to_categorical(np.repeat(1, inData.shape[0]), num_classes=2)
+    outLabels = to_categorical(np.repeat(0, outData.shape[0]), num_classes=2)
+    inDataset = ds.Dataset.from_tensor_slices((inData, inLabels))
+    outDataset = ds.Dataset.from_tensor_slices((outData, outLabels))
+    return inDataset, outDataset
+
+
 def main():
 
     config = parse_config()
@@ -205,6 +244,8 @@ def main():
     shadowDatasets = split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = get_shadow_models_and_datasets(
         config, shadowDatasets)
+    inDataset, outDataset = predict_and_label_shadow_data(
+        config, shadowModels, shadowDatasets)
 
 
 if __name__ == "__main__":
