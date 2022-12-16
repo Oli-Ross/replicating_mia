@@ -1,7 +1,7 @@
 from os import environ
 from os.path import isabs
 import argparse
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import numpy as np
 
 # Tensorflow C++ backend logging verbosity
@@ -60,22 +60,37 @@ def get_target_model_name(config: Dict) -> str:
         f'trainsize_{config["targetDataset"]["trainSize"]}'
 
 
-def get_shadow_models(config: Dict, shadowDatasets:
-                      List[ds.Dataset]) -> List[tm.Sequential]:
+def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset]
+                                   ) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
+    """
+    Tries to load shadow datasets from disk, alternatively trains from scratch.
+
+    Returns 2 lists:
+        models: the trained shadow models and a list of tuples, containing
+        datasets: the training and test data for the corresponding shadow models
+
+        E.g. models[0] is trained with datasets[0,0] and tested on datasets[0,1]
+    """
     numModels: int = config["shadowModels"]["number"]
     split: float = config["shadowModels"]["split"]
     dataSize = shadowDatasets[0].cardinality().numpy()
     trainSize = np.ceil(split * dataSize)
     testSize = dataSize - trainSize
+    datasets = []
     models = []
 
     for i in range(numModels):
         modelName = "shadow_" + \
             get_target_model_name(config) + f"_split_{split}_{i}"
+        trainDataName = modelName + "_train_data"
+        testDataName = modelName + "_test_data"
 
         try:
             print(f"Trying to load shadow model \"{modelName}\" from disk.")
             model: tm.KaggleModel = tm.load_model(modelName)
+            trainData: ds.Dataset = ds.load_shadow(trainDataName)
+            testData: ds.Dataset = ds.load_shadow(testDataName)
+
         except BaseException:
             print(f"Didn't work, training shadow model {i}.")
             dataset = shadowDatasets[i]
@@ -89,14 +104,18 @@ def get_shadow_models(config: Dict, shadowDatasets:
             # TODO: this currently fails
             tm.train_model(model, modelName, trainData, testData, modelConfig)
 
-            print(f"Saving shadow model {i} to disk.")
+            print(f"Saving shadow model {i} and its data to disk.")
             tm.save_model(modelName, model)
+            ds.save_shadow(trainData, trainDataName)
+            ds.save_shadow(testData, testDataName)
+
             print(f"Evaluating shadow model {i}")
             tm.evaluate_model(model, testData)
 
+        datasets.append((trainData, testData))
         models.append(model)
 
-    return models
+    return models, datasets
 
 
 def get_target_model(config: Dict, targetDataset):
@@ -184,7 +203,8 @@ def main():
     targetModel = get_target_model(config, targetDataset)
     shadowData = get_shadow_data(config, targetDataset, targetModel)
     shadowDatasets = split_shadow_data(config, shadowData)
-    shadowModels = get_shadow_models(config, shadowDatasets)
+    shadowModels, shadowDatasets = get_shadow_models_and_datasets(
+        config, shadowDatasets)
 
 
 if __name__ == "__main__":
