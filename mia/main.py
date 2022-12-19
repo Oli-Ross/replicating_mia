@@ -218,19 +218,17 @@ def predict_and_label_shadow_data(config: Dict, shadowModels:
 
         for currentClass in range(numClasses):
 
-            def _filter(x, y):
+            def my_filter(x, y):
                 return tf.math.equal(np.int64(currentClass), tf.math.argmax(y))
 
-            trainData = trainData.filter(_filter)
-            testData = testData.filter(_filter)
+            classTrainData = trainData.filter(my_filter)
+            classTestData = testData.filter(my_filter)
 
-            trainSize = len(list(trainData.as_numpy_iterator()))
-            testSize = len(list(testData.as_numpy_iterator()))
-            trainData = trainData.batch(trainSize)
-            testData = testData.batch(testSize)
+            assert len(list(classTestData.as_numpy_iterator())) != 0
+            assert len(list(classTrainData.as_numpy_iterator())) != 0
 
-            trainPredictions = model.predict(trainData)
-            testPredictions = model.predict(testData)
+            trainPredictions = model.predict(classTrainData.batch(100))
+            testPredictions = model.predict(classTestData.batch(100))
 
             inData[currentClass].append(trainPredictions)
             outData[currentClass].append(testPredictions)
