@@ -30,10 +30,10 @@ targetDataset:
 
 shadowModels:
   number: 10
-  split: 0.8
+  split: 0.5
 
 shadowDataset:
-  size: 20000
+  size: 50000
   method: noisy
   noisy:
     hyperparameters:

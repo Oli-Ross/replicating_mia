@@ -221,22 +221,32 @@ def predict_and_label_shadow_data(config: Dict, shadowModels:
             def my_filter(x, y):
                 return tf.math.equal(np.int64(currentClass), tf.math.argmax(y))
 
-            classTrainData = trainData.filter(my_filter)
             classTestData = testData.filter(my_filter)
+            classTestDataSize = len(list(classTestData.as_numpy_iterator()))
+            if classTestDataSize != 0:
+                testPredictions = model.predict(classTestData.batch(100))
+                outData[currentClass].append(testPredictions)
 
-            assert len(list(classTestData.as_numpy_iterator())) != 0
-            assert len(list(classTrainData.as_numpy_iterator())) != 0
-
-            trainPredictions = model.predict(classTrainData.batch(100))
-            testPredictions = model.predict(classTestData.batch(100))
-
-            inData[currentClass].append(trainPredictions)
-            outData[currentClass].append(testPredictions)
+            classTrainData = trainData.filter(my_filter)
+            classTrainDataSize = len(list(classTrainData.as_numpy_iterator()))
+            if classTrainDataSize != 0:
+                trainPredictions = model.predict(classTrainData.batch(100))
+                inData[currentClass].append(trainPredictions)
 
     # Merge into 1 array
     inData = np.array(inData).reshape((-1, 100))
     outData = np.array(outData).reshape((-1, 100))
     return inData, outData
+
+
+def get_stats(shadowData: ds.Dataset):
+    dataNP = shadowData.as_numpy_iterator()
+    labels = []
+    for x in dataNP:
+        labels.append(np.argmax(x[1]))
+    return np.histogram(np.array(labels), bins=100)[0]
+    for x in hist:
+        print(x)
 
 
 def main():
@@ -252,6 +262,17 @@ def main():
     shadowDatasets = split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = get_shadow_models_and_datasets(
         config, shadowDatasets)
+    for index, x in enumerate(shadowDatasets):
+        hist = get_stats(x[0])
+        if 0 in hist:
+            print(f"Train {index}")
+            print(hist)
+
+        hist = get_stats(x[1])
+        if 0 in hist:
+            print(f"Test {index}")
+            print(hist)
+
     inData, outData = predict_and_label_shadow_data(
         config, shadowModels, shadowDatasets)
 
