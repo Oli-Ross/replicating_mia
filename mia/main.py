@@ -85,7 +85,8 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 
     for i in range(numModels):
         modelName = "shadow_" + \
-            get_target_model_name(config) + f"_split_{split}_{i}"
+            get_target_model_name(config) + \
+            f"_split_{split}_{i}_of_{numModels}"
         trainDataName = modelName + "_train_data"
         testDataName = modelName + "_test_data"
 
