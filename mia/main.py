@@ -106,7 +106,6 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
             model = tm.KaggleModel(config["targetModel"]["classes"])
             modelConfig = config["targetModel"]["hyperparameters"]
 
-            # TODO: this currently fails
             tm.train_model(model, modelName, trainData, testData, modelConfig)
 
             print(f"Saving shadow model {i} and its data to disk.")
