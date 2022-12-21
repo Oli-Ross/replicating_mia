@@ -100,15 +100,17 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     return Dataset.from_tensor_slices((features, labels))
 
 
-def load_attack(datasetName: str) -> Dataset:
+def load_attack(datasetName: str, verbose=True) -> Dataset:
     datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
-    print(f"Loading dataset \"{datasetName}\" from disk.")
+    if verbose:
+        print(f"Loading dataset \"{datasetName}\" from disk.")
     return tf.data.experimental.load(datasetDir)
 
 
-def load_shadow(datasetName: str) -> Dataset:
+def load_shadow(datasetName: str, verbose=True) -> Dataset:
     datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
-    print(f"Loading dataset \"{datasetName}\" from disk.")
+    if verbose:
+        print(f"Loading dataset \"{datasetName}\" from disk.")
     return tf.data.experimental.load(datasetDir)
 
 
