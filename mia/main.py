@@ -256,7 +256,13 @@ def predict_and_label_shadow_data(config: Dict, shadowModels:
             # Drop unused data record and class ground truth
             classAttackDataFinal = classAttackData.map(restructure_data)
 
-            attackDatasets.append(classAttackDataFinal)
+            if i == 0:
+                # First shadow model -> Each class seen the first time
+                attackDatasets.append(classAttackDataFinal)
+            else:
+                # Not first shadow model. Concatenate with appropriate dataset
+                attackDatasets[currentClass] = attackDatasets[currentClass].concatenate(
+                    classAttackDataFinal)
 
     return attackDatasets
 
