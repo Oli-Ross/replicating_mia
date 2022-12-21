@@ -64,6 +64,14 @@ def get_target_model_name(config: Dict) -> str:
         f'trainsize_{config["targetDataset"]["trainSize"]}'
 
 
+def get_shadow_model_name(config: Dict, i: int):
+    numModels: int = config["shadowModels"]["number"]
+    split: float = config["shadowModels"]["split"]
+    return "shadow_" + \
+        get_target_model_name(config) + \
+        f"_split_{split}_{i}_of_{numModels}"
+
+
 def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset]
                                    ) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
     """
@@ -84,9 +92,7 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
     models = []
 
     for i in range(numModels):
-        modelName = "shadow_" + \
-            get_target_model_name(config) + \
-            f"_split_{split}_{i}_of_{numModels}"
+        modelName = get_shadow_model_name(config, i)
         trainDataName = modelName + "_train_data"
         testDataName = modelName + "_test_data"
 
