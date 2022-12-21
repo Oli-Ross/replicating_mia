@@ -198,45 +198,67 @@ def split_shadow_data(
 
 def predict_and_label_shadow_data(config: Dict, shadowModels:
                                   List[tm.Sequential], shadowDatasets:
-                                  List[Tuple[ds.Dataset, ds.Dataset]]) -> Tuple[NDArray, NDArray]:
+                                  List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
     """
     Predicts the shadow data on the shadow models themselves and labels it with
     "in" and "out", for the attack model to train on.
     """
     numModels: int = config["shadowModels"]["number"]
     numClasses = config["targetModel"]["classes"]
-    inData = [[]] * numClasses
-    outData = [[]] * numClasses
+    attackDatasets = []
+
     for i in range(numModels):
+
         model = shadowModels[i]
         trainData, testData = shadowDatasets[i]
         trainDataSize = trainData.cardinality().numpy()
         testDataSize = testData.cardinality().numpy()
 
+        # Only relevant if split > 0.5
         assert trainDataSize >= testDataSize
         trainData = trainData.take(testDataSize)
+        trainDataSize = testDataSize
+
+        # Get predictions
+        trainPreds = model.predict(trainData.batch(100, drop_remainder=False))
+        testPreds = model.predict(testData.batch(100, drop_remainder=False))
+
+        # Construct "in"/"out" labels
+        trainLabels = np.tile(np.array([[1, 0]]), (trainDataSize, 1))
+        testLabels = np.tile(np.array([[0, 1]]), (testDataSize, 1))
+
+        # Combine them into 1 dataset
+        trainPredsLabels = tf.data.Dataset.from_tensor_slices(
+            (trainPreds, trainLabels))
+        testPredsLabels = tf.data.Dataset.from_tensor_slices(
+            (testPreds, testLabels))
+
+        # Add data records and ground truth class to the dataset
+        trainDataPredsLabels = tf.data.Dataset.zip(
+            (trainData, trainPredsLabels))
+        testDataPredsLabels = tf.data.Dataset.zip((testData, testPredsLabels))
+
+        # Combine train and test data
+        attackData = trainDataPredsLabels.concatenate(testDataPredsLabels)
 
         for currentClass in range(numClasses):
 
-            def my_filter(x, y):
-                return tf.math.equal(np.int64(currentClass), tf.math.argmax(y))
+            def is_current_class(dataAndClass, predAndLabel):
+                (_, classLabel) = dataAndClass
+                return tf.math.equal(np.int64(currentClass),
+                                     tf.math.argmax(classLabel))
 
-            classTestData = testData.filter(my_filter)
-            classTestDataSize = len(list(classTestData.as_numpy_iterator()))
-            if classTestDataSize != 0:
-                testPredictions = model.predict(classTestData.batch(100))
-                outData[currentClass].append(testPredictions)
+            classAttackData = attackData.filter(is_current_class)
 
-            classTrainData = trainData.filter(my_filter)
-            classTrainDataSize = len(list(classTrainData.as_numpy_iterator()))
-            if classTrainDataSize != 0:
-                trainPredictions = model.predict(classTrainData.batch(100))
-                inData[currentClass].append(trainPredictions)
+            def restructure_data(dataAndClass, predAndLabel):
+                return predAndLabel
 
-    # Merge into 1 array
-    inData = np.array(inData).reshape((-1, 100))
-    outData = np.array(outData).reshape((-1, 100))
-    return inData, outData
+            # Drop unused data record and class ground truth
+            classAttackDataFinal = classAttackData.map(restructure_data)
+
+            attackDatasets.append(classAttackDataFinal)
+
+    return attackDatasets
 
 
 def get_stats(shadowData: ds.Dataset):
@@ -262,18 +284,7 @@ def main():
     shadowDatasets = split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = get_shadow_models_and_datasets(
         config, shadowDatasets)
-    for index, x in enumerate(shadowDatasets):
-        hist = get_stats(x[0])
-        if 0 in hist:
-            print(f"Train {index}")
-            print(hist)
-
-        hist = get_stats(x[1])
-        if 0 in hist:
-            print(f"Test {index}")
-            print(hist)
-
-    inData, outData = predict_and_label_shadow_data(
+    attackDatasets = predict_and_label_shadow_data(
         config, shadowModels, shadowDatasets)
 
 
