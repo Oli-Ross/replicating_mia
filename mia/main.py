@@ -202,9 +202,48 @@ def split_shadow_data(
     return ds.split_dataset(shadowData, numSubsets)
 
 
+def _get_attack_data_name(config: Dict, i):
+    numModels: int = config["shadowModels"]["number"]
+    split: float = config["shadowModels"]["split"]
+    return get_target_model_name(config) + f"_split_{split}_with_{numModels}"
+
+
+def _save_attack_datasets(config: Dict, datasets: List[ds.Dataset]):
+    labelShape = datasets[0].as_numpy_iterator().next()[0].shape[0]
+    assert labelShape == len(
+        datasets), "List should contain 1 dataset per class"
+    for index, dataset in enumerate(datasets):
+        if index % 10 == 0:
+            print(f"Saving attack dataset #{index}")
+        ds.save_attack(dataset, _get_attack_data_name(config, index))
+
+
+def _load_attack_datasets(config: Dict):
+    numClasses = config["targetModel"]["classes"]
+    numDatasets = numClasses
+    attackDatasets = []
+    for i in range(numDatasets):
+        attackDatasets.append(ds.load_attack(_get_attack_data_name(config, i)))
+    return attackDatasets
+
+
 def predict_and_label_shadow_data(config: Dict, shadowModels:
                                   List[tm.Sequential], shadowDatasets:
                                   List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
+    try:
+        print("Loading attack data..")
+        return _load_attack_datasets(config)
+    except BaseException:
+        print("Didn't work, reconstructing it.")
+        attackDatasets = construct_attack_data(
+            config, shadowModels, shadowDatasets)
+        _save_attack_datasets(config, attackDatasets)
+        return attackDatasets
+
+
+def construct_attack_data(config: Dict, shadowModels:
+                          List[tm.Sequential], shadowDatasets:
+                          List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
     """
     Predicts the shadow data on the shadow models themselves and labels it with
     "in" and "out", for the attack model to train on.
