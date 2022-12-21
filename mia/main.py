@@ -319,16 +319,6 @@ def construct_attack_data(config: Dict, shadowModels:
     return attackDatasets
 
 
-def get_stats(shadowData: ds.Dataset):
-    dataNP = shadowData.as_numpy_iterator()
-    labels = []
-    for x in dataNP:
-        labels.append(np.argmax(x[1]))
-    return np.histogram(np.array(labels), bins=100)[0]
-    for x in hist:
-        print(x)
-
-
 def main():
 
     config = parse_config()
