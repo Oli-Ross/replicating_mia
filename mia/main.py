@@ -213,12 +213,12 @@ def _get_attack_data_name(config: Dict, i):
 
 
 def _save_attack_datasets(config: Dict, datasets: List[ds.Dataset]):
-    labelShape = datasets[0].as_numpy_iterator().next()[0].shape[0]
-    assert labelShape == len(
+    numClasses = config["targetModel"]["classes"]
+    assert numClasses == len(
         datasets), "List should contain 1 dataset per class"
     for index, dataset in enumerate(datasets):
         if index % 10 == 0:
-            print(f"Saving attack dataset #{index}")
+            print(f"Saving attack dataset #{index}/{numClasses}")
         ds.save_attack(dataset, _get_attack_data_name(config, index))
 
 
