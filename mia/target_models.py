@@ -76,14 +76,15 @@ class KaggleModel(Sequential):
         self.add(Softmax())
 
 
-def load_model(name: str) -> Sequential:
+def load_model(name: str, verbose=True) -> Sequential:
     """
     Load model from disk.
 
     The file name will be constructed from the `name` argument.
     """
     # TODO: make dir if it doesn't exist
-    print(f"Loading model {name} from disk.")
+    if verbose:
+        print(f"Loading model {name} from disk.")
     filePath: str = join(dirname(__file__), "../models/target", name)
     return keras.models.load_model(filePath)
 

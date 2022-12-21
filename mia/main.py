@@ -91,16 +91,17 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
     datasets = []
     models = []
 
+    print(f"Loading shadow models from disk.")
     for i in range(numModels):
         modelName = get_shadow_model_name(config, i)
         trainDataName = modelName + "_train_data"
         testDataName = modelName + "_test_data"
 
         try:
-            print(f"Trying to load shadow model \"{modelName}\" from disk.")
-            model: tm.KaggleModel = tm.load_model(modelName)
-            trainData: ds.Dataset = ds.load_shadow(trainDataName)
-            testData: ds.Dataset = ds.load_shadow(testDataName)
+            model: tm.KaggleModel = tm.load_model(modelName, verbose=False)
+            trainData: ds.Dataset = ds.load_shadow(
+                trainDataName, verbose=False)
+            testData: ds.Dataset = ds.load_shadow(testDataName, verbose=False)
 
         except BaseException:
             print(f"Didn't work, training shadow model {i}.")
@@ -134,8 +135,8 @@ def get_target_model(config: Dict, targetDataset):
     modelName = get_target_model_name(config)
 
     try:
-        print(f"Trying to load model \"{modelName}\" from disk.")
-        model: tm.KaggleModel = tm.load_model(modelName)
+        print(f"Loading target model from disk.")
+        model: tm.KaggleModel = tm.load_model(modelName, verbose=False)
 
     except BaseException:
         print("Didn't work, retraining target model.")
@@ -168,7 +169,8 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
     if method == "noisy":
         dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}'
         try:
-            shadowData = ds.load_shadow(dataName)
+            print("Loading shadow data from disk.")
+            shadowData = ds.load_shadow(dataName, verbose=False)
         except BaseException:
             print("Loading failed, generating shadow data.")
             shadowData = sd.generate_shadow_data_noisy(
@@ -223,7 +225,12 @@ def _load_attack_datasets(config: Dict):
     numDatasets = numClasses
     attackDatasets = []
     for i in range(numDatasets):
-        attackDatasets.append(ds.load_attack(_get_attack_data_name(config, i)))
+        attackDatasets.append(
+            ds.load_attack(
+                _get_attack_data_name(
+                    config,
+                    i),
+                verbose=False))
     return attackDatasets
 
 
@@ -231,7 +238,7 @@ def predict_and_label_shadow_data(config: Dict, shadowModels:
                                   List[tm.Sequential], shadowDatasets:
                                   List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
     try:
-        print("Loading attack data..")
+        print("Loading attack data.")
         return _load_attack_datasets(config)
     except BaseException:
         print("Didn't work, reconstructing it.")
