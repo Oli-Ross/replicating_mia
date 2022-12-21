@@ -206,8 +206,10 @@ def split_shadow_data(
 
 def _get_attack_data_name(config: Dict, i):
     numModels: int = config["shadowModels"]["number"]
+    numClasses = config["targetModel"]["classes"]
     split: float = config["shadowModels"]["split"]
-    return get_target_model_name(config) + f"_split_{split}_with_{numModels}"
+    return get_target_model_name(
+        config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
 
 
 def _save_attack_datasets(config: Dict, datasets: List[ds.Dataset]):
