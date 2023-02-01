@@ -116,7 +116,7 @@ object. E.g. if the YAML file has an entry "seed: 1234":</p>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="n">configuration</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">configName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    If a `configName` is passed, this will be used to construct the file</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    name. Otherwise the current time is used. Either way, config files are</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    written into the `config/` directory.</span>
@@ -131,7 +131,7 @@ object. E.g. if the YAML file has an entry "seed: 1234":</p>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="k">def</span> <span class="nf">from_abs_path</span><span class="p">(</span><span class="n">absoluteFilePath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    Load a Configuration from absolute file path.</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span>
@@ -142,7 +142,7 @@ object. E.g. if the YAML file has an entry "seed: 1234":</p>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
 </span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="k">def</span> <span class="nf">from_rel_path</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">    Load a Configuration from relative file path.</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">curDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
@@ -151,7 +151,7 @@ object. E.g. if the YAML file has an entry "seed: 1234":</p>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
 </span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="k">def</span> <span class="nf">from_name</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    Load a Configuration from `config/`.</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">    `fileName` is the name of the file inside `config/`.</span>
@@ -174,7 +174,7 @@ object. E.g. if the YAML file has an entry "seed: 1234":</p>
     </div>
     <a class="headerlink" href="#save_to_file"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="save_to_file-18"><a href="#save_to_file-18"><span class="linenos">18</span></a><span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="n">configuration</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">configName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="save_to_file-19"><a href="#save_to_file-19"><span class="linenos">19</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="save_to_file-19"><a href="#save_to_file-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="save_to_file-20"><a href="#save_to_file-20"><span class="linenos">20</span></a><span class="sd">    If a `configName` is passed, this will be used to construct the file</span>
 </span><span id="save_to_file-21"><a href="#save_to_file-21"><span class="linenos">21</span></a><span class="sd">    name. Otherwise the current time is used. Either way, config files are</span>
 </span><span id="save_to_file-22"><a href="#save_to_file-22"><span class="linenos">22</span></a><span class="sd">    written into the `config/` directory.</span>
@@ -208,7 +208,7 @@ written into the <code>config/</code> directory.</p>
     </div>
     <a class="headerlink" href="#from_abs_path"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="from_abs_path-33"><a href="#from_abs_path-33"><span class="linenos">33</span></a><span class="k">def</span> <span class="nf">from_abs_path</span><span class="p">(</span><span class="n">absoluteFilePath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="from_abs_path-34"><a href="#from_abs_path-34"><span class="linenos">34</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="from_abs_path-34"><a href="#from_abs_path-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="from_abs_path-35"><a href="#from_abs_path-35"><span class="linenos">35</span></a><span class="sd">    Load a Configuration from absolute file path.</span>
 </span><span id="from_abs_path-36"><a href="#from_abs_path-36"><span class="linenos">36</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="from_abs_path-37"><a href="#from_abs_path-37"><span class="linenos">37</span></a>    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span>
@@ -236,7 +236,7 @@ written into the <code>config/</code> directory.</p>
     </div>
     <a class="headerlink" href="#from_rel_path"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="from_rel_path-44"><a href="#from_rel_path-44"><span class="linenos">44</span></a><span class="k">def</span> <span class="nf">from_rel_path</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="from_rel_path-45"><a href="#from_rel_path-45"><span class="linenos">45</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="from_rel_path-45"><a href="#from_rel_path-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="from_rel_path-46"><a href="#from_rel_path-46"><span class="linenos">46</span></a><span class="sd">    Load a Configuration from relative file path.</span>
 </span><span id="from_rel_path-47"><a href="#from_rel_path-47"><span class="linenos">47</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="from_rel_path-48"><a href="#from_rel_path-48"><span class="linenos">48</span></a>    <span class="n">curDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
@@ -262,7 +262,7 @@ written into the <code>config/</code> directory.</p>
     </div>
     <a class="headerlink" href="#from_name"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="from_name-53"><a href="#from_name-53"><span class="linenos">53</span></a><span class="k">def</span> <span class="nf">from_name</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="from_name-54"><a href="#from_name-54"><span class="linenos">54</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="from_name-54"><a href="#from_name-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="from_name-55"><a href="#from_name-55"><span class="linenos">55</span></a><span class="sd">    Load a Configuration from `config/`.</span>
 </span><span id="from_name-56"><a href="#from_name-56"><span class="linenos">56</span></a>
 </span><span id="from_name-57"><a href="#from_name-57"><span class="linenos">57</span></a><span class="sd">    `fileName` is the name of the file inside `config/`.</span>

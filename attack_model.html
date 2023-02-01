@@ -104,7 +104,7 @@ attack_model    </h1>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">new_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    Set the global seed that will be used for all functions that include</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    randomness.</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -114,7 +114,7 @@ attack_model    </h1>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="k">class</span> <span class="nc">KaggleAttackModel</span><span class="p">(</span><span class="n">Sequential</span><span class="p">):</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    Architecture:</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        Fully connected NN,</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">        1 hiddenlayer, size 64,</span>
@@ -136,7 +136,7 @@ attack_model    </h1>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    Load model from disk.</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    The file name will be constructed from the `name` argument.</span>
@@ -146,7 +146,7 @@ attack_model    </h1>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    Save model to disk.</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    The file name will be constructed from the `name` argument.</span>
@@ -171,15 +171,14 @@ attack_model    </h1>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">testData</span> <span class="o">=</span> <span class="n">testData</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">log_dir</span> <span class="o">=</span> <span class="s2">&quot;logs/attack/&quot;</span> <span class="o">+</span> <span class="n">modelName</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">cb</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">TensorBoard</span><span class="p">(</span><span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">log_dir</span><span class="o">=</span><span class="n">log_dir</span><span class="p">)</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainData</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>                     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">cb</span><span class="p">],</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">testData</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainData</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">cb</span><span class="p">],</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">testData</span><span class="p">)</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">def</span> <span class="nf">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="c1"># TODO: batchSize is hardcoded</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">10</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="k">def</span> <span class="nf">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="c1"># TODO: batchSize is hardcoded</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -196,7 +195,7 @@ attack_model    </h1>
     </div>
     <a class="headerlink" href="#set_seed"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="set_seed-26"><a href="#set_seed-26"><span class="linenos">26</span></a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">new_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="set_seed-27"><a href="#set_seed-27"><span class="linenos">27</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="set_seed-27"><a href="#set_seed-27"><span class="linenos">27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="set_seed-28"><a href="#set_seed-28"><span class="linenos">28</span></a><span class="sd">    Set the global seed that will be used for all functions that include</span>
 </span><span id="set_seed-29"><a href="#set_seed-29"><span class="linenos">29</span></a><span class="sd">    randomness.</span>
 </span><span id="set_seed-30"><a href="#set_seed-30"><span class="linenos">30</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -224,7 +223,7 @@ randomness.</p>
     </div>
     <a class="headerlink" href="#KaggleAttackModel"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="KaggleAttackModel-36"><a href="#KaggleAttackModel-36"><span class="linenos">36</span></a><span class="k">class</span> <span class="nc">KaggleAttackModel</span><span class="p">(</span><span class="n">Sequential</span><span class="p">):</span>
-</span><span id="KaggleAttackModel-37"><a href="#KaggleAttackModel-37"><span class="linenos">37</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="KaggleAttackModel-37"><a href="#KaggleAttackModel-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="KaggleAttackModel-38"><a href="#KaggleAttackModel-38"><span class="linenos">38</span></a><span class="sd">    Architecture:</span>
 </span><span id="KaggleAttackModel-39"><a href="#KaggleAttackModel-39"><span class="linenos">39</span></a><span class="sd">        Fully connected NN,</span>
 </span><span id="KaggleAttackModel-40"><a href="#KaggleAttackModel-40"><span class="linenos">40</span></a><span class="sd">        1 hiddenlayer, size 64,</span>
@@ -405,7 +404,7 @@ randomness.</p>
     </div>
     <a class="headerlink" href="#load_model"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="load_model-58"><a href="#load_model-58"><span class="linenos">58</span></a><span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
-</span><span id="load_model-59"><a href="#load_model-59"><span class="linenos">59</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="load_model-59"><a href="#load_model-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="load_model-60"><a href="#load_model-60"><span class="linenos">60</span></a><span class="sd">    Load model from disk.</span>
 </span><span id="load_model-61"><a href="#load_model-61"><span class="linenos">61</span></a>
 </span><span id="load_model-62"><a href="#load_model-62"><span class="linenos">62</span></a><span class="sd">    The file name will be constructed from the `name` argument.</span>
@@ -434,7 +433,7 @@ randomness.</p>
     </div>
     <a class="headerlink" href="#save_model"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="save_model-68"><a href="#save_model-68"><span class="linenos">68</span></a><span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="save_model-69"><a href="#save_model-69"><span class="linenos">69</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="save_model-69"><a href="#save_model-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="save_model-70"><a href="#save_model-70"><span class="linenos">70</span></a><span class="sd">    Save model to disk.</span>
 </span><span id="save_model-71"><a href="#save_model-71"><span class="linenos">71</span></a>
 </span><span id="save_model-72"><a href="#save_model-72"><span class="linenos">72</span></a><span class="sd">    The file name will be constructed from the `name` argument.</span>
@@ -478,8 +477,7 @@ randomness.</p>
 </span><span id="train_model-91"><a href="#train_model-91"><span class="linenos">91</span></a>    <span class="n">testData</span> <span class="o">=</span> <span class="n">testData</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="train_model-92"><a href="#train_model-92"><span class="linenos">92</span></a>    <span class="n">log_dir</span> <span class="o">=</span> <span class="s2">&quot;logs/attack/&quot;</span> <span class="o">+</span> <span class="n">modelName</span>
 </span><span id="train_model-93"><a href="#train_model-93"><span class="linenos">93</span></a>    <span class="n">cb</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">TensorBoard</span><span class="p">(</span><span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">log_dir</span><span class="o">=</span><span class="n">log_dir</span><span class="p">)</span>
-</span><span id="train_model-94"><a href="#train_model-94"><span class="linenos">94</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainData</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span>
-</span><span id="train_model-95"><a href="#train_model-95"><span class="linenos">95</span></a>                     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">cb</span><span class="p">],</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">testData</span><span class="p">)</span>
+</span><span id="train_model-94"><a href="#train_model-94"><span class="linenos">94</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainData</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">cb</span><span class="p">],</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">testData</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -497,11 +495,11 @@ randomness.</p>
 
     </div>
     <a class="headerlink" href="#evaluate_model"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="evaluate_model-98"><a href="#evaluate_model-98"><span class="linenos"> 98</span></a><span class="k">def</span> <span class="nf">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
-</span><span id="evaluate_model-99"><a href="#evaluate_model-99"><span class="linenos"> 99</span></a>    <span class="c1"># TODO: batchSize is hardcoded</span>
-</span><span id="evaluate_model-100"><a href="#evaluate_model-100"><span class="linenos">100</span></a>    <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">10</span>
-</span><span id="evaluate_model-101"><a href="#evaluate_model-101"><span class="linenos">101</span></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="evaluate_model-102"><a href="#evaluate_model-102"><span class="linenos">102</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="evaluate_model-97"><a href="#evaluate_model-97"><span class="linenos"> 97</span></a><span class="k">def</span> <span class="nf">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
+</span><span id="evaluate_model-98"><a href="#evaluate_model-98"><span class="linenos"> 98</span></a>    <span class="c1"># TODO: batchSize is hardcoded</span>
+</span><span id="evaluate_model-99"><a href="#evaluate_model-99"><span class="linenos"> 99</span></a>    <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="evaluate_model-100"><a href="#evaluate_model-100"><span class="linenos">100</span></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="evaluate_model-101"><a href="#evaluate_model-101"><span class="linenos">101</span></a>    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </span></pre></div>
 
 
