@@ -7,7 +7,7 @@
 from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
-from typing import Union
+from typing import Union, Dict, List
 import datasets as ds
 import random
 import numpy as np
@@ -44,6 +44,48 @@ def generate_shadow_data_sampling(original_data: Dataset) -> Dataset:
     sample_dataset: Dataset = tf.data.Dataset.sample_from_datasets(
         [original_data], seed=global_seed, stop_on_empty_dataset=True)
     return sample_dataset
+
+
+def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
+    print("Splitting shadow data into subsets.")
+    numSubsets = config["shadowModels"]["number"]
+    return ds.split_dataset(shadowData, numSubsets)
+
+
+def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
+    shadowConfig = config["shadowDataset"]
+    method = shadowConfig["method"]
+    dataSize = shadowConfig["size"]
+    hyperpars = shadowConfig[method]["hyperparameters"]
+
+    if method == "noisy":
+        dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}'
+        try:
+            print("Loading shadow data from disk.")
+            shadowData = ds.load_shadow(dataName, verbose=False)
+        except BaseException:
+            print("Loading failed, generating shadow data.")
+            shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
+            ds.save_shadow(shadowData, dataName)
+    elif method == "hill_climbing":
+        dataName = \
+            f'{method}_' + \
+            f'kmax_{hyperpars["k_max"]}_' + \
+            f'kmin_{hyperpars["k_min"]}_' + \
+            f'confmin_{hyperpars["conf_min"]}_' + \
+            f'rejmax_{hyperpars["rej_max"]}_' + \
+            f'itermax_{hyperpars["iter_max"]}_' + \
+            f'size_{dataSize}'
+        try:
+            shadowData = ds.load_shadow(dataName)
+        except BaseException:
+            print("Loading failed, generating shadow data.")
+            shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
+            ds.save_shadow(shadowData, dataName)
+    else:
+        raise ValueError(f"{method} is not a valid shadow data method.")
+
+    return shadowData
 
 
 def _make_data_record_noisy(features, label, fraction):
