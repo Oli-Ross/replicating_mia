@@ -125,3 +125,14 @@ def evaluate_model(model: Sequential, dataset: Dataset):
     batchSize = 100
     dataset = dataset.batch(batchSize, drop_remainder=True)
     return model.evaluate(dataset)
+
+
+def get_model_name(config: Dict) -> str:
+    modelConfig = config["targetModel"]["hyperparameters"]
+    return \
+        f'{config["targetDataset"]["name"]}_' + \
+        f'lr_{modelConfig["learningRate"]}_' + \
+        f'bs_{modelConfig["batchSize"]}_' + \
+        f'epochs_{modelConfig["epochs"]}_' + \
+        f'trainsize_{config["targetDataset"]["trainSize"]}'
+    pass

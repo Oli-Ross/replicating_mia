@@ -51,20 +51,10 @@ def parse_config() -> Dict:
     return config
 
 
-def get_target_model_name(config: Dict) -> str:
-    modelConfig = config["targetModel"]["hyperparameters"]
-    return \
-        f'{config["targetDataset"]["name"]}_' + \
-        f'lr_{modelConfig["learningRate"]}_' + \
-        f'bs_{modelConfig["batchSize"]}_' + \
-        f'epochs_{modelConfig["epochs"]}_' + \
-        f'trainsize_{config["targetDataset"]["trainSize"]}'
-
-
 def get_shadow_model_name(config: Dict, i: int):
     numModels: int = config["shadowModels"]["number"]
     split: float = config["shadowModels"]["split"]
-    return "shadow_" + get_target_model_name(config) + f"_split_{split}_{i}_of_{numModels}"
+    return "shadow_" + tm.get_model_name(config) + f"_split_{split}_{i}_of_{numModels}"
 
 
 def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset]
@@ -126,7 +116,7 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 def get_target_model(config: Dict, targetDataset):
     dataConfig = config["targetDataset"]
     modelConfig = config["targetModel"]["hyperparameters"]
-    modelName = get_target_model_name(config)
+    modelName = tm.get_model_name(config)
 
     try:
         print(f"Loading target model from disk.")
@@ -194,42 +184,16 @@ def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
     return ds.split_dataset(shadowData, numSubsets)
 
 
-def _get_attack_data_name(config: Dict, i):
-    numModels: int = config["shadowModels"]["number"]
-    numClasses = config["targetModel"]["classes"]
-    split: float = config["shadowModels"]["split"]
-    return get_target_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
-
-
-def _save_attack_datasets(config: Dict, datasets: List[ds.Dataset]):
-    numClasses = config["targetModel"]["classes"]
-    assert numClasses == len(
-        datasets), "List should contain 1 dataset per class"
-    for index, dataset in enumerate(datasets):
-        if index % 10 == 0:
-            print(f"Saving attack dataset #{index}/{numClasses}")
-        ds.save_attack(dataset, _get_attack_data_name(config, index))
-
-
-def _load_attack_datasets(config: Dict):
-    numClasses = config["targetModel"]["classes"]
-    numDatasets = numClasses
-    attackDatasets = []
-    for i in range(numDatasets):
-        attackDatasets.append(ds.load_attack(_get_attack_data_name(config, i), verbose=False))
-    return attackDatasets
-
-
 def predict_and_label_shadow_data(config: Dict,
                                   shadowModels: List[tm.Sequential],
                                   shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
     try:
         print("Loading attack data.")
-        return _load_attack_datasets(config)
+        return ad.load(config)
     except BaseException:
         print("Didn't work, reconstructing it.")
         attackDatasets = ad.from_shadow_models(config, shadowModels, shadowDatasets)
-        _save_attack_datasets(config, attackDatasets)
+        ad.save(config, attackDatasets)
         return attackDatasets
 
 

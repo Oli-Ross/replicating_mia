@@ -92,6 +92,32 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
     return attackTrainData, attackTestData
 
 
+def load(config: Dict):
+    numClasses = config["targetModel"]["classes"]
+    numDatasets = numClasses
+    attackDatasets = []
+    for i in range(numDatasets):
+        attackDatasets.append(ds.load_attack(_get_attack_data_name(config, i), verbose=False))
+    return attackDatasets
+
+
+def _get_attack_data_name(config: Dict, i):
+    numModels: int = config["shadowModels"]["number"]
+    numClasses = config["targetModel"]["classes"]
+    split: float = config["shadowModels"]["split"]
+    return tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
+
+
+def save(config: Dict, datasets: List[ds.Dataset]):
+    numClasses = config["targetModel"]["classes"]
+    assert numClasses == len(
+        datasets), "List should contain 1 dataset per class"
+    for index, dataset in enumerate(datasets):
+        if index % 10 == 0:
+            print(f"Saving attack dataset #{index}/{numClasses}")
+        ds.save_attack(dataset, _get_attack_data_name(config, index))
+
+
 def from_shadow_models(config: Dict, shadowModels:
                        List[tm.Sequential], shadowDatasets:
                        List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
