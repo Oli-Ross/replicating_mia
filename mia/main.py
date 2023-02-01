@@ -28,12 +28,8 @@ def set_seeds(seed: int):
 
 
 def parse_args() -> Dict:
-    parser = argparse.ArgumentParser(
-        description='Launch a membership inference attack pipeline')
-    parser.add_argument(
-        '--config',
-        help='Relative path to config file.',
-    )
+    parser = argparse.ArgumentParser(description='Launch a membership inference attack pipeline')
+    parser.add_argument('--config', help='Relative path to config file.',)
 
     return vars(parser.parse_args())
 
@@ -67,9 +63,7 @@ def get_target_model_name(config: Dict) -> str:
 def get_shadow_model_name(config: Dict, i: int):
     numModels: int = config["shadowModels"]["number"]
     split: float = config["shadowModels"]["split"]
-    return "shadow_" + \
-        get_target_model_name(config) + \
-        f"_split_{split}_{i}_of_{numModels}"
+    return "shadow_" + get_target_model_name(config) + f"_split_{split}_{i}_of_{numModels}"
 
 
 def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset]
@@ -99,8 +93,7 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 
         try:
             model: tm.KaggleModel = tm.load_model(modelName, verbose=False)
-            trainData: ds.Dataset = ds.load_shadow(
-                trainDataName, verbose=False)
+            trainData: ds.Dataset = ds.load_shadow(trainDataName, verbose=False)
             testData: ds.Dataset = ds.load_shadow(testDataName, verbose=False)
 
         except BaseException:
@@ -142,9 +135,7 @@ def get_target_model(config: Dict, targetDataset):
         print("Didn't work, retraining target model.")
 
         trainData = targetDataset.take(dataConfig["trainSize"])
-        testData = targetDataset.skip(
-            dataConfig["trainSize"]).take(
-            dataConfig["testSize"])
+        testData = targetDataset.skip(dataConfig["trainSize"]).take(dataConfig["testSize"])
 
         if dataConfig["shuffle"]:
             trainData = ds.shuffle(trainData)
@@ -173,8 +164,7 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             shadowData = ds.load_shadow(dataName, verbose=False)
         except BaseException:
             print("Loading failed, generating shadow data.")
-            shadowData = sd.generate_shadow_data_noisy(
-                targetDataset, dataSize, **hyperpars)
+            shadowData = sd.generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
             ds.save_shadow(shadowData, dataName)
     elif method == "hill_climbing":
         dataName = \
@@ -197,8 +187,7 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
     return shadowData
 
 
-def split_shadow_data(
-        config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
+def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
     print("Splitting shadow data into subsets.")
     numSubsets = config["shadowModels"]["number"]
     return ds.split_dataset(shadowData, numSubsets)
@@ -208,8 +197,7 @@ def _get_attack_data_name(config: Dict, i):
     numModels: int = config["shadowModels"]["number"]
     numClasses = config["targetModel"]["classes"]
     split: float = config["shadowModels"]["split"]
-    return get_target_model_name(
-        config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
+    return get_target_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
 
 
 def _save_attack_datasets(config: Dict, datasets: List[ds.Dataset]):
@@ -227,25 +215,19 @@ def _load_attack_datasets(config: Dict):
     numDatasets = numClasses
     attackDatasets = []
     for i in range(numDatasets):
-        attackDatasets.append(
-            ds.load_attack(
-                _get_attack_data_name(
-                    config,
-                    i),
-                verbose=False))
+        attackDatasets.append(ds.load_attack(_get_attack_data_name(config, i), verbose=False))
     return attackDatasets
 
 
-def predict_and_label_shadow_data(config: Dict, shadowModels:
-                                  List[tm.Sequential], shadowDatasets:
-                                  List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
+def predict_and_label_shadow_data(config: Dict,
+                                  shadowModels: List[tm.Sequential],
+                                  shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
     try:
         print("Loading attack data.")
         return _load_attack_datasets(config)
     except BaseException:
         print("Didn't work, reconstructing it.")
-        attackDatasets = construct_attack_data(
-            config, shadowModels, shadowDatasets)
+        attackDatasets = construct_attack_data(config, shadowModels, shadowDatasets)
         _save_attack_datasets(config, attackDatasets)
         return attackDatasets
 
@@ -282,14 +264,11 @@ def construct_attack_data(config: Dict, shadowModels:
         testLabels = np.tile(np.array([[0, 1]]), (testDataSize, 1))
 
         # Combine them into 1 dataset
-        trainPredsLabels = tf.data.Dataset.from_tensor_slices(
-            (trainPreds, trainLabels))
-        testPredsLabels = tf.data.Dataset.from_tensor_slices(
-            (testPreds, testLabels))
+        trainPredsLabels = tf.data.Dataset.from_tensor_slices((trainPreds, trainLabels))
+        testPredsLabels = tf.data.Dataset.from_tensor_slices((testPreds, testLabels))
 
         # Add data records and ground truth class to the dataset
-        trainDataPredsLabels = tf.data.Dataset.zip(
-            (trainData, trainPredsLabels))
+        trainDataPredsLabels = tf.data.Dataset.zip((trainData, trainPredsLabels))
         testDataPredsLabels = tf.data.Dataset.zip((testData, testPredsLabels))
 
         # Combine train and test data
@@ -299,8 +278,7 @@ def construct_attack_data(config: Dict, shadowModels:
 
             def is_current_class(dataAndClass, predAndLabel):
                 (_, classLabel) = dataAndClass
-                return tf.math.equal(np.int64(currentClass),
-                                     tf.math.argmax(classLabel))
+                return tf.math.equal(np.int64(currentClass), tf.math.argmax(classLabel))
 
             classAttackData = attackData.filter(is_current_class)
 
@@ -315,8 +293,7 @@ def construct_attack_data(config: Dict, shadowModels:
                 attackDatasets.append(classAttackDataFinal)
             else:
                 # Not first shadow model. Concatenate with appropriate dataset
-                attackDatasets[currentClass] = attackDatasets[currentClass].concatenate(
-                    classAttackDataFinal)
+                attackDatasets[currentClass] = attackDatasets[currentClass].concatenate(classAttackDataFinal)
 
     return attackDatasets
 
@@ -352,10 +329,8 @@ def main():
     targetModel = get_target_model(config, targetDataset)
     shadowData = get_shadow_data(config, targetDataset, targetModel)
     shadowDatasets = split_shadow_data(config, shadowData)
-    shadowModels, shadowDatasets = get_shadow_models_and_datasets(
-        config, shadowDatasets)
-    attackDatasets = predict_and_label_shadow_data(
-        config, shadowModels, shadowDatasets)
+    shadowModels, shadowDatasets = get_shadow_models_and_datasets(config, shadowDatasets)
+    attackDatasets = predict_and_label_shadow_data(config, shadowModels, shadowDatasets)
     _make_stats(attackDatasets)
     breakpoint()
 
