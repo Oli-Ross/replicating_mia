@@ -3,14 +3,8 @@ from os.path import isabs
 import argparse
 from typing import Dict, List
 
-from numpy._typing import NDArray
-from tensorflow.keras.utils import to_categorical  # pyright: ignore
-import tensorflow as tf
-import numpy as np
-
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
-
 
 import download
 import configuration as con
