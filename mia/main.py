@@ -1,7 +1,7 @@
 from os import environ
 from os.path import isabs
 import argparse
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from numpy._typing import NDArray
 from tensorflow.keras.utils import to_categorical  # pyright: ignore
@@ -52,35 +52,6 @@ def parse_config() -> Dict:
     return config
 
 
-def get_target_model(config: Dict, targetDataset):
-    dataConfig = config["targetDataset"]
-    modelConfig = config["targetModel"]["hyperparameters"]
-    modelName = tm.get_model_name(config)
-
-    try:
-        print(f"Loading target model from disk.")
-        model: tm.KaggleModel = tm.load_model(modelName, verbose=False)
-
-    except BaseException:
-        print("Didn't work, retraining target model.")
-
-        trainData = targetDataset.take(dataConfig["trainSize"])
-        testData = targetDataset.skip(dataConfig["trainSize"]).take(dataConfig["testSize"])
-
-        if dataConfig["shuffle"]:
-            trainData = ds.shuffle(trainData)
-
-        model = tm.KaggleModel(config["targetModel"]["classes"])
-
-        tm.train_model(model, modelName, trainData, testData, modelConfig)
-
-        print("Saving target model to disk.")
-        tm.save_model(modelName, model)
-        tm.evaluate_model(model, testData)
-
-    return model
-
-
 def _make_stats(attackDatasets: List[ds.Dataset]):
     inls = 0
     outls = 0
@@ -109,7 +80,7 @@ def main():
     download.download_all_datasets()
 
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
-    targetModel = get_target_model(config, targetDataset)
+    targetModel = tm.get_target_model(config, targetDataset)
     shadowData = sd.get_shadow_data(config, targetDataset, targetModel)
     shadowDatasets = sd.split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)

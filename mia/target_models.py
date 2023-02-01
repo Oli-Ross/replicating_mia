@@ -7,6 +7,8 @@ from os import environ
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
+import datasets as ds
+
 from os.path import dirname, join
 import datetime
 
@@ -135,4 +137,32 @@ def get_model_name(config: Dict) -> str:
         f'bs_{modelConfig["batchSize"]}_' + \
         f'epochs_{modelConfig["epochs"]}_' + \
         f'trainsize_{config["targetDataset"]["trainSize"]}'
-    pass
+
+
+def get_target_model(config: Dict, targetDataset):
+    dataConfig = config["targetDataset"]
+    modelConfig = config["targetModel"]["hyperparameters"]
+    modelName = get_model_name(config)
+
+    try:
+        print(f"Loading target model from disk.")
+        model: KaggleModel = load_model(modelName, verbose=False)
+
+    except BaseException:
+        print("Didn't work, retraining target model.")
+
+        trainData = targetDataset.take(dataConfig["trainSize"])
+        testData = targetDataset.skip(dataConfig["trainSize"]).take(dataConfig["testSize"])
+
+        if dataConfig["shuffle"]:
+            trainData = ds.shuffle(trainData)
+
+        model = KaggleModel(config["targetModel"]["classes"])
+
+        train_model(model, modelName, trainData, testData, modelConfig)
+
+        print("Saving target model to disk.")
+        save_model(modelName, model)
+        evaluate_model(model, testData)
+
+    return model
