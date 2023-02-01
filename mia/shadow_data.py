@@ -59,14 +59,12 @@ def _make_dataset_noisy(original_data: Dataset, fraction: float) -> Dataset:
     flipped.
     """
     return original_data.map(
-        lambda x, y: tf.numpy_function(
-            func=_make_data_record_noisy,
-            inp=(x, y, fraction),
-            Tout=[tf.int64, tf.int64]))
+        lambda x, y:
+            tf.numpy_function(func=_make_data_record_noisy, inp=(x, y, fraction), Tout=[tf.int64, tf.int64])
+    )
 
 
-def generate_shadow_data_noisy(
-        original_data: Dataset, outputSize: int, fraction: float = 0.1) -> Dataset:
+def generate_shadow_data_noisy(original_data: Dataset, outputSize: int, fraction: float = 0.1) -> Dataset:
     """
     Generate synthetic data for the shadow models by using a noisy version of
     the original data.
@@ -155,8 +153,7 @@ def _get_random_record(numFeatures: int,
 def _randomize_features_batched(
         data: NDArray, k: int, batchSize: int, numFeatures: int = 600) -> NDArray:
 
-    outputdata = np.repeat(data.reshape((numFeatures, 1)), batchSize,
-                           axis=1).transpose()
+    outputdata = np.repeat(data.reshape((numFeatures, 1)), batchSize, axis=1).transpose()
 
     import numpy.testing as tt
     tt.assert_equal(outputdata[0], data.reshape(numFeatures))
@@ -319,11 +316,9 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
     for index, label in enumerate(labels):
         label = int(label[0])
-        new_record = _generate_synthetic_record_batched(
-            label, targetModel, **hyperpars)
+        new_record = _generate_synthetic_record_batched(label, targetModel, **hyperpars)
         while new_record is None:
-            new_record = _generate_synthetic_record_batched(
-                label, targetModel, **hyperpars)
+            new_record = _generate_synthetic_record_batched(label, targetModel, **hyperpars)
         print(80 * "-")
         print(20 * "-" + "Generated new record!" + 20 * "-")
         print(80 * "-")

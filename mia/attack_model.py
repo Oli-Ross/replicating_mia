@@ -90,8 +90,7 @@ def train_model(model: Sequential, modelName: str, trainData: Dataset,
     testData = testData.batch(batchSize, drop_remainder=True)
     log_dir = "logs/attack/" + modelName
     cb = keras.callbacks.TensorBoard(histogram_freq=1, log_dir=log_dir)
-    return model.fit(trainData, epochs=epochs,
-                     callbacks=[cb], validation_data=testData)
+    return model.fit(trainData, epochs=epochs, callbacks=[cb], validation_data=testData)
 
 
 def evaluate_model(model: Sequential, dataset: Dataset):

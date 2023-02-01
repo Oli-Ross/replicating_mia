@@ -73,8 +73,7 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
 
 def shuffle(dataset: Dataset) -> Dataset:
     datasetSize = dataset.cardinality().numpy()
-    return dataset.shuffle(datasetSize, seed=global_seed,
-                           reshuffle_each_iteration=False)
+    return dataset.shuffle(datasetSize, seed=global_seed, reshuffle_each_iteration=False)
 
 
 def _prepare_kaggle() -> Dataset:
@@ -90,9 +89,7 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     Load the Kaggle data and cluster it.
     """
     print(f"Clustering Kaggle with {numberOfClusters} classes.")
-    kmeans = sklearn.cluster.MiniBatchKMeans(
-        n_clusters=numberOfClusters,
-        random_state=global_seed)
+    kmeans = sklearn.cluster.MiniBatchKMeans(n_clusters=numberOfClusters, random_state=global_seed)
     features, _ = _read_kaggle_data()
     kaggleSize = 197324
     labels: NDArray = kmeans.fit_predict(features).reshape(kaggleSize, 1)

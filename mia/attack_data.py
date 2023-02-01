@@ -70,10 +70,8 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
     halfAttackTrainSize: int = int(attackTrainSize / 2)
     halfAttackTestSize: int = int(attackTestSize / 2)
 
-    APredictions, ALabels = _prepare_subset(
-        targetTestData, halfAttackTrainSize, targetModel, False)
-    BPredictions, BLabels = _prepare_subset(
-        targetTrainData, halfAttackTrainSize, targetModel, True)
+    APredictions, ALabels = _prepare_subset(targetTestData, halfAttackTrainSize, targetModel, False)
+    BPredictions, BLabels = _prepare_subset(targetTrainData, halfAttackTrainSize, targetModel, True)
     CPredictions, CLabels = _prepare_subset(
         targetTrainData.skip(halfAttackTrainSize), halfAttackTestSize, targetModel, True)
     DPredictions, DLabels = _prepare_subset(
