@@ -118,6 +118,24 @@ def save(config: Dict, datasets: List[ds.Dataset]):
         ds.save_attack(dataset, _get_attack_data_name(config, index))
 
 
+def get_attack_data(config: Dict,
+                    shadowModels: List[tm.Sequential],
+                    shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
+    """
+    This function predicts and then labels the provided datasets on their
+    respective shadow model, thus creating the labeled data needed for the
+    attack model.
+    """
+    try:
+        print("Loading attack data.")
+        return load(config)
+    except BaseException:
+        print("Didn't work, reconstructing it.")
+        attackDatasets = from_shadow_models(config, shadowModels, shadowDatasets)
+        save(config, attackDatasets)
+        return attackDatasets
+
+
 def from_shadow_models(config: Dict, shadowModels:
                        List[tm.Sequential], shadowDatasets:
                        List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:

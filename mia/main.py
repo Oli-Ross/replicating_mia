@@ -81,19 +81,6 @@ def get_target_model(config: Dict, targetDataset):
     return model
 
 
-def predict_and_label_shadow_data(config: Dict,
-                                  shadowModels: List[tm.Sequential],
-                                  shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
-    try:
-        print("Loading attack data.")
-        return ad.load(config)
-    except BaseException:
-        print("Didn't work, reconstructing it.")
-        attackDatasets = ad.from_shadow_models(config, shadowModels, shadowDatasets)
-        ad.save(config, attackDatasets)
-        return attackDatasets
-
-
 def _make_stats(attackDatasets: List[ds.Dataset]):
     inls = 0
     outls = 0
@@ -126,7 +113,7 @@ def main():
     shadowData = sd.get_shadow_data(config, targetDataset, targetModel)
     shadowDatasets = sd.split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)
-    attackDatasets = predict_and_label_shadow_data(config, shadowModels, shadowDatasets)
+    attackDatasets = ad.get_attack_data(config, shadowModels, shadowDatasets)
     _make_stats(attackDatasets)
     breakpoint()
 
