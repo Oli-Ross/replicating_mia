@@ -17,6 +17,7 @@ import configuration as con
 import target_models as tm
 import shadow_data as sd
 import datasets as ds
+import attack_data as ad
 
 
 def set_seeds(seed: int):
@@ -227,75 +228,9 @@ def predict_and_label_shadow_data(config: Dict,
         return _load_attack_datasets(config)
     except BaseException:
         print("Didn't work, reconstructing it.")
-        attackDatasets = construct_attack_data(config, shadowModels, shadowDatasets)
+        attackDatasets = ad.from_shadow_models(config, shadowModels, shadowDatasets)
         _save_attack_datasets(config, attackDatasets)
         return attackDatasets
-
-
-def construct_attack_data(config: Dict, shadowModels:
-                          List[tm.Sequential], shadowDatasets:
-                          List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
-    """
-    Predicts the shadow data on the shadow models themselves and labels it with
-    "in" and "out", for the attack model to train on.
-    """
-    numModels: int = config["shadowModels"]["number"]
-    numClasses = config["targetModel"]["classes"]
-    attackDatasets = []
-
-    for i in range(numModels):
-
-        model = shadowModels[i]
-        trainData, testData = shadowDatasets[i]
-        trainDataSize = trainData.cardinality().numpy()
-        testDataSize = testData.cardinality().numpy()
-
-        # Only relevant if split > 0.5
-        assert trainDataSize >= testDataSize
-        trainData = trainData.take(testDataSize)
-        trainDataSize = testDataSize
-
-        # Get predictions
-        trainPreds = model.predict(trainData.batch(100, drop_remainder=False))
-        testPreds = model.predict(testData.batch(100, drop_remainder=False))
-
-        # Construct "in"/"out" labels
-        trainLabels = np.tile(np.array([[1, 0]]), (trainDataSize, 1))
-        testLabels = np.tile(np.array([[0, 1]]), (testDataSize, 1))
-
-        # Combine them into 1 dataset
-        trainPredsLabels = tf.data.Dataset.from_tensor_slices((trainPreds, trainLabels))
-        testPredsLabels = tf.data.Dataset.from_tensor_slices((testPreds, testLabels))
-
-        # Add data records and ground truth class to the dataset
-        trainDataPredsLabels = tf.data.Dataset.zip((trainData, trainPredsLabels))
-        testDataPredsLabels = tf.data.Dataset.zip((testData, testPredsLabels))
-
-        # Combine train and test data
-        attackData = trainDataPredsLabels.concatenate(testDataPredsLabels)
-
-        for currentClass in range(numClasses):
-
-            def is_current_class(dataAndClass, predAndLabel):
-                (_, classLabel) = dataAndClass
-                return tf.math.equal(np.int64(currentClass), tf.math.argmax(classLabel))
-
-            classAttackData = attackData.filter(is_current_class)
-
-            def restructure_data(dataAndClass, predAndLabel):
-                return predAndLabel
-
-            # Drop unused data record and class ground truth
-            classAttackDataFinal = classAttackData.map(restructure_data)
-
-            if i == 0:
-                # First shadow model -> Each class seen the first time
-                attackDatasets.append(classAttackDataFinal)
-            else:
-                # Not first shadow model. Concatenate with appropriate dataset
-                attackDatasets[currentClass] = attackDatasets[currentClass].concatenate(classAttackDataFinal)
-
-    return attackDatasets
 
 
 def _make_stats(attackDatasets: List[ds.Dataset]):
