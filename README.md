@@ -46,14 +46,15 @@ TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physic
 
 ## Usage
 
-The code is split into submodules:
-1. `mia/download`: Download datasets
-2. `mia/datasets`: Data preprocessing
-3. `mia/configuration`: Parse config YAML file
-4. `mia/target_models`: Target model definition
-5. `mia/attack_model`: Attack model definition
-6. `mia/attack_data`: Generate shadow data from original data
-7. `mia/shadow_data`: Generate shadow data using paper's methods
+The code is split into submodules in the subfolder `mia/`:
+1. `download.py`: Download datasets
+2. `datasets.py`: Data preprocessing
+3. `configuration.py`: Parse config YAML file
+4. `target_models.py`: Target model definition and utilities
+5. `attack_model.py`: Attack model definition and utilities
+6. `shadow_data.py`: Generate shadow data
+7. `shadow_models.py`: Load or construct shadow models
+8. `attack_data.py`: Predict shadow data on shadow models and aggregate it into attack data
 
 Refer to the documentation of each module on how to use it. 
 An example script, which ties the modules together is given at `mia/main.py`.
