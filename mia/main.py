@@ -16,6 +16,7 @@ import download
 import configuration as con
 import target_models as tm
 import shadow_data as sd
+import shadow_models as sm
 import datasets as ds
 import attack_data as ad
 
@@ -51,68 +52,6 @@ def parse_config() -> Dict:
     return config
 
 
-def get_shadow_model_name(config: Dict, i: int):
-    numModels: int = config["shadowModels"]["number"]
-    split: float = config["shadowModels"]["split"]
-    return "shadow_" + tm.get_model_name(config) + f"_split_{split}_{i}_of_{numModels}"
-
-
-def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset]
-                                   ) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
-    """
-    Tries to load shadow datasets from disk, alternatively trains from scratch.
-
-    Returns 2 lists:
-        models: the trained shadow models and a list of tuples, containing
-        datasets: the training and test data for the corresponding shadow models
-
-        E.g. models[0] is trained with datasets[0,0] and tested on datasets[0,1]
-    """
-    numModels: int = config["shadowModels"]["number"]
-    split: float = config["shadowModels"]["split"]
-    dataSize = shadowDatasets[0].cardinality().numpy()
-    trainSize = np.ceil(split * dataSize)
-    testSize = dataSize - trainSize
-    datasets = []
-    models = []
-
-    print(f"Loading shadow models from disk.")
-    for i in range(numModels):
-        modelName = get_shadow_model_name(config, i)
-        trainDataName = modelName + "_train_data"
-        testDataName = modelName + "_test_data"
-
-        try:
-            model: tm.KaggleModel = tm.load_model(modelName, verbose=False)
-            trainData: ds.Dataset = ds.load_shadow(trainDataName, verbose=False)
-            testData: ds.Dataset = ds.load_shadow(testDataName, verbose=False)
-
-        except BaseException:
-            print(f"Didn't work, training shadow model {i}.")
-            dataset = shadowDatasets[i]
-            trainData = dataset.take(trainSize)
-            testData = dataset.skip(trainSize).take(testSize)
-
-            # Shadow models have same architecture as target model
-            model = tm.KaggleModel(config["targetModel"]["classes"])
-            modelConfig = config["targetModel"]["hyperparameters"]
-
-            tm.train_model(model, modelName, trainData, testData, modelConfig)
-
-            print(f"Saving shadow model {i} and its data to disk.")
-            tm.save_model(modelName, model)
-            ds.save_shadow(trainData, trainDataName)
-            ds.save_shadow(testData, testDataName)
-
-            print(f"Evaluating shadow model {i}")
-            tm.evaluate_model(model, testData)
-
-        datasets.append((trainData, testData))
-        models.append(model)
-
-    return models, datasets
-
-
 def get_target_model(config: Dict, targetDataset):
     dataConfig = config["targetDataset"]
     modelConfig = config["targetModel"]["hyperparameters"]
@@ -140,48 +79,6 @@ def get_target_model(config: Dict, targetDataset):
         tm.evaluate_model(model, testData)
 
     return model
-
-
-def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
-    shadowConfig = config["shadowDataset"]
-    method = shadowConfig["method"]
-    dataSize = shadowConfig["size"]
-    hyperpars = shadowConfig[method]["hyperparameters"]
-
-    if method == "noisy":
-        dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}'
-        try:
-            print("Loading shadow data from disk.")
-            shadowData = ds.load_shadow(dataName, verbose=False)
-        except BaseException:
-            print("Loading failed, generating shadow data.")
-            shadowData = sd.generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
-            ds.save_shadow(shadowData, dataName)
-    elif method == "hill_climbing":
-        dataName = \
-            f'{method}_' + \
-            f'kmax_{hyperpars["k_max"]}_' + \
-            f'kmin_{hyperpars["k_min"]}_' + \
-            f'confmin_{hyperpars["conf_min"]}_' + \
-            f'rejmax_{hyperpars["rej_max"]}_' + \
-            f'itermax_{hyperpars["iter_max"]}_' + \
-            f'size_{dataSize}'
-        try:
-            shadowData = ds.load_shadow(dataName)
-        except BaseException:
-            print("Loading failed, generating shadow data.")
-            shadowData = sd.hill_climbing(targetModel, dataSize, **hyperpars)
-            ds.save_shadow(shadowData, dataName)
-    else:
-        raise ValueError(f"{method} is not a valid shadow data method.")
-
-    return shadowData
-
-
-def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
-    print("Splitting shadow data into subsets.")
-    numSubsets = config["shadowModels"]["number"]
-    return ds.split_dataset(shadowData, numSubsets)
 
 
 def predict_and_label_shadow_data(config: Dict,
@@ -226,9 +123,9 @@ def main():
 
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
     targetModel = get_target_model(config, targetDataset)
-    shadowData = get_shadow_data(config, targetDataset, targetModel)
-    shadowDatasets = split_shadow_data(config, shadowData)
-    shadowModels, shadowDatasets = get_shadow_models_and_datasets(config, shadowDatasets)
+    shadowData = sd.get_shadow_data(config, targetDataset, targetModel)
+    shadowDatasets = sd.split_shadow_data(config, shadowData)
+    shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)
     attackDatasets = predict_and_label_shadow_data(config, shadowModels, shadowDatasets)
     _make_stats(attackDatasets)
     breakpoint()
