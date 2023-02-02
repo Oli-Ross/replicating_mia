@@ -135,6 +135,8 @@ def _balance_attack_data(dataset: ds.Dataset) -> ds.Dataset:
         in_data = shuffle(in_data).skip(in_points - out_points)
     elif in_points < out_points:
         out_data = shuffle(out_data).skip(out_points - in_points)
+    else:
+        return dataset
 
     return in_data.concatenate(out_data)
 
