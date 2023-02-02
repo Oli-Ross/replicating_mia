@@ -118,6 +118,36 @@ def save(config: Dict, datasets: List[ds.Dataset]):
         ds.save_attack(dataset, _get_attack_data_name(config, index))
 
 
+def shuffle(dataset: Dataset, bufferSize=10000) -> Dataset:
+    # TODO: hard coded buffer size (needs to be greater than dataset size for
+    # real random sampling.)
+    return dataset.shuffle(bufferSize, seed=global_seed, reshuffle_each_iteration=False)
+
+
+def _balance_attack_data(dataset: ds.Dataset) -> ds.Dataset:
+    in_data = dataset.filter(lambda _, y: tf.math.equal(tf.argmax(y), 1))
+    out_data = dataset.filter(lambda _, y: tf.math.equal(tf.argmax(y), 0))
+
+    in_points = len(list(in_data))
+    out_points = len(list(out_data))
+
+    if in_points > out_points:
+        in_data = shuffle(in_data).skip(in_points - out_points)
+    elif in_points < out_points:
+        out_data = shuffle(out_data).skip(out_points - in_points)
+
+    return in_data.concatenate(out_data)
+
+
+def balance_attack_data(datasets: List[ds.Dataset]) -> List[ds.Dataset]:
+    """
+    Make sure that input datasets have equal number of in/out datapoints.
+    """
+    for index, dataset in enumerate(datasets):
+        datasets[index] = _balance_attack_data(dataset)
+    return datasets
+
+
 def get_attack_data(config: Dict,
                     shadowModels: List[tm.Sequential],
                     shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
