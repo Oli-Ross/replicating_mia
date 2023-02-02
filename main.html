@@ -146,12 +146,13 @@ main    </h1>
 </span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="n">shadowDatasets</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">split_shadow_data</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">shadowData</span><span class="p">)</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="n">shadowModels</span><span class="p">,</span> <span class="n">shadowDatasets</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">get_shadow_models_and_datasets</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">shadowDatasets</span><span class="p">)</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="n">attackDatasets</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">get_attack_data</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">shadowModels</span><span class="p">,</span> <span class="n">shadowDatasets</span><span class="p">)</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="n">_make_stats</span><span class="p">(</span><span class="n">attackDatasets</span><span class="p">)</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="nb">breakpoint</span><span class="p">()</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="n">attackDatasets</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">balance_attack_data</span><span class="p">(</span><span class="n">attackDatasets</span><span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="n">_make_stats</span><span class="p">(</span><span class="n">attackDatasets</span><span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="nb">breakpoint</span><span class="p">()</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="n">main</span><span class="p">()</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="n">main</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -256,8 +257,9 @@ main    </h1>
 </span><span id="main-80"><a href="#main-80"><span class="linenos">80</span></a>    <span class="n">shadowDatasets</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">split_shadow_data</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">shadowData</span><span class="p">)</span>
 </span><span id="main-81"><a href="#main-81"><span class="linenos">81</span></a>    <span class="n">shadowModels</span><span class="p">,</span> <span class="n">shadowDatasets</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">get_shadow_models_and_datasets</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">shadowDatasets</span><span class="p">)</span>
 </span><span id="main-82"><a href="#main-82"><span class="linenos">82</span></a>    <span class="n">attackDatasets</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">get_attack_data</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">shadowModels</span><span class="p">,</span> <span class="n">shadowDatasets</span><span class="p">)</span>
-</span><span id="main-83"><a href="#main-83"><span class="linenos">83</span></a>    <span class="n">_make_stats</span><span class="p">(</span><span class="n">attackDatasets</span><span class="p">)</span>
-</span><span id="main-84"><a href="#main-84"><span class="linenos">84</span></a>    <span class="nb">breakpoint</span><span class="p">()</span>
+</span><span id="main-83"><a href="#main-83"><span class="linenos">83</span></a>    <span class="n">attackDatasets</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">balance_attack_data</span><span class="p">(</span><span class="n">attackDatasets</span><span class="p">)</span>
+</span><span id="main-84"><a href="#main-84"><span class="linenos">84</span></a>    <span class="n">_make_stats</span><span class="p">(</span><span class="n">attackDatasets</span><span class="p">)</span>
+</span><span id="main-85"><a href="#main-85"><span class="linenos">85</span></a>    <span class="nb">breakpoint</span><span class="p">()</span>
 </span></pre></div>
 
 
