@@ -162,6 +162,7 @@ def get_attack_data(config: Dict,
     except BaseException:
         print("Didn't work, reconstructing it.")
         attackDatasets = from_shadow_models(config, shadowModels, shadowDatasets)
+        attackDatasets = balance_attack_data(attackDatasets)
         save(config, attackDatasets)
         return attackDatasets
 
