@@ -79,7 +79,6 @@ def main():
     shadowDatasets = sd.split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)
     attackDatasets = ad.get_attack_data(config, shadowModels, shadowDatasets)
-    attackDatasets = ad.balance_attack_data(attackDatasets)
     _make_stats(attackDatasets)
     breakpoint()
 
