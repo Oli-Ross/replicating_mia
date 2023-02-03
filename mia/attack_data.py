@@ -3,6 +3,7 @@
 """
 
 from os import environ
+from math import floor
 from typing import List, Dict, Tuple
 
 # Tensorflow C++ backend logging verbosity
@@ -92,30 +93,37 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
     return attackTrainData, attackTestData
 
 
-def load(config: Dict):
+def load(config: Dict) -> List[Tuple[ds.Dataset, ds.Dataset]]:
     numClasses = config["targetModel"]["classes"]
     numDatasets = numClasses
     attackDatasets = []
     for i in range(numDatasets):
-        attackDatasets.append(ds.load_attack(_get_attack_data_name(config, i), verbose=False))
+        testData = ds.load_attack(_get_attack_data_name(config, i, test=True), verbose=False)
+        trainData = ds.load_attack(_get_attack_data_name(config, i, test=False), verbose=False)
+        attackDatasets.append((testData, trainData))
     return attackDatasets
 
 
-def _get_attack_data_name(config: Dict, i):
+def _get_attack_data_name(config: Dict, i, test=False):
     numModels: int = config["shadowModels"]["number"]
     numClasses = config["targetModel"]["classes"]
     split: float = config["shadowModels"]["split"]
-    return tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
+    name = tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
+    if test:
+        return name + "_test"
+    else:
+        return name + "_train"
 
 
 def save(config: Dict, datasets: List[ds.Dataset]):
     numClasses = config["targetModel"]["classes"]
     assert numClasses == len(
         datasets), "List should contain 1 dataset per class"
-    for index, dataset in enumerate(datasets):
+    for index, (trainData, testData) in enumerate(datasets):
         if index % 10 == 0:
             print(f"Saving attack dataset #{index}/{numClasses}")
-        ds.save_attack(dataset, _get_attack_data_name(config, index))
+        ds.save_attack(trainData, _get_attack_data_name(config, index, test=False))
+        ds.save_attack(testData, _get_attack_data_name(config, index, test=True))
 
 
 def shuffle(dataset: Dataset, bufferSize=10000) -> Dataset:
@@ -145,14 +153,35 @@ def balance_attack_data(datasets: List[ds.Dataset]) -> List[ds.Dataset]:
     """
     Make sure that input datasets have equal number of in/out datapoints.
     """
+    size = len(datasets)
     for index, dataset in enumerate(datasets):
+        print(f"Balancing dataset {index} of {size}.")
         datasets[index] = _balance_attack_data(dataset)
     return datasets
 
 
+def split_dataset(dataset: ds.Dataset, split: float):
+    datasetSize = len(list(dataset))
+    trainSize = floor(split * datasetSize)
+    testSize = floor((1 - split) * datasetSize)
+    assert trainSize + testSize <= datasetSize
+
+    trainData = dataset.take(trainSize)
+    testData = dataset.skip(trainSize).take(testSize)
+    return trainData, testData
+
+
+def split_attack_data_for_training(datasets: List[ds.Dataset], config: Dict):
+    split = config["attackDataset"]["split"]
+    splitDatasets = []
+    for dataset in datasets:
+        splitDatasets.append(split_dataset(dataset, split))
+    return splitDatasets
+
+
 def get_attack_data(config: Dict,
                     shadowModels: List[tm.Sequential],
-                    shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[ds.Dataset]:
+                    shadowDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[Tuple[ds.Dataset, ds.Dataset]]:
     """
     This function predicts and then labels the provided datasets on their
     respective shadow model, thus creating the labeled data needed for the
@@ -164,7 +193,11 @@ def get_attack_data(config: Dict,
     except BaseException:
         print("Didn't work, reconstructing it.")
         attackDatasets = from_shadow_models(config, shadowModels, shadowDatasets)
+        print("Balancing attack data to contain equal amounts in/out records.")
         attackDatasets = balance_attack_data(attackDatasets)
+        print("Splitting attack data for training.")
+        attackDatasets = split_attack_data_for_training(attackDatasets, config)
+        print("Saving attack data to disk.")
         save(config, attackDatasets)
         return attackDatasets
 
