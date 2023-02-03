@@ -13,6 +13,7 @@ import shadow_data as sd
 import shadow_models as sm
 import datasets as ds
 import attack_data as ad
+import attack_model as am
 
 
 def set_seeds(seed: int):
@@ -59,6 +60,7 @@ def main():
     shadowDatasets = sd.split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)
     attackDatasets = ad.get_attack_data(config, shadowModels, shadowDatasets)
+    attackModels = am.get_attack_models(config, attackDatasets)
     breakpoint()
 
 
