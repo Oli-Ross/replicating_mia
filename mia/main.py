@@ -20,8 +20,8 @@ def set_seeds(seed: int):
     ds.set_seed(seed)
     tm.set_seed(seed)
     sd.set_seed(seed)
-    #  attack_model.set_seed(seed)
-    #  attack_data.set_seed(seed)
+    am.set_seed(seed)
+    ad.set_seed(seed)
 
 
 def parse_args() -> Dict:
