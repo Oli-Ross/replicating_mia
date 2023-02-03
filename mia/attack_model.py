@@ -11,7 +11,7 @@ from os.path import dirname, join
 import datetime
 from math import floor
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from tensorflow import keras
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.python.framework import random_seed
@@ -116,7 +116,7 @@ def get_model_name(config: Dict, i: int) -> str:
         f'{i}_of_{numClasses}'
 
 
-def get_attack_models(config: Dict, attackDatasets: List[ds.Dataset]) -> List[KaggleAttackModel]:
+def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[KaggleAttackModel]:
     dataConfig = config["targetDataset"]
     modelConfig = config["attackModel"]["hyperparameters"]
     numClasses = config["targetModel"]["classes"]
@@ -129,15 +129,7 @@ def get_attack_models(config: Dict, attackDatasets: List[ds.Dataset]) -> List[Ka
             model: KaggleAttackModel = load_model(modelName, verbose=False)
         except BaseException:
             print(f"Couldn't load attack model {i}, retraining.")
-            attackDataset = attackDatasets[i]
-            split = config["attackDataset"]["split"]
-            datasetSize = len(list(attackDataset))
-            trainSize = floor(split * datasetSize)
-            testSize = floor((1 - split) * datasetSize)
-            assert trainSize + testSize <= datasetSize
-
-            trainData = attackDataset.take(trainSize)
-            testData = attackDataset.skip(trainSize).take(testSize)
+            trainData, testData = attackDatasets[i]
             trainData = ds.shuffle(trainData)
 
             model = KaggleAttackModel(config["targetModel"]["classes"])
