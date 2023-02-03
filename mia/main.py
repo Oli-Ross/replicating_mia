@@ -46,26 +46,6 @@ def parse_config() -> Dict:
     return config
 
 
-def _make_stats(attackDatasets: List[ds.Dataset]):
-    inls = 0
-    outls = 0
-    for index, dataset in enumerate(attackDatasets):
-        print(f"Set #{index}")
-        outtmp = 0
-        intmp = 0
-        it = dataset.as_numpy_iterator()
-        for x in it:
-            if x[1][0] == 1:
-                intmp += 1
-            else:
-                outtmp += 1
-        print(f"    in:{intmp}, out:{outtmp}")
-        inls += intmp
-        outls += outtmp
-    print(f"Total:")
-    print(f"    in: {inls}, out: {outls}")
-
-
 def main():
 
     config = parse_config()
@@ -79,7 +59,6 @@ def main():
     shadowDatasets = sd.split_shadow_data(config, shadowData)
     shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)
     attackDatasets = ad.get_attack_data(config, shadowModels, shadowDatasets)
-    _make_stats(attackDatasets)
     breakpoint()
 
 
