@@ -9,8 +9,9 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import dirname, join
 import datetime
+from math import floor
 
-from typing import Dict
+from typing import Dict, List
 from tensorflow import keras
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.python.framework import random_seed
@@ -18,6 +19,8 @@ from tensorflow.keras.activations import relu  # pyright: ignore
 from tensorflow.keras.initializers import glorot_uniform  # pyright: ignore
 from tensorflow.keras.layers import Dense, InputLayer, Softmax  # pyright: ignore
 from tensorflow.keras import Sequential  # pyright: ignore
+
+import datasets as ds
 
 global_seed: int = 1234
 
@@ -54,12 +57,14 @@ class KaggleAttackModel(Sequential):
         self.add(Softmax())
 
 
-def load_model(name: str) -> Sequential:
+def load_model(name: str, verbose=True) -> Sequential:
     """
     Load model from disk.
 
     The file name will be constructed from the `name` argument.
     """
+    if verbose:
+        print(f"Loading model {name} from disk.")
     filePath: str = join(dirname(__file__), "../models/attack", name)
     return keras.models.load_model(filePath)
 
@@ -98,3 +103,51 @@ def evaluate_model(model: Sequential, dataset: Dataset):
     batchSize = 10
     dataset = dataset.batch(batchSize, drop_remainder=False)
     return model.evaluate(dataset)
+
+
+def get_model_name(config: Dict, i: int) -> str:
+    modelConfig = config["attackModel"]["hyperparameters"]
+    numClasses = config["targetModel"]["classes"]
+    return \
+        f'{config["targetDataset"]["name"]}_' + \
+        f'lr_{modelConfig["learningRate"]}_' + \
+        f'bs_{modelConfig["batchSize"]}_' + \
+        f'epochs_{modelConfig["epochs"]}_' + \
+        f'{i}_of_{numClasses}'
+
+
+def get_attack_models(config: Dict, attackDatasets: List[ds.Dataset]) -> List[KaggleAttackModel]:
+    dataConfig = config["targetDataset"]
+    modelConfig = config["attackModel"]["hyperparameters"]
+    numClasses = config["targetModel"]["classes"]
+    attackModels = []
+
+    print(f"Loading attack models from disk.")
+    for i in range(numClasses):
+        modelName = get_model_name(config, i)
+        try:
+            model: KaggleAttackModel = load_model(modelName, verbose=False)
+        except BaseException:
+            print(f"Couldn't load attack model {i}, retraining.")
+            attackDataset = attackDatasets[i]
+            split = config["attackDataset"]["split"]
+            datasetSize = len(list(attackDataset))
+            trainSize = floor(split * datasetSize)
+            testSize = floor((1 - split) * datasetSize)
+            assert trainSize + testSize <= datasetSize
+
+            trainData = attackDataset.take(trainSize)
+            testData = attackDataset.skip(trainSize).take(testSize)
+            trainData = ds.shuffle(trainData)
+
+            model = KaggleAttackModel(config["targetModel"]["classes"])
+
+            train_model(model, modelName, trainData, testData, modelConfig)
+
+            print(f"Saving target model {i} to disk.")
+            save_model(modelName, model)
+            evaluate_model(model, testData)
+
+        attackModels.append(model)
+
+    return attackModels
