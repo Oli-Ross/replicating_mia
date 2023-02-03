@@ -61,6 +61,8 @@ def main():
     shadowModels, shadowDatasets = sm.get_shadow_models_and_datasets(config, shadowDatasets)
     attackDatasets = ad.get_attack_data(config, shadowModels, shadowDatasets)
     attackModels = am.get_attack_models(config, attackDatasets)
+    overallAccuracy = am.evaluate_models(attackModels, attackDatasets)
+    print(f"Average attack accuracy over all classes: {overallAccuracy}")
 
 
 if __name__ == "__main__":

@@ -98,6 +98,16 @@ def train_model(model: Sequential, modelName: str, trainData: Dataset,
     return model.fit(trainData, epochs=epochs, callbacks=[cb], validation_data=testData)
 
 
+def evaluate_models(models: List[Sequential], datasets: List[ds.Dataset]) -> float:
+    assert len(models) == len(datasets)
+    accuracies = []
+    for i in range(len(models)):
+        testData = datasets[i][1]
+        accuracy = evaluate_model(models[i], testData)[1]
+        accuracies.append(accuracy)
+    return sum(accuracies) / len(accuracies)
+
+
 def evaluate_model(model: Sequential, dataset: Dataset):
     # TODO: batchSize is hardcoded
     batchSize = 10
