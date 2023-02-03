@@ -8,8 +8,6 @@ from os import environ
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import dirname, join
-import datetime
-from math import floor
 
 from typing import Dict, List, Tuple
 from tensorflow import keras
@@ -127,7 +125,6 @@ def get_model_name(config: Dict, i: int) -> str:
 
 
 def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[KaggleAttackModel]:
-    dataConfig = config["targetDataset"]
     modelConfig = config["attackModel"]["hyperparameters"]
     numClasses = config["targetModel"]["classes"]
     attackModels = []

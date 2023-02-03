@@ -49,7 +49,7 @@ def _prepare_subset(superset: Dataset, size: int,
 def _get_filter_fn(label: int):
 
     wantedLabel = np.int64(label)
-    def _filter_fn(x, y): return tf.math.equal(wantedLabel, tf.math.argmax(y))
+    def _filter_fn(_, y): return tf.math.equal(wantedLabel, tf.math.argmax(y))
     return _filter_fn
 
 

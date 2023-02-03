@@ -1,7 +1,7 @@
 from os import environ
 from os.path import isabs
 import argparse
-from typing import Dict, List
+from typing import Dict
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
