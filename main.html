@@ -68,7 +68,7 @@ main    </h1>
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">environ</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">isabs</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">import</span> <span class="nn">argparse</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="c1"># Tensorflow C++ backend logging verbosity</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TF_CPP_MIN_LOG_LEVEL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>  <span class="c1"># NOQA</span>
@@ -87,8 +87,8 @@ main    </h1>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">ds</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">tm</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">sd</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="c1">#  attack_model.set_seed(seed)</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="c1">#  attack_data.set_seed(seed)</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">am</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">ad</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
@@ -153,8 +153,8 @@ main    </h1>
 </span><span id="set_seeds-21"><a href="#set_seeds-21"><span class="linenos">21</span></a>    <span class="n">ds</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span><span id="set_seeds-22"><a href="#set_seeds-22"><span class="linenos">22</span></a>    <span class="n">tm</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span><span id="set_seeds-23"><a href="#set_seeds-23"><span class="linenos">23</span></a>    <span class="n">sd</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-</span><span id="set_seeds-24"><a href="#set_seeds-24"><span class="linenos">24</span></a>    <span class="c1">#  attack_model.set_seed(seed)</span>
-</span><span id="set_seeds-25"><a href="#set_seeds-25"><span class="linenos">25</span></a>    <span class="c1">#  attack_data.set_seed(seed)</span>
+</span><span id="set_seeds-24"><a href="#set_seeds-24"><span class="linenos">24</span></a>    <span class="n">am</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+</span><span id="set_seeds-25"><a href="#set_seeds-25"><span class="linenos">25</span></a>    <span class="n">ad</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span></pre></div>
 
 
