@@ -7,7 +7,7 @@
 from os import environ
 from typing import Tuple
 from numpy.typing import NDArray
-from typing import Union, Dict, List
+from typing import Optional, Dict, List
 import datasets as ds
 import random
 import numpy as np
@@ -220,7 +220,7 @@ def _generate_synthetic_record_batched(label: int,
                                        conf_min: float = 0.05,
                                        rej_max: int = 20,
                                        iter_max: int = 200,
-                                       batchSize: int = 1) -> Union[NDArray, None]:
+                                       batchSize: int = 1) -> Optional[NDArray]:
     """
     Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -290,7 +290,7 @@ def _generate_synthetic_record(label: int,
                                k_min: int = 5,
                                conf_min: float = 0.05,
                                rej_max: int = 20,
-                               iter_max: int = 200) -> Union[NDArray, None]:
+                               iter_max: int = 200) -> Optional[NDArray]:
     """
     Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
