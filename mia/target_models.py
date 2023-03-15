@@ -133,6 +133,7 @@ def get_model_name(config: Dict) -> str:
     modelConfig = config["targetModel"]["hyperparameters"]
     return \
         f'{config["targetDataset"]["name"]}_' + \
+        f'classes_{config["targetModel"]["classes"]}_' + \
         f'lr_{modelConfig["learningRate"]}_' + \
         f'bs_{modelConfig["batchSize"]}_' + \
         f'epochs_{modelConfig["epochs"]}_' + \
