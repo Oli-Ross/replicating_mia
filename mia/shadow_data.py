@@ -54,12 +54,13 @@ def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
 
 def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
     shadowConfig = config["shadowDataset"]
+    targetDataName = config["targetDataset"]["name"]
     method = shadowConfig["method"]
     dataSize = shadowConfig["size"]
     hyperpars = shadowConfig[method]["hyperparameters"]
 
     if method == "noisy":
-        dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}'
+        dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}_target_{targetDataName}'
         try:
             print("Loading shadow data from disk.")
             shadowData = ds.load_shadow(dataName, verbose=False)
@@ -70,6 +71,7 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
     elif method == "hill_climbing":
         dataName = \
             f'{method}_' + \
+            f'{targetDataName}_' + \
             f'kmax_{hyperpars["k_max"]}_' + \
             f'kmin_{hyperpars["k_min"]}_' + \
             f'confmin_{hyperpars["conf_min"]}_' + \
