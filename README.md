@@ -6,6 +6,9 @@ against machine learning classifiers.
 
 ## Setup
 
+It is recommended to use the docker setup to ensure the Cuda and cuDNN versions match the pinned tensorflow version.
+The dockerfile uses `Cuda==11.2.1` and `cuDNN==8.1`, this project uses `tensorflow-gpu==2.9.3`.
+
 ### Venv
 
 Set up a virtual environment, e.g.: 
