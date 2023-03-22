@@ -8,6 +8,7 @@ from os import environ
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import dirname, isdir, join
+import shutil
 from typing import Tuple
 
 import numpy as np
@@ -119,6 +120,11 @@ def save_attack(dataset: Dataset, datasetName: str):
 def save_shadow(dataset: Dataset, datasetName: str):
     datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
     tf.data.experimental.save(dataset, datasetDir)
+
+
+def delete_shadow(datasetName: str):
+    datasetDir: str = join(dataDir, "shadow", datasetName, "dataset")
+    shutil.rmtree(datasetDir)
 
 
 def load_dataset(datasetName: str) -> Dataset:
