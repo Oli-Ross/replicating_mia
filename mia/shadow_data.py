@@ -67,7 +67,11 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
         except BaseException:
             print("Loading failed, generating shadow data.")
             shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
-            ds.save_shadow(shadowData, dataName)
+            try:
+                ds.save_shadow(shadowData, dataName)
+            except BaseException:
+                ds.delete_shadow(dataName)
+                raise
     elif method == "hill_climbing":
         dataName = \
             f'{method}_' + \
