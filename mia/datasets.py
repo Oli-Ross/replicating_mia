@@ -74,6 +74,10 @@ def _read_kaggle_data() -> Tuple[NDArray, NDArray]:
 
 def shuffle(dataset: Dataset) -> Dataset:
     datasetSize = dataset.cardinality().numpy()
+    if datasetSize <= 0:  # tf uses constants < 0 to indicate unknown cardinality
+        print("Warning: Getting dataset size from loading it to memory via numpy iterator, potentially slow.")
+        datasetSize = len(list(dataset.as_numpy_iterator()))
+
     return dataset.shuffle(datasetSize, seed=global_seed, reshuffle_each_iteration=False)
 
 
