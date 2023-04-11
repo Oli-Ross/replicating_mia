@@ -24,6 +24,7 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 
         E.g. models[0] is trained with datasets[0,0] and tested on datasets[0,1]
     """
+    verbose = config["verbose"]
     numModels: int = config["shadowModels"]["number"]
     split: float = config["shadowModels"]["split"]
     dataSize = shadowDatasets[0].cardinality().numpy()
@@ -39,9 +40,9 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
         testDataName = modelName + "_test_data"
 
         try:
-            model: tm.KaggleModel = tm.load_model(modelName, verbose=False)
-            trainData: ds.Dataset = ds.load_shadow(trainDataName, verbose=False)
-            testData: ds.Dataset = ds.load_shadow(testDataName, verbose=False)
+            model: tm.KaggleModel = tm.load_model(modelName, verbose=verbose)
+            trainData: ds.Dataset = ds.load_shadow(trainDataName, verbose=verbose)
+            testData: ds.Dataset = ds.load_shadow(testDataName, verbose=verbose)
 
         except BaseException:
             print(f"Didn't work, training shadow model {i}.")

@@ -141,13 +141,14 @@ def get_model_name(config: Dict) -> str:
 
 
 def get_target_model(config: Dict, targetDataset):
+    verbose = config["verbose"]
     dataConfig = config["targetDataset"]
     modelConfig = config["targetModel"]["hyperparameters"]
     modelName = get_model_name(config)
 
     try:
         print(f"Loading target model from disk.")
-        model: KaggleModel = load_model(modelName, verbose=False)
+        model: KaggleModel = load_model(modelName, verbose=verbose)
 
     except BaseException:
         print("Didn't work, retraining target model.")
