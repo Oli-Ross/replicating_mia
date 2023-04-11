@@ -94,12 +94,13 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
 
 
 def load(config: Dict) -> List[Tuple[ds.Dataset, ds.Dataset]]:
+    verbose = config["verbose"]
     numClasses = config["targetModel"]["classes"]
     numDatasets = numClasses
     attackDatasets = []
     for i in range(numDatasets):
-        testData = ds.load_attack(_get_attack_data_name(config, i, test=True), verbose=False)
-        trainData = ds.load_attack(_get_attack_data_name(config, i, test=False), verbose=False)
+        testData = ds.load_attack(_get_attack_data_name(config, i, test=True), verbose=verbose)
+        trainData = ds.load_attack(_get_attack_data_name(config, i, test=False), verbose=verbose)
         attackDatasets.append((testData, trainData))
     return attackDatasets
 

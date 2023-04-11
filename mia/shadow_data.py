@@ -53,6 +53,7 @@ def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
 
 
 def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
+    verbose = config["verbose"]
     shadowConfig = config["shadowDataset"]
     targetDataName = config["targetDataset"]["name"]
     method = shadowConfig["method"]
@@ -63,7 +64,7 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
         dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}_target_{targetDataName}'
         try:
             print("Loading shadow data from disk.")
-            shadowData = ds.load_shadow(dataName, verbose=False)
+            shadowData = ds.load_shadow(dataName, verbose=verbose)
         except BaseException:
             print("Loading failed, generating shadow data.")
             shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)

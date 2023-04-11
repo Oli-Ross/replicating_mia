@@ -125,6 +125,7 @@ def get_model_name(config: Dict, i: int) -> str:
 
 
 def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[KaggleAttackModel]:
+    verbose = config["verbose"]
     modelConfig = config["attackModel"]["hyperparameters"]
     numClasses = config["targetModel"]["classes"]
     attackModels = []
@@ -133,7 +134,7 @@ def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Da
     for i in range(numClasses):
         modelName = get_model_name(config, i)
         try:
-            model: KaggleAttackModel = load_model(modelName, verbose=False)
+            model: KaggleAttackModel = load_model(modelName, verbose=verbose)
         except BaseException:
             print(f"Couldn't load attack model {i}, retraining.")
             trainData, testData = attackDatasets[i]
