@@ -109,7 +109,11 @@ def _get_attack_data_name(config: Dict, i, test=False):
     numModels: int = config["shadowModels"]["number"]
     numClasses = config["targetModel"]["classes"]
     split: float = config["shadowModels"]["split"]
-    name = tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}"
+    if config["attackDataset"]["balance"]:
+        balanced = "balanced"
+    else:
+        balanced = "unbalanced"
+    name = tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}_{balanced}"
     if test:
         return name + "_test"
     else:
@@ -194,8 +198,10 @@ def get_attack_data(config: Dict,
     except BaseException:
         print("Didn't work, reconstructing it.")
         attackDatasets = from_shadow_models(config, shadowModels, shadowDatasets)
-        print("Balancing attack data to contain equal amounts in/out records.")
-        attackDatasets = balance_attack_data(attackDatasets)
+        balanceAttackData = config["attackDataset"]["balance"]
+        if balanceAttackData:
+            print("Balancing attack data to contain equal amounts in/out records.")
+            attackDatasets = balance_attack_data(attackDatasets)
         print("Splitting attack data for training.")
         attackDatasets = split_attack_data_for_training(attackDatasets, config)
         print("Saving attack data to disk.")
