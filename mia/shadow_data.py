@@ -69,8 +69,12 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             print("Loading failed, generating shadow data.")
             shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
             try:
+                if verbose:
+                    print(f"Saving shadow data {dataName} to disk.")
                 ds.save_shadow(shadowData, dataName)
             except BaseException:
+                if verbose:
+                    print(f"Failed to save shadow data {dataName} to disk.")
                 ds.delete_shadow(dataName)
                 raise
     elif method == "hill_climbing":
@@ -88,7 +92,15 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
         except BaseException:
             print("Loading failed, generating shadow data.")
             shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
-            ds.save_shadow(shadowData, dataName)
+            try:
+                if verbose:
+                    print(f"Saving shadow data {dataName} to disk.")
+                ds.save_shadow(shadowData, dataName)
+            except BaseException:
+                if verbose:
+                    print(f"Failed to save shadow data {dataName} to disk.")
+                ds.delete_shadow(dataName)
+                raise
     else:
         raise ValueError(f"{method} is not a valid shadow data method.")
 
