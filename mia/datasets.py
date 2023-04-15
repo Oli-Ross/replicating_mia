@@ -95,7 +95,7 @@ def _prepare_clustered_kaggle(numberOfClusters: int):
     Load the Kaggle data and cluster it.
     """
     print(f"Clustering Kaggle with {numberOfClusters} classes.")
-    kmeans = sklearn.cluster.MiniBatchKMeans(n_clusters=numberOfClusters, random_state=global_seed)
+    kmeans = sklearn.cluster.KMeans(n_clusters=numberOfClusters, random_state=global_seed)
     features, _ = _read_kaggle_data()
     kaggleSize = 197324
     labels: NDArray = kmeans.fit_predict(features).reshape(kaggleSize, 1)
