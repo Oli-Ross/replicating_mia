@@ -164,7 +164,8 @@ def get_target_model(config: Dict, targetDataset):
         train_model(model, modelName, trainData, testData, modelConfig)
 
         print("Saving target model to disk.")
-        save_model(modelName, model)
+        if config["cache_to_disk"]:
+            save_model(modelName, model)
         evaluate_model(model, testData)
 
     return model

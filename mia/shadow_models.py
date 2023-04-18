@@ -56,10 +56,11 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 
             tm.train_model(model, modelName, trainData, testData, modelConfig)
 
-            print(f"Saving shadow model {i} and its data to disk.")
-            tm.save_model(modelName, model)
-            ds.save_shadow(trainData, trainDataName)
-            ds.save_shadow(testData, testDataName)
+            if config["cache_to_disk"]:
+                print(f"Saving shadow model {i} and its data to disk.")
+                tm.save_model(modelName, model)
+                ds.save_shadow(trainData, trainDataName)
+                ds.save_shadow(testData, testDataName)
 
             print(f"Evaluating shadow model {i}")
             tm.evaluate_model(model, testData)
