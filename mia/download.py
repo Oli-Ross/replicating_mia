@@ -25,8 +25,6 @@ def _download_raw_kaggle_data():
 
 
 def _extract_kaggle_data():
-    if not path.isdir(kaggleDir):
-        makedirs(kaggleDir)
     kaggleRaw = path.join(kaggleDir, "raw_data")
     kaggleCompressed = path.join(kaggleDir, "raw_data.tgz")
 
@@ -37,6 +35,8 @@ def _extract_kaggle_data():
 
 
 def download_kaggle():
+    if not path.isdir(kaggleDir):
+        makedirs(kaggleDir)
     _download_raw_kaggle_data()
     _extract_kaggle_data()
 
