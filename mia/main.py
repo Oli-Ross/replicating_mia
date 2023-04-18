@@ -52,7 +52,7 @@ def main():
     config = parse_config()
     set_seeds(config["seed"])
 
-    download.download_all_datasets()
+    download.download_dataset(config["targetDataset"]["name"])
 
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
     targetModel = tm.get_target_model(config, targetDataset)

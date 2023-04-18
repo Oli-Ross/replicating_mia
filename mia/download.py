@@ -58,5 +58,16 @@ def download_all_datasets():
     download_kaggle()
 
 
+def download_dataset(datasetName: str):
+    if datasetName == "cifar10":
+        download_cifar10()
+    elif datasetName == "cifar100":
+        download_cifar100()
+    elif "kaggle" in datasetName:
+        download_kaggle()
+    else:
+        raise ValueError(f"{datasetName} is not a known dataset.")
+
+
 if __name__ == "__main__":
     download_all_datasets()
