@@ -44,6 +44,9 @@
             <li>
                     <a class="function" href="#download_all_datasets">download_all_datasets</a>
             </li>
+            <li>
+                    <a class="function" href="#download_dataset">download_dataset</a>
+            </li>
     </ul>
 
 
@@ -138,8 +141,19 @@ download    </h1>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">download_kaggle</span><span class="p">()</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="n">download_all_datasets</span><span class="p">()</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="k">def</span> <span class="nf">download_dataset</span><span class="p">(</span><span class="n">datasetName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="k">if</span> <span class="n">datasetName</span> <span class="o">==</span> <span class="s2">&quot;cifar10&quot;</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">download_cifar10</span><span class="p">()</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="k">elif</span> <span class="n">datasetName</span> <span class="o">==</span> <span class="s2">&quot;cifar100&quot;</span><span class="p">:</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="n">download_cifar100</span><span class="p">()</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="k">elif</span> <span class="s2">&quot;kaggle&quot;</span> <span class="ow">in</span> <span class="n">datasetName</span><span class="p">:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="n">download_kaggle</span><span class="p">()</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">datasetName</span><span class="si">}</span><span class="s2"> is not a known dataset.&quot;</span><span class="p">)</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">download_all_datasets</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -222,6 +236,32 @@ download    </h1>
 </span><span id="download_all_datasets-57"><a href="#download_all_datasets-57"><span class="linenos">57</span></a>    <span class="n">download_cifar100</span><span class="p">()</span>
 </span><span id="download_all_datasets-58"><a href="#download_all_datasets-58"><span class="linenos">58</span></a>    <span class="n">download_cifar10</span><span class="p">()</span>
 </span><span id="download_all_datasets-59"><a href="#download_all_datasets-59"><span class="linenos">59</span></a>    <span class="n">download_kaggle</span><span class="p">()</span>
+</span></pre></div>
+
+
+    
+
+                </section>
+                <section id="download_dataset">
+                            <input id="download_dataset-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">download_dataset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">datasetName</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="download_dataset-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#download_dataset"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="download_dataset-62"><a href="#download_dataset-62"><span class="linenos">62</span></a><span class="k">def</span> <span class="nf">download_dataset</span><span class="p">(</span><span class="n">datasetName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="download_dataset-63"><a href="#download_dataset-63"><span class="linenos">63</span></a>    <span class="k">if</span> <span class="n">datasetName</span> <span class="o">==</span> <span class="s2">&quot;cifar10&quot;</span><span class="p">:</span>
+</span><span id="download_dataset-64"><a href="#download_dataset-64"><span class="linenos">64</span></a>        <span class="n">download_cifar10</span><span class="p">()</span>
+</span><span id="download_dataset-65"><a href="#download_dataset-65"><span class="linenos">65</span></a>    <span class="k">elif</span> <span class="n">datasetName</span> <span class="o">==</span> <span class="s2">&quot;cifar100&quot;</span><span class="p">:</span>
+</span><span id="download_dataset-66"><a href="#download_dataset-66"><span class="linenos">66</span></a>        <span class="n">download_cifar100</span><span class="p">()</span>
+</span><span id="download_dataset-67"><a href="#download_dataset-67"><span class="linenos">67</span></a>    <span class="k">elif</span> <span class="s2">&quot;kaggle&quot;</span> <span class="ow">in</span> <span class="n">datasetName</span><span class="p">:</span>
+</span><span id="download_dataset-68"><a href="#download_dataset-68"><span class="linenos">68</span></a>        <span class="n">download_kaggle</span><span class="p">()</span>
+</span><span id="download_dataset-69"><a href="#download_dataset-69"><span class="linenos">69</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="download_dataset-70"><a href="#download_dataset-70"><span class="linenos">70</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">datasetName</span><span class="si">}</span><span class="s2"> is not a known dataset.&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
