@@ -28,6 +28,7 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
     numModels: int = config["shadowModels"]["number"]
     split: float = config["shadowModels"]["split"]
     dataSize = shadowDatasets[0].cardinality().numpy()
+    assert dataSize != 0, "Loaded shadow dataset that seems empty."
     trainSize = np.ceil(split * dataSize)
     testSize = dataSize - trainSize
     datasets = []
