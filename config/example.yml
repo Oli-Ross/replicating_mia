@@ -3,9 +3,6 @@ name: Example Configuration
 seed: 1234
 verbose: yes
 
-actions:
-  generateShadowData: no
-
 attackModel:
   hyperparameters:
     epochs: 50
