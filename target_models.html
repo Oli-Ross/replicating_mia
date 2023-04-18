@@ -291,10 +291,11 @@ train them.</p>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="n">train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">trainData</span><span class="p">,</span> <span class="n">testData</span><span class="p">,</span> <span class="n">modelConfig</span><span class="p">)</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving target model to disk.&quot;</span><span class="p">)</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="n">save_model</span><span class="p">(</span><span class="n">modelName</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="n">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">testData</span><span class="p">)</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>    <span class="k">return</span> <span class="n">model</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;cache_to_disk&quot;</span><span class="p">]:</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>            <span class="n">save_model</span><span class="p">(</span><span class="n">modelName</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">testData</span><span class="p">)</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>    <span class="k">return</span> <span class="n">model</span>
 </span></pre></div>
 
 
@@ -869,10 +870,11 @@ and a SoftMax layer. We use Tanh as the activation function.
 </span><span id="get_target_model-165"><a href="#get_target_model-165"><span class="linenos">165</span></a>        <span class="n">train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">trainData</span><span class="p">,</span> <span class="n">testData</span><span class="p">,</span> <span class="n">modelConfig</span><span class="p">)</span>
 </span><span id="get_target_model-166"><a href="#get_target_model-166"><span class="linenos">166</span></a>
 </span><span id="get_target_model-167"><a href="#get_target_model-167"><span class="linenos">167</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving target model to disk.&quot;</span><span class="p">)</span>
-</span><span id="get_target_model-168"><a href="#get_target_model-168"><span class="linenos">168</span></a>        <span class="n">save_model</span><span class="p">(</span><span class="n">modelName</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-</span><span id="get_target_model-169"><a href="#get_target_model-169"><span class="linenos">169</span></a>        <span class="n">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">testData</span><span class="p">)</span>
-</span><span id="get_target_model-170"><a href="#get_target_model-170"><span class="linenos">170</span></a>
-</span><span id="get_target_model-171"><a href="#get_target_model-171"><span class="linenos">171</span></a>    <span class="k">return</span> <span class="n">model</span>
+</span><span id="get_target_model-168"><a href="#get_target_model-168"><span class="linenos">168</span></a>        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;cache_to_disk&quot;</span><span class="p">]:</span>
+</span><span id="get_target_model-169"><a href="#get_target_model-169"><span class="linenos">169</span></a>            <span class="n">save_model</span><span class="p">(</span><span class="n">modelName</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</span><span id="get_target_model-170"><a href="#get_target_model-170"><span class="linenos">170</span></a>        <span class="n">evaluate_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">testData</span><span class="p">)</span>
+</span><span id="get_target_model-171"><a href="#get_target_model-171"><span class="linenos">171</span></a>
+</span><span id="get_target_model-172"><a href="#get_target_model-172"><span class="linenos">172</span></a>    <span class="k">return</span> <span class="n">model</span>
 </span></pre></div>
 
 
