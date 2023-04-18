@@ -206,8 +206,9 @@ def get_attack_data(config: Dict,
             attackDatasets = balance_attack_data(attackDatasets)
         print("Splitting attack data for training.")
         attackDatasets = split_attack_data_for_training(attackDatasets, config)
-        print("Saving attack data to disk.")
-        save(config, attackDatasets)
+        if config["cache_to_disk"]:
+            print("Saving attack data to disk.")
+            save(config, attackDatasets)
         return attackDatasets
 
 

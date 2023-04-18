@@ -71,7 +71,8 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             try:
                 if verbose:
                     print(f"Saving shadow data {dataName} to disk.")
-                ds.save_shadow(shadowData, dataName)
+                if config["cache_to_disk"]:
+                    ds.save_shadow(shadowData, dataName)
             except BaseException:
                 if verbose:
                     print(f"Failed to save shadow data {dataName} to disk.")
@@ -95,7 +96,8 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             try:
                 if verbose:
                     print(f"Saving shadow data {dataName} to disk.")
-                ds.save_shadow(shadowData, dataName)
+                if config["cache_to_disk"]:
+                    ds.save_shadow(shadowData, dataName)
             except BaseException:
                 if verbose:
                     print(f"Failed to save shadow data {dataName} to disk.")
