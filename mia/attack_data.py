@@ -179,7 +179,9 @@ def split_dataset(dataset: ds.Dataset, split: float):
 def split_attack_data_for_training(datasets: List[ds.Dataset], config: Dict):
     split = config["attackDataset"]["split"]
     splitDatasets = []
-    for dataset in datasets:
+    for index, dataset in enumerate(datasets):
+        if config["verbose"]:
+            print(f"Splitting dataset {index}")
         splitDatasets.append(split_dataset(dataset, split))
     return splitDatasets
 
