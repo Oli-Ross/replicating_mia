@@ -5,6 +5,7 @@
 import datetime
 import os
 import os.path
+from os.path import isabs
 from typing import Dict, Optional
 
 import yaml
@@ -57,3 +58,22 @@ def from_name(fileName: str) -> Dict:
     """
     absoluteFilePath = os.path.join(configDir, fileName)
     return from_abs_path(absoluteFilePath)
+
+
+def from_cli_options(options: Dict) -> Dict:
+    """
+    Take options from CLI and load correct config file.
+    """
+    configFile = options["config"]
+    try:
+        if isabs(configFile):
+            config = from_abs_path(configFile)
+        else:
+            config = from_rel_path(configFile)
+        name = config["name"]
+        print(f"Using configuration \"{name}\"")
+    except BaseException:
+        config = from_name("example.yml")
+        print("Using default configuration.")
+
+    return config
