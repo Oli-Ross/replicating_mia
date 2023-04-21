@@ -2,6 +2,8 @@
 .. include:: ../docs/download.md
 """
 
+import configuration as con
+
 import tarfile
 from os import makedirs, path, rename
 from os.path import join, dirname, isdir
@@ -70,4 +72,10 @@ def download_dataset(datasetName: str):
 
 
 if __name__ == "__main__":
-    download_all_datasets()
+    import argparse
+    parser = argparse.ArgumentParser(description='Make sure the needed dataset is downloaded.')
+    parser.add_argument('--config', help='Relative path to config file.',)
+    config = con.from_cli_options(vars(parser.parse_args()))
+    dataName = config["targetDataset"]["name"]
+    print(f"Downloading {dataName}, if necessary.")
+    download_dataset(dataName)
