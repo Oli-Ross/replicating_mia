@@ -174,3 +174,16 @@ def train_target_model(config: Dict, targetDataset) -> Sequential:
         save_model(modelName, model)
     evaluate_model(model, testData)
     return model
+
+
+if __name__ == "__main__":
+    import argparse
+    import configuration as con
+    import datasets as ds
+
+    parser = argparse.ArgumentParser(description='Train the target model.')
+    parser.add_argument('--config', help='Relative path to config file.',)
+    config = con.from_cli_options(vars(parser.parse_args()))
+
+    targetDataset = ds.load_dataset(config["targetDataset"]["name"])
+    targetModel = get_target_model(config, targetDataset)
