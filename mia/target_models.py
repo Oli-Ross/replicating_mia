@@ -140,32 +140,38 @@ def get_model_name(config: Dict) -> str:
         f'trainsize_{config["targetDataset"]["trainSize"]}'
 
 
-def get_target_model(config: Dict, targetDataset):
-    verbose = config["verbose"]
-    dataConfig = config["targetDataset"]
-    modelConfig = config["targetModel"]["hyperparameters"]
-    modelName = get_model_name(config)
-
+def get_target_model(config: Dict, targetDataset) -> Sequential:
+    """
+    Try to load target model. If it doesn't work, train it.
+    """
     try:
         print(f"Loading target model from disk.")
-        model: KaggleModel = load_model(modelName, verbose=verbose)
+        modelName = get_model_name(config)
+        model: KaggleModel = load_model(modelName, verbose=config["verbose"])
 
     except BaseException:
         print("Didn't work, retraining target model.")
+        model: KaggleModel = train_target_model(config, targetDataset)
 
-        trainData = targetDataset.take(dataConfig["trainSize"])
-        testData = targetDataset.skip(dataConfig["trainSize"]).take(dataConfig["testSize"])
+    return model
 
-        if dataConfig["shuffle"]:
-            trainData = ds.shuffle(trainData)
 
-        model = KaggleModel(config["targetModel"]["classes"])
+def train_target_model(config: Dict, targetDataset) -> Sequential:
+    dataConfig = config["targetDataset"]
+    modelConfig = config["targetModel"]["hyperparameters"]
+    modelName = get_model_name(config)
+    trainData = targetDataset.take(dataConfig["trainSize"])
+    testData = targetDataset.skip(dataConfig["trainSize"]).take(dataConfig["testSize"])
 
-        train_model(model, modelName, trainData, testData, modelConfig)
+    if dataConfig["shuffle"]:
+        trainData = ds.shuffle(trainData)
 
-        print("Saving target model to disk.")
-        if config["cache_to_disk"]:
-            save_model(modelName, model)
-        evaluate_model(model, testData)
+    model = KaggleModel(config["targetModel"]["classes"])
 
+    train_model(model, modelName, trainData, testData, modelConfig)
+
+    print("Saving target model to disk.")
+    if config["cache_to_disk"]:
+        save_model(modelName, model)
+    evaluate_model(model, testData)
     return model
