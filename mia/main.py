@@ -1,5 +1,4 @@
 from os import environ
-from os.path import isabs
 import argparse
 from typing import Dict
 
@@ -31,28 +30,10 @@ def parse_args() -> Dict:
     return vars(parser.parse_args())
 
 
-def parse_config(options: Dict) -> Dict:
-    """
-    Take options from CLI and load correct config file.
-    """
-    configFile = options["config"]
-    try:
-        if isabs(configFile):
-            config = con.from_abs_path(configFile)
-        else:
-            config = con.from_rel_path(configFile)
-        name = config["name"]
-        print(f"Using configuration \"{name}\"")
-    except BaseException:
-        config = con.from_name("example.yml")
-        print("Using default configuration.")
-    return config
-
-
 def main():
 
     options = parse_args()
-    config = parse_config(options)
+    config = con.from_cli_options(options)
     set_seeds(config["seed"])
 
     download.download_dataset(config["targetDataset"]["name"])
