@@ -390,3 +390,18 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
     features = features.reshape((numRecords, numFeatures))
     labels = labels.reshape((numRecords, 1))
     return Dataset.from_tensor_slices((features, labels))
+
+
+if __name__ == "__main__":
+    import argparse
+    import configuration as con
+    import datasets as ds
+    import target_models as tm
+
+    parser = argparse.ArgumentParser(description='Generate all the necessary shadow data and save it to disk.')
+    parser.add_argument('--config', help='Relative path to config file.',)
+    config = con.from_cli_options(vars(parser.parse_args()))
+
+    targetDataset = ds.load_dataset(config["targetDataset"]["name"])
+    targetModel = tm.load_model(tm.get_model_name(config), verbose=config["verbose"])
+    get_shadow_data(config, targetDataset, targetModel)
