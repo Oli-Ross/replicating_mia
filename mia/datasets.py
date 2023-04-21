@@ -186,4 +186,5 @@ def load_all_datasets():
 
 
 if __name__ == "__main__":
+    # Implicitely does all the clustering for the different Kaggle versions
     load_all_datasets()
