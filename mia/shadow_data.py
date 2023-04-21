@@ -52,32 +52,20 @@ def split_shadow_data(config: Dict, shadowData: ds.Dataset) -> List[ds.Dataset]:
     return ds.split_dataset(shadowData, numSubsets)
 
 
-def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
-    verbose = config["verbose"]
+def load_shadow_data(config: Dict):
+    dataName = get_shadow_data_name(config)
+    return ds.load_shadow(dataName, verbose=config["verbose"])
+
+
+def get_shadow_data_name(config: Dict):
     shadowConfig = config["shadowDataset"]
+    method = shadowConfig["method"]
     targetDataName = config["targetDataset"]["name"]
     method = shadowConfig["method"]
     dataSize = shadowConfig["size"]
     hyperpars = shadowConfig[method]["hyperparameters"]
-
     if method == "noisy":
         dataName = f'{method}_fraction_{hyperpars["fraction"]}_size_{dataSize}_target_{targetDataName}'
-        try:
-            print("Loading shadow data from disk.")
-            shadowData = ds.load_shadow(dataName, verbose=verbose)
-        except BaseException:
-            print("Loading failed, generating shadow data.")
-            shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
-            try:
-                if verbose:
-                    print(f"Saving shadow data {dataName} to disk.")
-                if config["cache_to_disk"]:
-                    ds.save_shadow(shadowData, dataName)
-            except BaseException:
-                if verbose:
-                    print(f"Failed to save shadow data {dataName} to disk.")
-                ds.delete_shadow(dataName)
-                raise
     elif method == "hill_climbing":
         dataName = \
             f'{method}_' + \
@@ -88,23 +76,41 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             f'rejmax_{hyperpars["rej_max"]}_' + \
             f'itermax_{hyperpars["iter_max"]}_' + \
             f'size_{dataSize}'
-        try:
-            shadowData = ds.load_shadow(dataName)
-        except BaseException:
-            print("Loading failed, generating shadow data.")
-            shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
-            try:
-                if verbose:
-                    print(f"Saving shadow data {dataName} to disk.")
-                if config["cache_to_disk"]:
-                    ds.save_shadow(shadowData, dataName)
-            except BaseException:
-                if verbose:
-                    print(f"Failed to save shadow data {dataName} to disk.")
-                ds.delete_shadow(dataName)
-                raise
     else:
         raise ValueError(f"{method} is not a valid shadow data method.")
+    return dataName
+
+
+def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
+    verbose = config["verbose"]
+    shadowConfig = config["shadowDataset"]
+    method = shadowConfig["method"]
+    dataSize = shadowConfig["size"]
+    hyperpars = shadowConfig[method]["hyperparameters"]
+    dataName = get_shadow_data_name(config)
+
+    try:
+        print("Loading shadow data from disk.")
+        shadowData = load_shadow_data(config)
+    except BaseException:
+        print("Loading failed, generating shadow data.")
+
+        if method == "noisy":
+            shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
+        elif method == "hill_climbing":
+            shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
+        else:
+            raise ValueError(f"{method} is not a valid shadow data method.")
+
+        try:
+            if config["cache_to_disk"]:
+                if verbose:
+                    print(f"Saving shadow data {dataName} to disk.")
+                ds.save_shadow(shadowData, dataName)
+        except BaseException:
+            print(f"Failed to save shadow data {dataName} to disk.")
+            ds.delete_shadow(dataName)
+            raise
 
     return shadowData
 
