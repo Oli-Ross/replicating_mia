@@ -31,8 +31,10 @@ def parse_args() -> Dict:
     return vars(parser.parse_args())
 
 
-def parse_config() -> Dict:
-    options = parse_args()
+def parse_config(options: Dict) -> Dict:
+    """
+    Take options from CLI and load correct config file.
+    """
     configFile = options["config"]
     try:
         if isabs(configFile):
@@ -49,7 +51,8 @@ def parse_config() -> Dict:
 
 def main():
 
-    config = parse_config()
+    options = parse_args()
+    config = parse_config(options)
     set_seeds(config["seed"])
 
     download.download_dataset(config["targetDataset"]["name"])
