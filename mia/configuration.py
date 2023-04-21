@@ -77,3 +77,11 @@ def from_cli_options(options: Dict) -> Dict:
         print("Using default configuration.")
 
     return config
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='Dry run of parsing the provided configuration file.')
+    parser.add_argument('--config', help='Relative path to config file.',)
+    config = from_cli_options(vars(parser.parse_args()))
+    print(config)
