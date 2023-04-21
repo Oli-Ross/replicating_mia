@@ -70,3 +70,19 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
         models.append(model)
 
     return models, datasets
+
+
+if __name__ == "__main__":
+    import argparse
+    import configuration as con
+    import datasets as ds
+    import target_models as tm
+    import shadow_data as sd
+
+    parser = argparse.ArgumentParser(description='Save one shadow dataset per model and train the models.')
+    parser.add_argument('--config', help='Relative path to config file.',)
+    config = con.from_cli_options(vars(parser.parse_args()))
+
+    shadowData = sd.load_shadow_data(config)
+    shadowDatasets = sd.split_shadow_data(config, shadowData)
+    shadowModels = get_shadow_models_and_datasets(config, shadowDatasets)
