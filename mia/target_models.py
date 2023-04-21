@@ -84,7 +84,6 @@ def load_model(name: str, verbose=True) -> Sequential:
 
     The file name will be constructed from the `name` argument.
     """
-    # TODO: make dir if it doesn't exist
     if verbose:
         print(f"Loading model {name} from disk.")
     filePath: str = join(dirname(__file__), "../models/target", name)
