@@ -136,7 +136,7 @@ def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Da
         try:
             model: KaggleAttackModel = load_model(modelName, verbose=verbose)
         except BaseException:
-            print(f"Couldn't load attack model {i}, retraining.")
+            print(f"Couldn't load attack model {i+1}, retraining.")
             trainData, testData = attackDatasets[i]
             trainData = ds.shuffle(trainData)
 
@@ -145,7 +145,7 @@ def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Da
             train_model(model, modelName, trainData, testData, modelConfig)
 
             if config["cache_to_disk"]:
-                print(f"Saving attack model {i} to disk.")
+                print(f"Saving attack model {i+1} to disk.")
                 save_model(modelName, model)
             evaluate_model(model, testData)
 
