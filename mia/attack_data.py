@@ -93,7 +93,7 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
     return attackTrainData, attackTestData
 
 
-def load(config: Dict) -> List[Tuple[ds.Dataset, ds.Dataset]]:
+def load_attack_data(config: Dict) -> List[Tuple[ds.Dataset, ds.Dataset]]:
     verbose = config["verbose"]
     numClasses = config["targetModel"]["classes"]
     numDatasets = numClasses
@@ -196,7 +196,7 @@ def get_attack_data(config: Dict,
     """
     try:
         print("Loading attack data.")
-        return load(config)
+        return load_attack_data(config)
     except BaseException:
         print("Didn't work, reconstructing it.")
         attackDatasets = from_shadow_models(config, shadowModels, shadowDatasets)
