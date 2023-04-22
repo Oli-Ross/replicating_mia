@@ -125,8 +125,8 @@ def save(config: Dict, datasets: List[ds.Dataset]):
     assert numClasses == len(
         datasets), "List should contain 1 dataset per class"
     for index, (trainData, testData) in enumerate(datasets):
-        if index % 10 == 0:
-            print(f"Saving attack dataset #{index}/{numClasses}")
+        if config["verbose"]:
+            print(f"Saving attack dataset #{index+1}/{numClasses}")
         ds.save_attack(trainData, _get_attack_data_name(config, index, test=False))
         ds.save_attack(testData, _get_attack_data_name(config, index, test=True))
 
