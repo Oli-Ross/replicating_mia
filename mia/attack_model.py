@@ -121,7 +121,7 @@ def get_model_name(config: Dict, i: int) -> str:
         f'lr_{modelConfig["learningRate"]}_' + \
         f'bs_{modelConfig["batchSize"]}_' + \
         f'epochs_{modelConfig["epochs"]}_' + \
-        f'{i}_of_{numClasses}'
+        f'{i+1}_of_{numClasses}'
 
 
 def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Dataset]]) -> List[KaggleAttackModel]:
