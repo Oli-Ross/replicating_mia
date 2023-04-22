@@ -76,5 +76,5 @@ if __name__ == "__main__":
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
     dataName = config["targetDataset"]["name"]
-    print(f"Downloading {dataName}, if necessary.")
+    print(f"Downloading data for {dataName}, if necessary.")
     download_dataset(dataName)
