@@ -13,6 +13,72 @@ def get_shadow_model_name(config: Dict, i: int):
     return "shadow_" + tm.get_model_name(config) + f"_split_{split}_{i}_of_{numModels}"
 
 
+def load_shadow_models_and_datasets(config: Dict) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
+    verbose = config["verbose"]
+    numModels: int = config["shadowModels"]["number"]
+    datasets = []
+    models = []
+
+    print(f"Loading shadow models from disk.")
+    for i in range(numModels):
+        modelName = get_shadow_model_name(config, i)
+        model: tm.KaggleModel = tm.load_model(modelName, verbose=verbose)
+
+        trainDataName = modelName + "_train_data"
+        testDataName = modelName + "_test_data"
+        trainData: ds.Dataset = ds.load_shadow(trainDataName, verbose=verbose)
+        testData: ds.Dataset = ds.load_shadow(testDataName, verbose=verbose)
+
+        datasets.append((trainData, testData))
+        models.append(model)
+
+    return models, datasets
+
+
+def train_shadow_models(config: Dict, shadowDatasets: List[ds.Dataset]
+                        ) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
+
+    numModels: int = config["shadowModels"]["number"]
+    split: float = config["shadowModels"]["split"]
+    dataSize = shadowDatasets[0].cardinality().numpy()
+    assert dataSize != 0, "Loaded shadow dataset that seems empty."
+    trainSize = np.ceil(split * dataSize)
+    testSize = dataSize - trainSize
+    datasets = []
+    models = []
+
+    for i in range(numModels):
+        print(f"Training shadow model {i}.")
+
+        modelName = get_shadow_model_name(config, i)
+        trainDataName = modelName + "_train_data"
+        testDataName = modelName + "_test_data"
+
+        dataset = shadowDatasets[i]
+        trainData = dataset.take(trainSize)
+        testData = dataset.skip(trainSize).take(testSize)
+
+        # Shadow models have same architecture as target model
+        model = tm.KaggleModel(config["targetModel"]["classes"])
+        modelConfig = config["targetModel"]["hyperparameters"]
+
+        tm.train_model(model, modelName, trainData, testData, modelConfig)
+
+        if config["cache_to_disk"]:
+            print(f"Saving shadow model {i} and its data to disk.")
+            tm.save_model(modelName, model)
+            ds.save_shadow(trainData, trainDataName)
+            ds.save_shadow(testData, testDataName)
+
+        print(f"Evaluating shadow model {i}")
+        tm.evaluate_model(model, testData)
+
+        datasets.append((trainData, testData))
+        models.append(model)
+
+    return models, datasets
+
+
 def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset]
                                    ) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
     """
@@ -24,50 +90,12 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 
         E.g. models[0] is trained with datasets[0,0] and tested on datasets[0,1]
     """
-    verbose = config["verbose"]
-    numModels: int = config["shadowModels"]["number"]
-    split: float = config["shadowModels"]["split"]
-    dataSize = shadowDatasets[0].cardinality().numpy()
-    assert dataSize != 0, "Loaded shadow dataset that seems empty."
-    trainSize = np.ceil(split * dataSize)
-    testSize = dataSize - trainSize
-    datasets = []
-    models = []
-
-    print(f"Loading shadow models from disk.")
-    for i in range(numModels):
-        modelName = get_shadow_model_name(config, i)
-        trainDataName = modelName + "_train_data"
-        testDataName = modelName + "_test_data"
-
-        try:
-            model: tm.KaggleModel = tm.load_model(modelName, verbose=verbose)
-            trainData: ds.Dataset = ds.load_shadow(trainDataName, verbose=verbose)
-            testData: ds.Dataset = ds.load_shadow(testDataName, verbose=verbose)
-
-        except BaseException:
-            print(f"Didn't work, training shadow model {i}.")
-            dataset = shadowDatasets[i]
-            trainData = dataset.take(trainSize)
-            testData = dataset.skip(trainSize).take(testSize)
-
-            # Shadow models have same architecture as target model
-            model = tm.KaggleModel(config["targetModel"]["classes"])
-            modelConfig = config["targetModel"]["hyperparameters"]
-
-            tm.train_model(model, modelName, trainData, testData, modelConfig)
-
-            if config["cache_to_disk"]:
-                print(f"Saving shadow model {i} and its data to disk.")
-                tm.save_model(modelName, model)
-                ds.save_shadow(trainData, trainDataName)
-                ds.save_shadow(testData, testDataName)
-
-            print(f"Evaluating shadow model {i}")
-            tm.evaluate_model(model, testData)
-
-        datasets.append((trainData, testData))
-        models.append(model)
+    try:
+        print("Trying to load shadow models and data from disk.")
+        models, datasets = load_shadow_models_and_datasets(config)
+    except BaseException:
+        print("Didn't work, training shadow models.")
+        models, datasets = train_shadow_models(config, shadowDatasets)
 
     return models, datasets
 
