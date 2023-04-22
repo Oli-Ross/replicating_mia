@@ -19,7 +19,7 @@ def parse_args() -> Dict:
 
 
 def run_script(scriptName: str, configFile: str):
-    run(f"python {scriptName} --config {configFile}")
+    run(f"python {scriptName} --config {configFile}", pty=True)
 
 
 def prepare(configFile: str):
