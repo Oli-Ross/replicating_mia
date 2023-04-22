@@ -15,6 +15,14 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 def parse_args() -> Dict:
     parser = argparse.ArgumentParser(description='Launch a membership inference attack pipeline')
     parser.add_argument('--config', help='Relative path to config file.',)
+    parser.add_argument(
+        '--prepare',
+        action="store_true",
+        help="Prepare all data and train models to launch the attack.")
+    parser.add_argument(
+        '--evaluate',
+        action="store_true",
+        help="Evaluate attack accuracy by loading models and data from disk.")
     return vars(parser.parse_args())
 
 
@@ -42,7 +50,10 @@ def evaluate(config: Dict):
 
 if __name__ == "__main__":
     options = parse_args()
-    config = con.from_cli_options(options)
-    configFileName = options["config"]
-    prepare(configFileName)
-    evaluate(config)
+    if options["prepare"]:
+        configFileName = options["config"]
+        prepare(configFileName)
+
+    if options["evaluate"]:
+        config = con.from_cli_options(options)
+        evaluate(config)
