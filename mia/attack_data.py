@@ -113,7 +113,7 @@ def _get_attack_data_name(config: Dict, i, test=False):
         balanced = "balanced"
     else:
         balanced = "unbalanced"
-    name = tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i}_of_{numClasses}_{balanced}"
+    name = tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i+1}_of_{numClasses}_{balanced}"
     if test:
         return name + "_test"
     else:
