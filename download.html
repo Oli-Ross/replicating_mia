@@ -153,7 +153,14 @@ download    </h1>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
 </span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">download_all_datasets</span><span class="p">()</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="kn">import</span> <span class="nn">argparse</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="kn">import</span> <span class="nn">configuration</span> <span class="k">as</span> <span class="nn">con</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Make sure the needed dataset is downloaded.&#39;</span><span class="p">)</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Relative path to config file.&#39;</span><span class="p">,)</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="n">config</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">from_cli_options</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()))</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="n">dataName</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;targetDataset&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="n">dataName</span><span class="si">}</span><span class="s2">, if necessary.&quot;</span><span class="p">)</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="n">download_dataset</span><span class="p">(</span><span class="n">dataName</span><span class="p">)</span>
 </span></pre></div>
 
 
