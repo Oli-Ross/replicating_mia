@@ -407,6 +407,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate all the necessary shadow data and save it to disk.')
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
+    set_seed(config["seed"])
 
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
     targetModel = tm.load_model(tm.get_model_name(config), verbose=config["verbose"])

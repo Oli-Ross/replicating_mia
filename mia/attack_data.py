@@ -286,6 +286,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Save one shadow dataset per model and train the models.')
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
+    set_seed(config["seed"])
 
     shadowModels, shadowDatasets = sm.load_shadow_models_and_datasets(config)
     attackDatasets = get_attack_data(config, shadowModels, shadowDatasets)

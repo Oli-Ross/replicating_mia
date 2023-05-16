@@ -188,9 +188,12 @@ def load_all_datasets():
 if __name__ == "__main__":
     import argparse
     import configuration as con
+
     parser = argparse.ArgumentParser(description='Make sure the needed dataset is downloaded.')
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
+    set_seed(config["seed"])
+
     dataName = config["targetDataset"]["name"]
     print(f"Loading {dataName}, doing clustering if necessary.")
     # Implicitely performs clustering for kaggle datasets
