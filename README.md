@@ -52,15 +52,29 @@ TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physic
 The code is split into submodules in the subfolder `mia/`:
 1. `download.py`: Download datasets
 2. `datasets.py`: Data preprocessing
-3. `configuration.py`: Parse config YAML file
-4. `target_models.py`: Target model definition and utilities
-5. `attack_model.py`: Attack model definition and utilities
-6. `shadow_data.py`: Generate shadow data
-7. `shadow_models.py`: Load or construct shadow models
-8. `attack_data.py`: Predict shadow data on shadow models and aggregate it into attack data
+3. `target_models.py`: Train/load target model
+4. `shadow_data.py`: Generate shadow data
+5. `shadow_models.py`: Train/load shadow models
+6. `attack_data.py`: Predict shadow data on shadow models and aggregate it into attack data
+7. `attack_model.py`: Train/load attack model
+8. (`configuration.py`: Parse config YAML file)
 
-Refer to the documentation of each module on how to use it. 
-An example script, which ties the modules together is given at `mia/main.py`.
+Each module can be called as a standalone script with the option `--config FILE` to read the configuration from `FILE`
+(default is using `config/example.yml`).
+By default datasets and models will be saved to disk and only generated or trained if they can't be loaded from disk.
+
+`mia/main.py` ties the modules together to train/generate all models/data:
+
+```bash
+python mia/main.py --prepare
+```
+
+Subsequently, the attack model can be evaluated to determine the overall accuracy of the attack:
+```bash
+python mia/main.py --evaluate
+```
+
+Refer to the documentation of each module on how to use it as standalone. 
 
 ## Documentation
 
