@@ -4,7 +4,21 @@ import datasets as ds
 import target_models as tm
 import shadow_data as sd
 
+from tensorflow.python.framework import random_seed
+
 import numpy as np
+
+global_seed: int = 1234
+
+
+def set_seed(new_seed: int):
+    """
+    Set the global seed that will be used for all functions that include
+    randomness.
+    """
+    global global_seed
+    global_seed = new_seed
+    random_seed.set_seed(global_seed)
 
 
 def get_shadow_model_name(config: Dict, i: int):
@@ -110,6 +124,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Save one shadow dataset per model and train the models.')
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
+    set_seed(config["seed"])
 
     shadowData = sd.load_shadow_data(config)
     shadowDatasets = sd.split_shadow_data(config, shadowData)

@@ -184,6 +184,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train the target model.')
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
+    set_seed(config["seed"])
 
     targetDataset = ds.load_dataset(config["targetDataset"]["name"])
     targetModel = get_target_model(config, targetDataset)
