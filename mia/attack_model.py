@@ -100,7 +100,7 @@ def evaluate_models(models: List[Sequential], datasets: List[ds.Dataset]) -> flo
     assert len(models) == len(datasets)
     accuracies = []
     for i in range(len(models)):
-        testData = datasets[i][1]
+        testData = datasets[i][0]
         accuracy = evaluate_model(models[i], testData)[1]
         accuracies.append(accuracy)
     return sum(accuracies) / len(accuracies)
@@ -137,7 +137,7 @@ def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Da
             model: KaggleAttackModel = load_model(modelName, verbose=verbose)
         except BaseException:
             print(f"Couldn't load attack model {i+1}, retraining.")
-            trainData, testData = attackDatasets[i]
+            testData, trainData = attackDatasets[i]
             trainData = ds.shuffle(trainData)
 
             model = KaggleAttackModel(config["targetModel"]["classes"])
