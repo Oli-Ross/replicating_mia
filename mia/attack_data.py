@@ -55,9 +55,32 @@ def _get_filter_fn(label: int):
 
 def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
                      targetModel: Sequential, label: int) -> Dataset:
+    """
+    Use the training and test data to construct the attack dataset.
+    Splitting is done according to this scheme:
+
+      Training data             Testing data
+    
+    ┌───────┬───────┐         ┌───────┬───────┐
+    │       │       │         │       │       │
+    │  B    │  C    │         │  A    │  D    │
+    └────┬──┴─────┬─┘         └───┬───┴────┬──┘
+         │        │               │        │
+         │    ┌───┼───────────────┘        │
+       B │  A │   └──────────────────┐     │
+         │    │                      │C    │D
+         │    │                      │     │
+         ▼    ▼                      ▼     ▼
+    
+    ┌───────────────┐          ┌───────────────┐
+    │               │          │               │
+    │   A+B         │          │    C+D        │
+    └───────────────┘          └───────────────┘
+    Attack train data          Attack test data
+    
+    """
     # TODO: don't hardcode dataset size
     # TODO assertions about disjoint sets, and equal set sizes
-    # TODO: Make this understandable without my piece of paper
     targetTrainData = targetTrainData.filter(_get_filter_fn(label))
     targetTestData = targetTestData.filter(_get_filter_fn(label))
 
