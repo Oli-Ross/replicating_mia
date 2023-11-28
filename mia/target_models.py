@@ -96,8 +96,10 @@ def save_model(name: str, model: Sequential) -> None:
 
     The file name will be constructed from the `name` argument.
     """
-    # TODO: make dir if it doesn't exist
-    filePath: str = join(dirname(__file__), "../models/target", name)
+    folderPath: str = join(dirname(__file__),"../model/target")
+    if not isdir(folderPath):
+        mkdir(folderPath)
+    filePath: str = join(folderPath, name)
     model.save(filePath)
 
 
