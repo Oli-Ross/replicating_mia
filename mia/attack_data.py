@@ -79,7 +79,6 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
     Attack train data          Attack test data
     
     """
-    # TODO: don't hardcode dataset size
     # TODO assertions about disjoint sets, and equal set sizes
     targetTrainData = targetTrainData.filter(_get_filter_fn(label))
     targetTestData = targetTestData.filter(_get_filter_fn(label))
