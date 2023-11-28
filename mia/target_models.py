@@ -158,6 +158,8 @@ def get_target_model(config: Dict, targetDataset) -> Sequential:
 
 
 def train_target_model(config: Dict, targetDataset) -> Sequential:
+    # TODO: Need to randomly select the 10.000 records used for training
+    # TODO: Need to randomly select the 10.000 records used for testing
     dataConfig = config["targetDataset"]
     modelConfig = config["targetModel"]["hyperparameters"]
     modelName = get_model_name(config)
