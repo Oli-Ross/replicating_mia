@@ -2,7 +2,6 @@
 name: Example Configuration
 seed: 1234
 verbose: yes
-cache_to_disk: yes
 
 attackModel:
   hyperparameters:

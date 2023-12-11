@@ -144,9 +144,8 @@ def get_attack_models(config: Dict, attackDatasets: List[Tuple[ds.Dataset, ds.Da
 
             train_model(model, modelName, trainData, testData, modelConfig)
 
-            if config["cache_to_disk"]:
-                print(f"Saving attack model {i+1} to disk.")
-                save_model(modelName, model)
+            print(f"Saving attack model {i+1} to disk.")
+            save_model(modelName, model)
             evaluate_model(model, testData)
 
         attackModels.append(model)

@@ -174,8 +174,7 @@ def train_target_model(config: Dict, targetDataset) -> Sequential:
     train_model(model, modelName, trainData, testData, modelConfig)
 
     print("Saving target model to disk.")
-    if config["cache_to_disk"]:
-        save_model(modelName, model)
+    save_model(modelName, model)
     evaluate_model(model, testData)
     return model
 
