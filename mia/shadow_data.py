@@ -102,15 +102,14 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
         else:
             raise ValueError(f"{method} is not a valid shadow data method.")
 
-        if config["cache_to_disk"]:
-            if verbose:
-                print(f"Saving shadow data {dataName} to disk.")
-            try:
-                ds.save_shadow(shadowData, dataName)
-            except BaseException:
-                print(f"Failed to save shadow data {dataName} to disk.")
-                ds.delete_shadow(dataName)
-                raise
+        if verbose:
+            print(f"Saving shadow data {dataName} to disk.")
+        try:
+            ds.save_shadow(shadowData, dataName)
+        except BaseException:
+            print(f"Failed to save shadow data {dataName} to disk.")
+            ds.delete_shadow(dataName)
+            raise
 
     return shadowData
 
