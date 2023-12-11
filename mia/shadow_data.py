@@ -280,7 +280,7 @@ def _generate_synthetic_record_batched(label: int,
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
-                print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
+                #  print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
                 haveSampled = True
                 if y_c > globalRandomGen.random():
                     return x.reshape((1, numFeatures))
@@ -304,9 +304,8 @@ def _generate_synthetic_record_batched(label: int,
         else:
             batchIndex += 1
 
-        if (i % 20) == 0:
-            print(
-                f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
+        #  if (i % 20) == 0:
+        #      print(f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
 
     return None
 
@@ -388,9 +387,7 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
         new_record = _generate_synthetic_record_batched(label, targetModel, **hyperpars)
         while new_record is None:
             new_record = _generate_synthetic_record_batched(label, targetModel, **hyperpars)
-        print(80 * "-")
-        print(20 * "-" + "Generated new record!" + 20 * "-")
-        print(80 * "-")
+        print(f"Generating synthetic records: {index}/{numRecords}, {index/numRecords*100:.2f}% done.")
         features[index] = new_record.reshape((1, numFeatures))
 
     features = features.reshape((numRecords, numFeatures))
