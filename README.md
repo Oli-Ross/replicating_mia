@@ -78,7 +78,7 @@ Refer to the documentation of each module on how to use it as standalone.
 
 ## Documentation
 
-Documentation is avaible at https://oliverross.github.io/replicating_mia.
+Documentation is avaible at https://oli-ross.github.io/replicating_mia.
 You can generate it locally with [pdoc](https://pypi.org/project/pdoc/):
 ```bash
 cd mia && pdoc -o ../docs/build *.py
