@@ -226,8 +226,14 @@ def _randomize_features_batched(
     import numpy.testing as tt
     tt.assert_equal(outputdata[0], data.reshape(numFeatures))
 
-    for i in range(batchSize):
+    # Flip features of the first record
+    featuresToFlip = random.sample(range(numFeatures), k)
+    outputdata[0, featuresToFlip] ^= 1
+
+    # Flip all further records based on the previous one
+    for i in range(1,batchSize):
         featuresToFlip = random.sample(range(numFeatures), k)
+        outputdata[i,:] = outputdata[i-1, :]
         outputdata[i, featuresToFlip] ^= 1
 
     return outputdata
