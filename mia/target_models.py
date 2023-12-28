@@ -2,14 +2,14 @@
 .. include:: ../docs/target_models.md
 """
 
-from os import environ
+from os import environ, mkdir
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import datasets as ds
 
-from os.path import dirname, join
+from os.path import dirname, isdir, join
 import datetime
 
 from typing import Dict
