@@ -160,11 +160,23 @@ def get_target_model(config: Dict, targetDataset) -> Sequential:
 def train_target_model(config: Dict, targetDataset) -> Sequential:
     # TODO: Need to randomly select the 10.000 records used for training
     # TODO: Need to randomly select the 10.000 records used for testing
+
+    targetDataset = ds.shuffle(targetDataset)
     dataConfig = config["targetDataset"]
     modelConfig = config["targetModel"]["hyperparameters"]
+
     modelName = get_model_name(config)
+    trainDataName = modelName + "_train_data"
+    testDataName = modelName + "_test_data"
+    restDataName = modelName + "_rest_data"
+
     trainData = targetDataset.take(dataConfig["trainSize"])
     testData = targetDataset.skip(dataConfig["trainSize"]).take(dataConfig["testSize"])
+    restData = targetDataset.skip(dataConfig["trainSize"]).skip(dataConfig["testSize"])
+
+    ds.save_target(trainData,trainDataName)
+    ds.save_target(trainData,testDataName)
+    ds.save_target(restData,restDataName)
 
     if dataConfig["shuffle"]:
         trainData = ds.shuffle(trainData)
