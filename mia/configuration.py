@@ -12,7 +12,7 @@ import yaml
 
 configDir = os.path.join(os.path.dirname(__file__), "..", "config")
 if not os.path.isdir(configDir):
-    os.mkdir(configDir)
+    os.makedirs(configDir,exist_ok=True)
 
 
 def save_to_file(configuration: Dict, configName: Optional[str] = None):

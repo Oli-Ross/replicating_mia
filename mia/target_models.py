@@ -2,7 +2,7 @@
 .. include:: ../docs/target_models.md
 """
 
-from os import environ, mkdir, makedirs
+from os import environ, makedirs
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
@@ -98,7 +98,7 @@ def save_model(name: str, model: Sequential) -> None:
     """
     folderPath: str = join(dirname(__file__),"../model/target")
     if not isdir(folderPath):
-        mkdir(folderPath)
+        makedirs(folderPath, exist_ok=True)
     filePath: str = join(folderPath, name)
     model.save(filePath)
 
