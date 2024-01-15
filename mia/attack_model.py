@@ -97,6 +97,7 @@ def train_model(model: Sequential, modelName: str, trainData: Dataset,
 
 
 def evaluate_models(models: List[Sequential], datasets: List[ds.Dataset]) -> float:
+    # TODO: Evaluate on randomly reshuffled records from test/train dataset
     assert len(models) == len(datasets)
     accuracies = []
     for i in range(len(models)):
