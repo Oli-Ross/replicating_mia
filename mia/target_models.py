@@ -2,7 +2,7 @@
 .. include:: ../docs/target_models.md
 """
 
-from os import environ, mkdir
+from os import environ, mkdir, makedirs
 
 # Tensorflow C++ backend logging verbosity
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
@@ -119,6 +119,7 @@ def train_model(model: Sequential, modelName: str, trainData: Dataset,
     trainData = trainData.batch(batchSize, drop_remainder=True)
     testData = testData.batch(batchSize, drop_remainder=True)
     log_dir = "logs/target/" + modelName
+    makedirs(log_dir, exist_ok=True)
     cb = keras.callbacks.TensorBoard(histogram_freq=1, log_dir=log_dir)
     return model.fit(trainData, epochs=epochs, callbacks=[cb], validation_data=testData)
 
