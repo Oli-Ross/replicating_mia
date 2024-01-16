@@ -399,6 +399,10 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
     labels = labels.reshape((numRecords, 1))
     return Dataset.from_tensor_slices((features, labels))
 
+def get_target_model_rest_data(config:Dict) -> Dataset:
+    modelName = tm.get_model_name(config)
+    restDataName = modelName + "_rest_data"
+    return ds.load_target(restDataName)
 
 if __name__ == "__main__":
     import argparse
@@ -411,6 +415,6 @@ if __name__ == "__main__":
     config = con.from_cli_options(vars(parser.parse_args()))
     set_seed(config["seed"])
 
-    targetDataset = ds.load_dataset(config["targetDataset"]["name"])
+    targetDataset = get_target_model_rest_data(config)
     targetModel = tm.load_model(tm.get_model_name(config), verbose=config["verbose"])
     get_shadow_data(config, targetDataset, targetModel)
