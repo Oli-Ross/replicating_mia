@@ -146,14 +146,26 @@ def get_target_model(config: Dict, targetDataset) -> Sequential:
     """
     Try to load target model. If it doesn't work, train it.
     """
+
+    modelName = get_model_name(config)
+
     try:
         print(f"Loading target model from disk.")
-        modelName = get_model_name(config)
         model: KaggleModel = load_model(modelName, verbose=config["verbose"])
 
     except BaseException:
         print("Didn't work, retraining target model.")
         model: KaggleModel = train_target_model(config, targetDataset)
+
+    print("Evaluating target model on training data:")
+    trainDataName = modelName + "_train_data"
+    trainData = ds.load_target(trainDataName)
+    evaluate_model(model,trainData)
+
+    print("Evaluating target model on testing data:")
+    testDataName = modelName + "_test_data"
+    testData = ds.load_target(testDataName)
+    evaluate_model(model,testData)
 
     return model
 
@@ -174,7 +186,7 @@ def train_target_model(config: Dict, targetDataset) -> Sequential:
     restData = targetDataset.skip(dataConfig["trainSize"]).skip(dataConfig["testSize"])
 
     ds.save_target(trainData,trainDataName)
-    ds.save_target(trainData,testDataName)
+    ds.save_target(testData,testDataName)
     ds.save_target(restData,restDataName)
 
     if dataConfig["shuffle"]:
