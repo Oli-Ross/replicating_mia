@@ -116,6 +116,15 @@ def load_shadow(datasetName: str, verbose=True) -> Dataset:
         print(f"Loading dataset \"{datasetName}\" from disk.")
     return tf.data.experimental.load(datasetDir)
 
+def save_target(dataset: Dataset, datasetName: str):
+    datasetDir: str = join(dataDir, "target", datasetName, "dataset")
+    tf.data.experimental.save(dataset, datasetDir)
+
+def load_target(datasetName: str, verbose=True) -> Dataset:
+    datasetDir: str = join(dataDir, "target", datasetName, "dataset")
+    if verbose:
+        print(f"Loading dataset \"{datasetName}\" from disk.")
+    return tf.data.experimental.load(datasetDir)
 
 def save_attack(dataset: Dataset, datasetName: str):
     datasetDir: str = join(dataDir, "attack", datasetName, "dataset")
