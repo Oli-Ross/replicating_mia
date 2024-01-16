@@ -392,9 +392,9 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
     for index, label in enumerate(labels):
         label = int(label[0])
-        new_record = _generate_synthetic_record_batched(label, targetModel, **hyperpars)
+        new_record = _generate_synthetic_record(label, targetModel, **hyperpars)
         while new_record is None:
-            new_record = _generate_synthetic_record_batched(label, targetModel, **hyperpars)
+            new_record = _generate_synthetic_record(label, targetModel, **hyperpars)
         print(f"Generating synthetic records: {index}/{numRecords}, {index/numRecords*100:.2f}% done.")
         features[index] = new_record.reshape((1, numFeatures))
 
