@@ -32,7 +32,7 @@ shadowModels:
   split: 0.5
 
 shadowDataset:
-  size: 50000
+  size: 30000
   method: hill_climbing
   noisy:
     hyperparameters:
