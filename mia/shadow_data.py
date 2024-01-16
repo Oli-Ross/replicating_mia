@@ -328,8 +328,6 @@ def _generate_synthetic_record(label: int,
     paper "Membership Inference Attacks against Machine Learning Models".
     """
     assert label < 100 and label >= 0
-    if batchSize != "1":
-        print("Calling unbatched method with batchSize != 1: Ignoring batch size.")
 
     # Initalization
     numFeatures: int = 600
@@ -347,7 +345,7 @@ def _generate_synthetic_record(label: int,
 
         if y_c >= y_c_star:
             if y_c > conf_min and predictedClass == label:
-                print("Now sampling!")
+                #  print("Now sampling!")
                 if y_c > globalRandomGen.random():
                     return x
 
@@ -361,9 +359,9 @@ def _generate_synthetic_record(label: int,
 
         x = _randomize_features(x, k)  # pyright: ignore
 
-        if (i % 20) == 0:
-            print(
-                f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
+        #  if (i % 20) == 0:
+        #      print(
+        #          f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
 
     return None
 
