@@ -321,12 +321,15 @@ def _generate_synthetic_record(label: int,
                                k_min: int = 5,
                                conf_min: float = 0.05,
                                rej_max: int = 20,
-                               iter_max: int = 200) -> Optional[NDArray]:
+                               iter_max: int = 200,
+                               batchSize: int = 1) -> Optional[NDArray]:
     """
     Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
     """
     assert label < 100 and label >= 0
+    if batchSize != "1":
+        print("Calling unbatched method with batchSize != 1: Ignoring batch size.")
 
     # Initalization
     numFeatures: int = 600
