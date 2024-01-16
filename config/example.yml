@@ -43,7 +43,7 @@ shadowDataset:
       k_min: 4
       conf_min: 0.05
       rej_max: 10
-      iter_max: 300
+      iter_max: 200
       batchSize: 100
 
 ...
