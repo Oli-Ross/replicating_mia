@@ -99,6 +99,8 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
         elif method == "hill_climbing":
             shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
+        elif method == "original":
+            shadowData = targetDataset
         else:
             raise ValueError(f"{method} is not a valid shadow data method.")
 
