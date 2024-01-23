@@ -189,9 +189,6 @@ def train_target_model(config: Dict, targetDataset) -> Sequential:
     ds.save_target(testData,testDataName)
     ds.save_target(restData,restDataName)
 
-    if dataConfig["shuffle"]:
-        trainData = ds.shuffle(trainData)
-
     model = KaggleModel(config["targetModel"]["classes"])
 
     train_model(model, modelName, trainData, testData, modelConfig)

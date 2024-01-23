@@ -25,7 +25,6 @@ targetDataset:
   name: kaggle # kaggle, kaggle_2, kaggle_10, kaggle_20, kaggle_50
   trainSize: 10000
   testSize: 10000
-  shuffle: True
 
 shadowModels:
   number: 10
