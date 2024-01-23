@@ -182,7 +182,7 @@ def balance_attack_data(datasets: List[ds.Dataset]) -> List[ds.Dataset]:
     """
     size = len(datasets)
     for index, dataset in enumerate(datasets):
-        print(f"Balancing dataset {index} of {size}.")
+        print(f"Balancing dataset {index+1} of {size}.")
         datasets[index] = _balance_attack_data(dataset)
     return datasets
 
@@ -203,7 +203,7 @@ def split_attack_data_for_training(datasets: List[ds.Dataset], config: Dict):
     splitDatasets = []
     for index, dataset in enumerate(datasets):
         if config["verbose"]:
-            print(f"Splitting dataset {index}")
+            print(f"Splitting dataset {index+1} of {len(datasets)}")
         splitDatasets.append(split_dataset(dataset, split))
     return splitDatasets
 
