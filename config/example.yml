@@ -33,7 +33,7 @@ shadowModels:
 shadowDataset:
   size: 30000
   # methods: hill_climbing, noisy, original
-  method: hill_climbing
+  method: noisy
   noisy:
     hyperparameters:
       fraction: 0.1
