@@ -159,7 +159,7 @@ if __name__ == "__main__":
     import configuration as con
     import attack_data as ad
 
-    parser = argparse.ArgumentParser(description='Save one shadow dataset per model and train the models.')
+    parser = argparse.ArgumentParser(description='Train the attack models.')
     parser.add_argument('--config', help='Relative path to config file.',)
     config = con.from_cli_options(vars(parser.parse_args()))
     set_seed(config["seed"])
