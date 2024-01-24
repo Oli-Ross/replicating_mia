@@ -9,6 +9,7 @@ environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from typing import Dict, Tuple
 
+import numpy as np
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.python.framework import random_seed
 
@@ -37,7 +38,23 @@ def load_target_data(config:Dict) -> Tuple[Dataset, Dataset]:
     return targetTrainData, targetRestData
 
 def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
-    pass
+    # TODO: batchSize is hardcoded
+    batchSize = 100
+    numClasses = config["targetModel"]["classes"]
+    verbose = config["verbose"]
+    targetTrainDataSize = config["targetDataset"]["trainSize"]
+
+    membersDataset = targetTrainData.batch(batchSize)
+    nonmembersDataset = targetRestData.take(targetTrainDataSize).batch(batchSize)
+
+    memberPredictions = targetModel.predict(membersDataset)
+    nonmemberPredictions = targetModel.predict(nonmembersDataset)
+
+    memberLabels = np.argmax(memberPredictions, axis = 1)
+    nonmemberLabels = np.argmax(nonmemberPredictions, axis = 1)
+
+    for i in range(numClasses):
+        pass
 
 if __name__ == "__main__":
     import argparse
