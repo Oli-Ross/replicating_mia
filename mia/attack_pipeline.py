@@ -58,8 +58,13 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     memberLabels = np.argmax(memberPredictions, axis = 1)
     nonmemberLabels = np.argmax(nonmemberPredictions, axis = 1)
 
+    memberAttackPredictions = []
+    nonmemberAttackPredictions = []
+
     for i in range(numClasses):
-        pass
+        print(f"predicting with attack model {i}")
+        memberAttackPredictions.append(attackModels[i].predict(memberPredictions))
+        nonmemberAttackPredictions.append(attackModels[i].predict(nonmemberPredictions))
 
 if __name__ == "__main__":
     import argparse
