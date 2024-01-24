@@ -30,6 +30,11 @@ def set_seed(new_seed: int):
     random_seed.set_seed(global_seed)
 
 def load_target_data(config:Dict) -> Tuple[Dataset, Dataset]:
+    """
+    Returns tuple trainData, restData.
+
+    RestData is data unused for training and testing previously.
+    """
     targetModelName = tm.get_model_name(config)
     targetTrainDataName = targetModelName + "_train_data"
     targetRestDataName = targetModelName + "_rest_data"
