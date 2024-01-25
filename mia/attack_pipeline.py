@@ -82,7 +82,6 @@ if __name__ == "__main__":
 
     targetTrainData, targetRestData = load_target_data(config)
 
-    attackDatasets = ad.load_attack_data(config)
-    attackModels = am.get_attack_models(config, attackDatasets)
+    attackModels = am.get_attack_models(config, [])
 
     run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
