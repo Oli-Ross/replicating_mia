@@ -43,33 +43,50 @@ def load_target_data(config:Dict) -> Tuple[Dataset, Dataset]:
     return targetTrainData, targetRestData
 
 def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
+    # (recall: % of records that were members were correctly inferred)
     # TODO: batchSize is hardcoded
-    batchSize = 100
-    numClasses = config["targetModel"]["classes"]
-    verbose = config["verbose"]
+    batchSizeTarget = 100
+    batchSizeAttack = config["attackModel"]["hyperparameters"]["batchSize"]
     targetTrainDataSize = config["targetDataset"]["trainSize"]
 
     membersDataset = targetTrainData
     nonmembersDataset = targetRestData.take(targetTrainDataSize)
 
-    memberPredictions = targetModel.predict(membersDataset.batch(batchSize))
-    nonmemberPredictions = targetModel.predict(nonmembersDataset.batch(batchSize))
-
-    memberLabels = np.argmax(memberPredictions, axis = 1)
-    nonmemberLabels = np.argmax(nonmemberPredictions, axis = 1)
+    memberPredictions = targetModel.predict(membersDataset.batch(batchSizeTarget))
+    nonmemberPredictions = targetModel.predict(nonmembersDataset.batch(batchSizeTarget))
 
     memberAttackPredictions = []
     nonmemberAttackPredictions = []
 
-    for i in range(numClasses):
-        print(f"predicting with attack model {i}")
-        memberAttackPredictions.append(attackModels[i].predict(memberPredictions))
-        nonmemberAttackPredictions.append(attackModels[i].predict(nonmemberPredictions))
+    print("Predicting members.")
+    for i, targetPrediction in enumerate(memberPredictions):
+        label = np.argmax(targetPrediction)
+        # select respective attack model, trained for that class
+        attackModel = attackModels[label]
+        modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
+        attackPrediction = attackModel.predict(modelInput,verbose = 0)
+        memberAttackPredictions.append(np.argmax(attackPrediction))
+        if (i+1) % 100 == 0:
+            print(f"Predicted {i}/{targetTrainDataSize} records on attack model.")
+
+    print("Predicting nonmembers.")
+    for i, targetPrediction in enumerate(nonmemberPredictions):
+        label = np.argmax(targetPrediction)
+        # select respective attack model, trained for that class
+        attackModel = attackModels[label]
+        modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
+        attackPrediction = attackModel.predict(modelInput, verbose = 0)
+        nonmemberAttackPredictions.append(np.argmax(attackPrediction))
+        if i % 100 == 0:
+            print(f"Predicted {i}/{targetTrainDataSize} records on attack model.")
+
+    breakpoint()
+
+    # precision: % of records inferred members, that are members
 
 if __name__ == "__main__":
     import argparse
     import configuration as con
-    import attack_data as ad
 
     parser = argparse.ArgumentParser(description='Run the attack pipeline on the target model.')
     parser.add_argument('--config', help='Relative path to config file.',)
