@@ -49,11 +49,11 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     verbose = config["verbose"]
     targetTrainDataSize = config["targetDataset"]["trainSize"]
 
-    membersDataset = targetTrainData.batch(batchSize)
-    nonmembersDataset = targetRestData.take(targetTrainDataSize).batch(batchSize)
+    membersDataset = targetTrainData
+    nonmembersDataset = targetRestData.take(targetTrainDataSize)
 
-    memberPredictions = targetModel.predict(membersDataset)
-    nonmemberPredictions = targetModel.predict(nonmembersDataset)
+    memberPredictions = targetModel.predict(membersDataset.batch(batchSize))
+    nonmemberPredictions = targetModel.predict(nonmembersDataset.batch(batchSize))
 
     memberLabels = np.argmax(memberPredictions, axis = 1)
     nonmemberLabels = np.argmax(nonmemberPredictions, axis = 1)
