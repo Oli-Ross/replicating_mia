@@ -44,6 +44,7 @@ def load_target_data(config:Dict) -> Tuple[Dataset, Dataset]:
 
 def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     # TODO: batchSize is hardcoded
+    numClasses = config["targetModel"]["classes"]
     batchSizeTarget = 100
     batchSizeAttack = config["attackModel"]["hyperparameters"]["batchSize"]
     targetTrainDataSize = config["targetDataset"]["trainSize"]
@@ -54,8 +55,8 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     memberPredictions = targetModel.predict(membersDataset.batch(batchSizeTarget))
     nonmemberPredictions = targetModel.predict(nonmembersDataset.batch(batchSizeTarget))
 
-    memberAttackPredictions = []
-    nonmemberAttackPredictions = []
+    memberAttackPredictions = [[] for _ in range(numClasses)]
+    nonmemberAttackPredictions = [[] for _ in range(numClasses)]
 
     print("Predicting members.")
     for i, targetPrediction in enumerate(memberPredictions):
@@ -64,7 +65,7 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         attackModel = attackModels[label]
         modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
         attackPrediction = attackModel.predict(modelInput,verbose = 0)
-        memberAttackPredictions.append(np.argmax(attackPrediction))
+        memberAttackPredictions[label].append(np.argmax(attackPrediction))
         if i % 100 == 0 and config["verbose"]:
             print(f"Predicted {i}/{targetTrainDataSize} member records on attack model.")
 
@@ -75,15 +76,26 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         attackModel = attackModels[label]
         modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
         attackPrediction = attackModel.predict(modelInput, verbose = 0)
-        nonmemberAttackPredictions.append(np.argmax(attackPrediction))
+        nonmemberAttackPredictions[label].append(np.argmax(attackPrediction))
         if i % 100 == 0 and config["verbose"]:
             print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
 
-    recall = 1 - np.average(memberAttackPredictions)
-    membersInferredAsMembers = targetTrainDataSize - np.count_nonzero(memberAttackPredictions)
-    nonmembersInferredAsMembers = targetTrainDataSize - np.count_nonzero(nonmemberAttackPredictions)
-    precision = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
-    return precision, recall
+    precisionPerClass = [[] for _ in range(numClasses)]
+    recallPerClass = [[] for _ in range(numClasses)]
+
+    for _class in range(numClasses):
+        memberAttackPrediction = memberAttackPredictions[_class]
+        nonmemberAttackPrediction = nonmemberAttackPredictions[_class]
+        recallPerClass[_class] = 1 - np.average(memberAttackPrediction)
+        membersInferredAsMembers = len(memberAttackPrediction) - np.count_nonzero(memberAttackPrediction)
+        nonmembersInferredAsMembers = len(nonmemberAttackPrediction) - np.count_nonzero(nonmemberAttackPrediction)
+        precisionPerClass[_class] = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
+
+    membersInferredAsMembers = targetTrainDataSize - sum([sum(x) for x in memberAttackPredictions])
+    nonmembersInferredAsMembers = targetTrainDataSize - sum([sum(x) for x in nonmemberAttackPredictions])
+    totalRecall = membersInferredAsMembers/targetTrainDataSize
+    totalPrecision = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
+    return totalPrecision, totalRecall, precisionPerClass, recallPerClass
 
 
 if __name__ == "__main__":
@@ -103,4 +115,5 @@ if __name__ == "__main__":
 
     attackModels = am.get_attack_models(config, [])
 
-    precision, recall = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
+    precision, recall, precisioPerClass, recallPerClass = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
+    breakpoint()
