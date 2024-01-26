@@ -39,6 +39,7 @@ def prepare(configFile: str):
     run_script(f"shadow_models.py", configFile)
     run_script(f"attack_data.py", configFile)
     run_script(f"attack_model.py", configFile)
+    run_script(f"attack_pipeline.py", configFile)
 
 
 def evaluate(config: Dict):
