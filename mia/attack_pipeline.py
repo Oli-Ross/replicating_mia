@@ -66,7 +66,7 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
         attackPrediction = attackModel.predict(modelInput,verbose = 0)
         memberAttackPredictions.append(np.argmax(attackPrediction))
-        if (i+1) % 100 == 0:
+        if i % 100 == 0:
             print(f"Predicted {i}/{targetTrainDataSize} records on attack model.")
 
     print("Predicting nonmembers.")
