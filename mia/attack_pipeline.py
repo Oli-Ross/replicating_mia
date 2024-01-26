@@ -43,7 +43,6 @@ def load_target_data(config:Dict) -> Tuple[Dataset, Dataset]:
     return targetTrainData, targetRestData
 
 def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
-    # (recall: % of records that were members were correctly inferred)
     # TODO: batchSize is hardcoded
     batchSizeTarget = 100
     batchSizeAttack = config["attackModel"]["hyperparameters"]["batchSize"]
@@ -80,9 +79,12 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         if i % 100 == 0 and config["verbose"]:
             print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
 
-    breakpoint()
+    recall = 1 - np.average(memberAttackPredictions)
+    membersInferredAsMembers = targetTrainDataSize - np.count_nonzero(memberAttackPredictions)
+    nonmembersInferredAsMembers = targetTrainDataSize - np.count_nonzero(nonmemberAttackPredictions)
+    precision = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
+    return precision, recall
 
-    # precision: % of records inferred members, that are members
 
 if __name__ == "__main__":
     import argparse
@@ -101,4 +103,4 @@ if __name__ == "__main__":
 
     attackModels = am.get_attack_models(config, [])
 
-    run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
+    precision, recall = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
