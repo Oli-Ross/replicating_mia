@@ -57,7 +57,8 @@ The code is split into submodules in the subfolder `mia/`:
 5. `shadow_models.py`: Train/load shadow models
 6. `attack_data.py`: Predict shadow data on shadow models and aggregate it into attack data
 7. `attack_model.py`: Train/load attack model
-8. (`configuration.py`: Parse config YAML file)
+8. `attack_pipeline.py`: Run the attack pipeline on the target model
+9. (`configuration.py`: Parse config YAML file)
 
 Each module can be called as a standalone script with the option `--config FILE` to read the configuration from `FILE`
 (default is using `config/example.yml`).
