@@ -66,8 +66,8 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
         attackPrediction = attackModel.predict(modelInput,verbose = 0)
         memberAttackPredictions.append(np.argmax(attackPrediction))
-        if i % 100 == 0:
-            print(f"Predicted {i}/{targetTrainDataSize} records on attack model.")
+        if i % 100 == 0 and config["verbose"]:
+            print(f"Predicted {i}/{targetTrainDataSize} member records on attack model.")
 
     print("Predicting nonmembers.")
     for i, targetPrediction in enumerate(nonmemberPredictions):
@@ -77,8 +77,8 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
         attackPrediction = attackModel.predict(modelInput, verbose = 0)
         nonmemberAttackPredictions.append(np.argmax(attackPrediction))
-        if i % 100 == 0:
-            print(f"Predicted {i}/{targetTrainDataSize} records on attack model.")
+        if i % 100 == 0 and config["verbose"]:
+            print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
 
     breakpoint()
 
