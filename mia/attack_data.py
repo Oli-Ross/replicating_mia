@@ -40,9 +40,9 @@ def _prepare_subset(superset: Dataset, size: int,
     subset = superset.take(size).batch(batchSize)
     predictions = model.predict(subset, batch_size=batchSize)
     if inTraining:
-        labels = np.ones(size)
-    else:
         labels = np.zeros(size)
+    else:
+        labels = np.ones(size)
     return predictions, labels
 
 
