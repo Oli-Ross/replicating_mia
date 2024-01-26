@@ -87,8 +87,8 @@ attack_data    </h1>
 
 <p>Membership status is one-hot encoded with the following scheme:</p>
 
-<p>[0,1] : respective record was part of training data
-[1,0] : respective record was not part of training data</p>
+<p>[1,0] or 0 : respective record was part of training data
+[0,1] or 1 : respective record was not part of training data</p>
 </div>
 
                         <input id="mod-attack_data-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -137,9 +137,9 @@ attack_data    </h1>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">subset</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batchSize</span><span class="p">)</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batchSize</span><span class="p">)</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="k">if</span> <span class="n">inTraining</span><span class="p">:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="k">return</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
