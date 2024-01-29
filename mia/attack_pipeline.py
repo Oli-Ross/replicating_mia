@@ -50,37 +50,44 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     targetTrainDataSize = config["targetDataset"]["trainSize"]
 
 
-    membersDataset = targetTrainData
-    nonmembersDataset = targetRestData.take(targetTrainDataSize)
+    try:
+        memberAttackPredictions = ds.load_numpy_array("memberAttackPredictions.npy")
+        nonmemberAttackPredictions = ds.load_numpy_array("nonmemberAttackPredictions.npy")
 
-    memberTargetPredictions = targetModel.predict(membersDataset.batch(batchSizeTarget))
-    nonmemberTargetPredictions = targetModel.predict(nonmembersDataset.batch(batchSizeTarget))
+    except:
+        membersDataset = targetTrainData
+        nonmembersDataset = targetRestData.take(targetTrainDataSize)
 
-    memberAttackPredictions = [[] for _ in range(numClasses)]
-    nonmemberAttackPredictions = [[] for _ in range(numClasses)]
+        memberTargetPredictions = targetModel.predict(membersDataset.batch(batchSizeTarget))
+        nonmemberTargetPredictions = targetModel.predict(nonmembersDataset.batch(batchSizeTarget))
 
-    print("Predicting members.")
-    for i, targetPrediction in enumerate(memberTargetPredictions):
-        label = np.argmax(targetPrediction)
-        # select respective attack model, trained for that class
-        attackModel = attackModels[label]
-        modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
-        attackPrediction = attackModel.predict(modelInput,verbose = 0)
-        memberAttackPredictions[label].append(np.argmax(attackPrediction))
-        if i % 100 == 0 and config["verbose"]:
-            print(f"Predicted {i}/{targetTrainDataSize} member records on attack model.")
+        memberAttackPredictions = [[] for _ in range(numClasses)]
+        nonmemberAttackPredictions = [[] for _ in range(numClasses)]
 
-    print("Predicting nonmembers.")
-    for i, targetPrediction in enumerate(nonmemberTargetPredictions):
-        label = np.argmax(targetPrediction)
-        # select respective attack model, trained for that class
-        attackModel = attackModels[label]
-        modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
-        attackPrediction = attackModel.predict(modelInput, verbose = 0)
-        nonmemberAttackPredictions[label].append(np.argmax(attackPrediction))
-        if i % 100 == 0 and config["verbose"]:
-            print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
+        print("Predicting members.")
+        for i, targetPrediction in enumerate(memberTargetPredictions):
+            label = np.argmax(targetPrediction)
+            # select respective attack model, trained for that class
+            attackModel = attackModels[label]
+            modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
+            attackPrediction = attackModel.predict(modelInput,verbose = 0)
+            memberAttackPredictions[label].append(np.argmax(attackPrediction))
+            if i % 100 == 0 and config["verbose"]:
+                print(f"Predicted {i}/{targetTrainDataSize} member records on attack model.")
 
+        print("Predicting nonmembers.")
+        for i, targetPrediction in enumerate(nonmemberTargetPredictions):
+            label = np.argmax(targetPrediction)
+            # select respective attack model, trained for that class
+            attackModel = attackModels[label]
+            modelInput = Dataset.from_tensors(targetPrediction).batch(batchSizeAttack)
+            attackPrediction = attackModel.predict(modelInput, verbose = 0)
+            nonmemberAttackPredictions[label].append(np.argmax(attackPrediction))
+            if i % 100 == 0 and config["verbose"]:
+                print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
+
+        ds.save_numpy_array("memberAttackPredictions.npy",memberAttackPredictions)
+        ds.save_numpy_array("nonmemberAttackPredictions.npy",nonmemberAttackPredictions)
 
     precisionPerClass = [None for _ in range(numClasses)]
     recallPerClass = [None for _ in range(numClasses)]

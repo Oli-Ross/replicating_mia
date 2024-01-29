@@ -8,6 +8,7 @@ from os import environ
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 from os.path import dirname, isdir, join
+from os import makedirs
 import shutil
 from typing import Tuple
 
@@ -115,6 +116,17 @@ def load_shadow(datasetName: str, verbose=True) -> Dataset:
     if verbose:
         print(f"Loading dataset \"{datasetName}\" from disk.")
     return tf.data.experimental.load(datasetDir)
+
+def load_numpy_array(filename:str):
+    numpyFile: str = join(dataDir, "numpy", filename)
+    return np.load(numpyFile, allow_pickle=True)
+
+def save_numpy_array(filename:str, array):
+    numpyDir: str = join(dataDir, "numpy")
+    if not isdir(numpyDir):
+        makedirs(numpyDir)
+    numpyFile: str = join(dataDir, "numpy", filename)
+    np.save(numpyFile, array)
 
 def save_target(dataset: Dataset, datasetName: str):
     datasetDir: str = join(dataDir, "target", datasetName, "dataset")
