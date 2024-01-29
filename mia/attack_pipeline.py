@@ -42,7 +42,7 @@ def load_target_data(config:Dict) -> Tuple[Dataset, Dataset]:
     targetRestData = ds.load_target(targetRestDataName)
     return targetTrainData, targetRestData
 
-def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
+def run_pipeline(targetModel, targetTrainData, targetRestData):
     # TODO: batchSize is hardcoded
     numClasses = config["targetModel"]["classes"]
     batchSizeTarget = 100
@@ -55,6 +55,8 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         nonmemberAttackPredictions = ds.load_numpy_array("nonmemberAttackPredictions.npy")
 
     except:
+        attackModels = am.get_attack_models(config, [])
+
         membersDataset = targetTrainData
         nonmembersDataset = targetRestData.take(targetTrainDataSize)
 
@@ -133,8 +135,6 @@ if __name__ == "__main__":
 
     targetTrainData, targetRestData = load_target_data(config)
 
-    attackModels = am.get_attack_models(config, [])
-
-    precision, recall, precisionPerClass, recallPerClass = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
+    precision, recall, precisionPerClass, recallPerClass = run_pipeline(targetModel, targetTrainData, targetRestData)
 
     process_results(precision, recall, precisionPerClass, recallPerClass)
