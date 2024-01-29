@@ -185,28 +185,40 @@ def _get_filter_fn(label: int):
     def _filter_fn(_, y): return tf.math.equal(wantedLabel, tf.math.argmax(y))
     return _filter_fn
 
+def _compute_kaggle_marginals(config):
+    dataName = config["targetDataset"]["name"]
+    originalData = ds.load_dataset(dataName)
+    numFeatures = iter(originalData).get_next()[0].numpy().shape[0]
+    numLabels = iter(originalData).get_next()[1].numpy().shape[0]
+    marginalProbabilities = np.zeros((100,600))
+    # For each class, count binary feature values to get marginal
+    for _class in range(numLabels):
+        if config["verbose"]:
+            print(f"Computing marginal probability for class {_class}/{numLabels}")
+        filteredData = originalData.filter(_get_filter_fn(_class))
+        initialCount = np.array([0]*numFeatures)
+        countedFeatures = filteredData.reduce(initialCount, lambda oldCount, dataPoint: oldCount + dataPoint[0]).numpy()
+        sampleSize = filteredData.cardinality()
+        if sampleSize <= 0 and config["verbose"]:  # tf uses constants < 0 to indicate unknown cardinality
+            sampleSize = len(list(filteredData.as_numpy_iterator()))
+        marginalProbability = countedFeatures / sampleSize
+        marginalProbabilities[_class] = marginalProbability
+    return marginalProbabilities
+
 def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
     """
     Generate synthetic data for the shadow models by using the marginal
     distribution of features in the original dataset.
     """
     # TODO: Kaggle specific
-    dataName = config["targetDataset"]["name"]
-    originalData = ds.load_dataset(dataName)
-    numFeatures = iter(originalData).get_next()[0].numpy().shape[0]
-    numLabels = iter(originalData).get_next()[1].numpy().shape[0]
-    marginalProbabilities = []
-    # For each class, count binary feature values to get marginal
-    for _class in range(numLabels):
-        filteredData = originalData.filter(_get_filter_fn(_class))
-        initialCount = np.array([0]*numFeatures)
-        countedFeatures = filteredData.reduce(initialCount, lambda oldCount, dataPoint: oldCount + dataPoint)
-        sampleSize = filteredData.cardinality()
-        marginalProbability = countedFeatures / sampleSize
-        marginalProbabilities.append(marginalProbability)
+    try:
+        marginalProbabilities = ds.load_numpy_array("kaggle_marginals.npy")
+    except:
+        marginalProbabilities = _compute_kaggle_marginals(config)
+        ds.save_numpy_array("kaggle_marginals.npy",marginalProbabilities)
 
     breakpoint()
-
+    # Generate new records
     for record in hyperpars["size"]:
         pass
 
