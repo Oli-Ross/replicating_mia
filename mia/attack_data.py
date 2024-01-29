@@ -130,12 +130,13 @@ def load_attack_data(config: Dict) -> List[Tuple[ds.Dataset, ds.Dataset]]:
 def _get_attack_data_name(config: Dict, i, test=False):
     numModels: int = config["shadowModels"]["number"]
     numClasses = config["targetModel"]["classes"]
+    shadowMethod = config["shadowDataset"]["method"]
     split: float = config["shadowModels"]["split"]
     if config["attackDataset"]["balance"]:
         balanced = "balanced"
     else:
         balanced = "unbalanced"
-    name = tm.get_model_name(config) + f"_split_{split}_with_{numModels}_models_{i+1}_of_{numClasses}_{balanced}"
+    name = tm.get_model_name(config) + "_" + shadowMethod + f"_split_{split}_with_{numModels}_models_{i+1}_of_{numClasses}_{balanced}"
     if test:
         return name + "_test"
     else:

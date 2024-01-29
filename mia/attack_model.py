@@ -119,6 +119,7 @@ def get_model_name(config: Dict, i: int) -> str:
     numClasses = config["targetModel"]["classes"]
     return \
         f'{config["targetDataset"]["name"]}_' + \
+        f'{config["shadowDataset"]["method"]}_' + \
         f'lr_{modelConfig["learningRate"]}_' + \
         f'bs_{modelConfig["batchSize"]}_' + \
         f'epochs_{modelConfig["epochs"]}_' + \
