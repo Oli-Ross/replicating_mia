@@ -197,7 +197,7 @@ def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
     numLabels = iter(originalData).get_next()[1].numpy().shape[0]
     marginalProbabilities = []
     # For each class, count binary feature values to get marginal
-    for _class in numLabels:
+    for _class in range(numLabels):
         filteredData = originalData.filter(_get_filter_fn(_class))
         initialCount = np.array([0]*numFeatures)
         countedFeatures = filteredData.reduce(initialCount, lambda oldCount, dataPoint: oldCount + dataPoint)
