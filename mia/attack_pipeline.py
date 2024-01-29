@@ -103,12 +103,13 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     return totalPrecision, totalRecall, precisionPerClass, recallPerClass
 
 def process_results(precision, recall, precisionPerClass, recallPerClass):
-    precisionPerClassWithoutNone = [x for x in precisionPerClass if x]
-    recallPerClassWithoutNone = [x for x in precisionPerClass if x]
 
-    print("Precision per class:")
-    for precision in sorted(precisionPerClassWithoutNone):
-        print(f"{precision:.2f}")
+    precisionPerClassWithoutNone = [x for x in precisionPerClass if x]
+
+    with open("precisionPerClass.csv",'w') as file:
+        file.write("Precision\n")
+        for precision in sorted(precisionPerClassWithoutNone):
+            file.write(f"{precision}\n")
 
 if __name__ == "__main__":
     import argparse

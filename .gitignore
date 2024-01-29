@@ -13,6 +13,9 @@ models/
 # Tensorboard logs
 mia/logs
 
+# Output files
+mia/precisionPerClass.csv
+
 __pycache__/
 
 # My temporary test file(s)
