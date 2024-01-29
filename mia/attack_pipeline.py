@@ -49,17 +49,18 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     batchSizeAttack = config["attackModel"]["hyperparameters"]["batchSize"]
     targetTrainDataSize = config["targetDataset"]["trainSize"]
 
+
     membersDataset = targetTrainData
     nonmembersDataset = targetRestData.take(targetTrainDataSize)
 
-    memberPredictions = targetModel.predict(membersDataset.batch(batchSizeTarget))
-    nonmemberPredictions = targetModel.predict(nonmembersDataset.batch(batchSizeTarget))
+    memberTargetPredictions = targetModel.predict(membersDataset.batch(batchSizeTarget))
+    nonmemberTargetPredictions = targetModel.predict(nonmembersDataset.batch(batchSizeTarget))
 
     memberAttackPredictions = [[] for _ in range(numClasses)]
     nonmemberAttackPredictions = [[] for _ in range(numClasses)]
 
     print("Predicting members.")
-    for i, targetPrediction in enumerate(memberPredictions):
+    for i, targetPrediction in enumerate(memberTargetPredictions):
         label = np.argmax(targetPrediction)
         # select respective attack model, trained for that class
         attackModel = attackModels[label]
@@ -70,7 +71,7 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
             print(f"Predicted {i}/{targetTrainDataSize} member records on attack model.")
 
     print("Predicting nonmembers.")
-    for i, targetPrediction in enumerate(nonmemberPredictions):
+    for i, targetPrediction in enumerate(nonmemberTargetPredictions):
         label = np.argmax(targetPrediction)
         # select respective attack model, trained for that class
         attackModel = attackModels[label]
@@ -80,16 +81,20 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
         if i % 100 == 0 and config["verbose"]:
             print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
 
-    precisionPerClass = [[] for _ in range(numClasses)]
-    recallPerClass = [[] for _ in range(numClasses)]
+
+    precisionPerClass = [None for _ in range(numClasses)]
+    recallPerClass = [None for _ in range(numClasses)]
 
     for _class in range(numClasses):
         memberAttackPrediction = memberAttackPredictions[_class]
+        if memberAttackPrediction:
+            recallPerClass[_class] = 1 - np.average(memberAttackPrediction)
+
         nonmemberAttackPrediction = nonmemberAttackPredictions[_class]
-        recallPerClass[_class] = 1 - np.average(memberAttackPrediction)
-        membersInferredAsMembers = len(memberAttackPrediction) - np.count_nonzero(memberAttackPrediction)
-        nonmembersInferredAsMembers = len(nonmemberAttackPrediction) - np.count_nonzero(nonmemberAttackPrediction)
-        precisionPerClass[_class] = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
+        if nonmemberAttackPrediction:
+            membersInferredAsMembers = len(memberAttackPrediction) - np.count_nonzero(memberAttackPrediction)
+            nonmembersInferredAsMembers = len(nonmemberAttackPrediction) - np.count_nonzero(nonmemberAttackPrediction)
+            precisionPerClass[_class] = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
 
     membersInferredAsMembers = targetTrainDataSize - sum([sum(x) for x in memberAttackPredictions])
     nonmembersInferredAsMembers = targetTrainDataSize - sum([sum(x) for x in nonmemberAttackPredictions])
@@ -97,6 +102,13 @@ def run_pipeline(attackModels, targetModel, targetTrainData, targetRestData):
     totalPrecision = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
     return totalPrecision, totalRecall, precisionPerClass, recallPerClass
 
+def process_results(precision, recall, precisionPerClass, recallPerClass):
+    precisionPerClassWithoutNone = [x for x in precisionPerClass if x]
+    recallPerClassWithoutNone = [x for x in precisionPerClass if x]
+
+    print("Precision per class:")
+    for precision in sorted(precisionPerClassWithoutNone):
+        print(f"{precision:.2f}")
 
 if __name__ == "__main__":
     import argparse
@@ -116,4 +128,5 @@ if __name__ == "__main__":
     attackModels = am.get_attack_models(config, [])
 
     precision, recall, precisionPerClass, recallPerClass = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
-    breakpoint()
+
+    process_results(precision, recall, precisionPerClass, recallPerClass)
