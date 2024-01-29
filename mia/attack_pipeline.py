@@ -115,5 +115,5 @@ if __name__ == "__main__":
 
     attackModels = am.get_attack_models(config, [])
 
-    precision, recall, precisioPerClass, recallPerClass = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
+    precision, recall, precisionPerClass, recallPerClass = run_pipeline(attackModels, targetModel, targetTrainData, targetRestData)
     breakpoint()
