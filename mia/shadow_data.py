@@ -229,7 +229,8 @@ def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
     recordsPerClass = int(size/numClasses)
 
     for _class in range(numClasses):
-        print(f"Generating records for class {_class}")
+        if config["verbose"]:
+            print(f"Generating records for class {_class}")
         index_start = _class * recordsPerClass
         index_end = (_class + 1) * recordsPerClass
         #  for index in range(index_start, index_end):
@@ -240,7 +241,8 @@ def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
         marginalProbability = marginalProbabilities[_class]
 
         for feature in range(numFeatures):
-            print(f"\tGenerating records for feature {feature}")
+            if config["verbose"]:
+                print(f"\tGenerating records for feature {feature}")
             probability = marginalProbability[feature]
             # sample one feature for all records in this class at once
             sampledFeature = gen.choice([0,1], p=[1-probability,probability],size = recordsPerClass)
