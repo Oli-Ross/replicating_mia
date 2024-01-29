@@ -61,7 +61,6 @@ def get_shadow_data_name(config: Dict):
     shadowConfig = config["shadowDataset"]
     method = shadowConfig["method"]
     targetDataName = config["targetDataset"]["name"]
-    method = shadowConfig["method"]
     dataSize = shadowConfig["size"]
     hyperpars = shadowConfig[method]["hyperparameters"]
     if method == "noisy":
