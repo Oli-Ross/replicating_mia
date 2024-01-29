@@ -241,8 +241,6 @@ def generate_shadow_data_statistic(config: Dict) -> Dataset:
         marginalProbability = marginalProbabilities[_class]
 
         for feature in range(numFeatures):
-            if config["verbose"]:
-                print(f"\tGenerating records for feature {feature}")
             probability = marginalProbability[feature]
             # sample one feature for all records in this class at once
             sampledFeature = gen.choice([0,1], p=[1-probability,probability],size = recordsPerClass)
