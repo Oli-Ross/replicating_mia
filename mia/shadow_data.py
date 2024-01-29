@@ -16,6 +16,7 @@ import numpy as np
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import tensorflow as tf
+from tensorflow.keras.utils import to_categorical  # pyright: ignore
 from tensorflow.python.framework import random_seed
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.keras import Sequential  # pyright: ignore
@@ -211,16 +212,41 @@ def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
     distribution of features in the original dataset.
     """
     # TODO: Kaggle specific
+    size = hyperpars["size"]
     try:
         marginalProbabilities = ds.load_numpy_array("kaggle_marginals.npy")
     except:
         marginalProbabilities = _compute_kaggle_marginals(config)
         ds.save_numpy_array("kaggle_marginals.npy",marginalProbabilities)
 
-    breakpoint()
     # Generate new records
-    for record in hyperpars["size"]:
-        pass
+    numClasses = marginalProbabilities.shape[0]
+    numFeatures = marginalProbabilities.shape[1]
+
+    features: NDArray = np.zeros((size,numFeatures)).astype(np.int32)
+    labels: NDArray = np.zeros((size,numClasses)).astype(np.int32)
+
+    recordsPerClass = int(size/numClasses)
+
+    for _class in range(numClasses):
+        print(f"Generating records for class {_class}")
+        index_start = _class * recordsPerClass
+        index_end = (_class + 1) * recordsPerClass
+        #  for index in range(index_start, index_end):
+        #      labels[index] = to_categorical(_class, num_classes = numClasses)
+        labels[index_start:index_end] = np.tile(to_categorical(_class, num_classes =
+                                                               numClasses),recordsPerClass).reshape(recordsPerClass,numClasses)
+        gen = np.random.default_rng(seed=global_seed)
+        marginalProbability = marginalProbabilities[_class]
+
+        for feature in range(numFeatures):
+            print(f"\tGenerating records for feature {feature}")
+            probability = marginalProbability[feature]
+            # sample one feature for all records in this class at once
+            sampledFeature = gen.choice([0,1], p=[1-probability,probability],size = recordsPerClass)
+            features[index_start:index_end,feature] = sampledFeature
+
+    return Dataset.from_tensor_slices((features, labels))
 
 
 

@@ -33,7 +33,7 @@ shadowModels:
 shadowDataset:
   size: 30000
   # methods: hill_climbing, noisy, original
-  method: noisy
+  method: statistic
   noisy:
     hyperparameters:
       fraction: 0.1
@@ -45,5 +45,8 @@ shadowDataset:
       rej_max: 10
       iter_max: 200
       batchSize: 100
+  statistic:
+    hyperparameters:
+      size: 1000
 
 ...
