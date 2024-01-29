@@ -75,6 +75,12 @@ def get_shadow_data_name(config: Dict):
             f'rejmax_{hyperpars["rej_max"]}_' + \
             f'itermax_{hyperpars["iter_max"]}_' + \
             f'size_{dataSize}'
+    elif method == "original":
+        dataName = \
+            f'{method}_' + \
+            f'{targetDataName}_' + \
+            f'original_data_' + \
+            f'size_{dataSize}'
     else:
         raise ValueError(f"{method} is not a valid shadow data method.")
     return dataName
@@ -99,7 +105,9 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
         elif method == "hill_climbing":
             shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
         elif method == "original":
-            shadowData = targetDataset
+            modelName = tm.get_model_name(config)
+            restDataName = modelName + "_rest_data"
+            shadowData = ds.load_target(restDataName).take(dataSize)
         else:
             raise ValueError(f"{method} is not a valid shadow data method.")
 
