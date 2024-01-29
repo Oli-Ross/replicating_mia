@@ -116,7 +116,7 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             restDataName = modelName + "_rest_data"
             shadowData = ds.load_target(restDataName).take(dataSize)
         elif method == "statistic":
-            shadowData = generate_shadow_data_statistic(config, **hyperpars)
+            shadowData = generate_shadow_data_statistic(config)
         else:
             raise ValueError(f"{method} is not a valid shadow data method.")
 
@@ -206,7 +206,7 @@ def _compute_kaggle_marginals(config):
         marginalProbabilities[_class] = marginalProbability
     return marginalProbabilities
 
-def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
+def generate_shadow_data_statistic(config: Dict) -> Dataset:
     """
     Generate synthetic data for the shadow models by using the marginal
     distribution of features in the original dataset.
