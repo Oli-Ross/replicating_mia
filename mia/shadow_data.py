@@ -81,6 +81,12 @@ def get_shadow_data_name(config: Dict):
             f'{targetDataName}_' + \
             f'original_data_' + \
             f'size_{dataSize}'
+    elif method == "statistic":
+        dataName = \
+            f'{method}_' + \
+            f'{targetDataName}_' + \
+            f'statistic_' + \
+            f'size_{dataSize}'
     else:
         raise ValueError(f"{method} is not a valid shadow data method.")
     return dataName
@@ -108,6 +114,8 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
             modelName = tm.get_model_name(config)
             restDataName = modelName + "_rest_data"
             shadowData = ds.load_target(restDataName).take(dataSize)
+        elif method == "statistic":
+            shadowData = generate_shadow_data_statistic(config, **hyperpars)
         else:
             raise ValueError(f"{method} is not a valid shadow data method.")
 
@@ -171,13 +179,38 @@ def generate_shadow_data_noisy(original_data: Dataset, outputSize: int, fraction
         ds.shuffle(original_data), fraction).take(offset)
     return noisySet.concatenate(offsetSet)
 
+def _get_filter_fn(label: int):
 
-def generate_shadow_data_statistic(original_data: Dataset) -> Dataset:
+    wantedLabel = np.int64(label)
+    def _filter_fn(_, y): return tf.math.equal(wantedLabel, tf.math.argmax(y))
+    return _filter_fn
+
+def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
     """
     Generate synthetic data for the shadow models by using the marginal
     distribution of features in the original dataset.
     """
-    pass
+    # TODO: Kaggle specific
+    dataName = config["targetDataset"]["name"]
+    originalData = ds.load_dataset(dataName)
+    numFeatures = iter(originalData).get_next()[0].numpy().shape[0]
+    numLabels = iter(originalData).get_next()[1].numpy().shape[1]
+    marginalProbabilities = []
+    # For each class, count binary feature values to get marginal
+    for _class in numLabels:
+        filteredData = originalData.filter(_get_filter_fn(_class))
+        initialCount = np.array([0]*numFeatures)
+        countedFeatures = filteredData.reduce(initialCount, lambda oldCount, dataPoint: oldCount + dataPoint)
+        sampleSize = filteredData.cardinality()
+        marginalProbability = countedFeatures / sampleSize
+        marginalProbabilities.append(marginalProbability)
+
+    breakpoint()
+
+    for record in hyperpars["size"]:
+        pass
+
+
 
 
 def _generate_labels(classes: int, size: int) -> NDArray:
