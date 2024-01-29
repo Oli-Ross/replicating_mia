@@ -23,8 +23,9 @@ def set_seed(new_seed: int):
 
 def get_shadow_model_name(config: Dict, i: int):
     numModels: int = config["shadowModels"]["number"]
+    method: str = config["shadowDataset"]["method"]
     split: float = config["shadowModels"]["split"]
-    return "shadow_" + tm.get_model_name(config) + f"_split_{split}_{i+1}_of_{numModels}"
+    return "shadow_" + method + tm.get_model_name(config) + f"_split_{split}_{i+1}_of_{numModels}"
 
 
 def load_shadow_models_and_datasets(config: Dict) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
