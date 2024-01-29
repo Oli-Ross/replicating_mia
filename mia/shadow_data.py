@@ -93,7 +93,7 @@ def get_shadow_data_name(config: Dict):
     return dataName
 
 
-def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
+def get_shadow_data(config: Dict) -> ds.Dataset:
     verbose = config["verbose"]
     shadowConfig = config["shadowDataset"]
     method = shadowConfig["method"]
@@ -106,6 +106,9 @@ def get_shadow_data(config: Dict, targetDataset, targetModel) -> ds.Dataset:
         shadowData = load_shadow_data(config)
     except BaseException:
         print("Loading failed, generating shadow data.")
+
+        targetDataset = get_target_model_rest_data(config)
+        targetModel = tm.load_model(tm.get_model_name(config), verbose=config["verbose"])
 
         if method == "noisy":
             shadowData = generate_shadow_data_noisy(targetDataset, dataSize, **hyperpars)
@@ -496,6 +499,4 @@ if __name__ == "__main__":
     config = con.from_cli_options(vars(parser.parse_args()))
     set_seed(config["seed"])
 
-    targetDataset = get_target_model_rest_data(config)
-    targetModel = tm.load_model(tm.get_model_name(config), verbose=config["verbose"])
-    get_shadow_data(config, targetDataset, targetModel)
+    shadowData = get_shadow_data(config)
