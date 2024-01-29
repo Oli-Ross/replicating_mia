@@ -23,7 +23,7 @@ def set_seed(new_seed: int):
 
 def get_shadow_model_name(config: Dict, i: int):
     numModels: int = config["shadowModels"]["number"]
-    method: str = config["shadowDataset"]["method"]
+    method: str = config["shadowDataset"]["method"] + "_"
     split: float = config["shadowModels"]["split"]
     return "shadow_" + method + tm.get_model_name(config) + f"_split_{split}_{i+1}_of_{numModels}"
 
