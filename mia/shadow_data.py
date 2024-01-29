@@ -212,7 +212,7 @@ def generate_shadow_data_statistic(config: Dict, **hyperpars) -> Dataset:
     distribution of features in the original dataset.
     """
     # TODO: Kaggle specific
-    size = hyperpars["size"]
+    size = config["shadowDataset"]["size"]
     try:
         marginalProbabilities = ds.load_numpy_array("kaggle_marginals.npy")
     except:
