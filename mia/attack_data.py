@@ -216,6 +216,8 @@ def get_attack_data(config: Dict,
     This function predicts and then labels the provided datasets on their
     respective shadow model, thus creating the labeled data needed for the
     attack model.
+
+    It returns a list of tuples that contains (trainingData, testingData) per class.
     """
     try:
         print("Loading attack data.")
