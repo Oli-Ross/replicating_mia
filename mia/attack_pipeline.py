@@ -13,6 +13,7 @@ import numpy as np
 from tensorflow.data import Dataset  # pyright: ignore
 from tensorflow.python.framework import random_seed
 
+import utils
 import datasets as ds
 import target_models as tm
 import attack_model as am
@@ -51,8 +52,9 @@ def run_pipeline(targetModel, targetTrainData, targetRestData):
 
 
     try:
-        memberAttackPredictions = ds.load_numpy_array("memberAttackPredictions.npy")
-        nonmemberAttackPredictions = ds.load_numpy_array("nonmemberAttackPredictions.npy")
+        hash = utils.hash(str(config))
+        memberAttackPredictions = ds.load_numpy_array(f"{hash}_memberAttackPredictions.npy")
+        nonmemberAttackPredictions = ds.load_numpy_array(f"{hash}_nonmemberAttackPredictions.npy")
 
     except:
         attackModels = am.get_attack_models(config, [])
