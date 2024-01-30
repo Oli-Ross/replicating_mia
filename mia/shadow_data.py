@@ -249,7 +249,9 @@ def generate_shadow_data_statistic(config: Dict) -> Dataset:
             sampledFeature = gen.choice([0,1], p=[1-probability,probability],size = recordsPerClass)
             features[index_start:index_end,feature] = sampledFeature
 
-    return Dataset.from_tensor_slices((features, labels))
+    shadowData = Dataset.from_tensor_slices((features, labels))
+    shadowData = shadowData.shuffle(size, seed=global_seed, reshuffle_each_iteration=False)
+    return shadowData
 
 
 
