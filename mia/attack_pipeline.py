@@ -117,7 +117,8 @@ def process_results(precision, recall, precisionPerClass, recallPerClass):
 
     precisionPerClassWithoutNone = [x for x in precisionPerClass if x]
 
-    with open("precisionPerClass.csv",'w') as file:
+    hash = utils.hash(str(config))
+    with open(f"{hash}_precisionPerClass.csv",'w') as file:
         file.write("Precision\n")
         for precision in sorted(precisionPerClassWithoutNone):
             file.write(f"{precision}\n")
