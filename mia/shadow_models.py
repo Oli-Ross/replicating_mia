@@ -5,8 +5,11 @@ import target_models as tm
 import shadow_data as sd
 
 from tensorflow.python.framework import random_seed
+from tensorflow.keras import Sequential  # pyright: ignore
 
 import numpy as np
+from os.path import dirname, isdir, join
+from os import makedirs
 
 global_seed: int = 1234
 
@@ -49,6 +52,17 @@ def load_shadow_models_and_datasets(config: Dict) -> Tuple[List[tm.Sequential], 
 
     return models, datasets
 
+def save_model(name: str, model: Sequential) -> None:
+    """
+    Save model to disk.
+
+    The file name will be constructed from the `name` argument.
+    """
+    folderPath: str = join(dirname(__file__),"../models/shadow")
+    if not isdir(folderPath):
+        makedirs(folderPath, exist_ok=True)
+    filePath: str = join(folderPath, name)
+    model.save(filePath)
 
 def train_shadow_models(config: Dict, shadowDatasets: List[ds.Dataset]
                         ) -> Tuple[List[tm.Sequential], List[Tuple[ds.Dataset, ds.Dataset]]]:
@@ -80,7 +94,7 @@ def train_shadow_models(config: Dict, shadowDatasets: List[ds.Dataset]
         tm.train_model(model, modelName, trainData, testData, modelConfig)
 
         print(f"Saving shadow model {i+1} and its data to disk.")
-        tm.save_model(modelName, model)
+        save_model(modelName, model)
         ds.save_shadow(trainData, trainDataName)
         ds.save_shadow(testData, testDataName)
 
