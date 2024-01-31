@@ -337,7 +337,7 @@ def _generate_synthetic_record_batched(label: int,
                                        conf_min: float = 0.05,
                                        rej_max: int = 20,
                                        iter_max: int = 200,
-                                       batchSize: int = 1) -> Optional[NDArray]:
+                                       batchSize: int = 1) -> Tuple[int, Optional[NDArray]]:
     """
     Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -373,7 +373,7 @@ def _generate_synthetic_record_batched(label: int,
                 #  print(f"Now sampling! {batchIndex},{y_c},{y_c_star}")
                 haveSampled = True
                 if y_c > globalRandomGen.random():
-                    return x.reshape((1, numFeatures))
+                    return i, x.reshape((1, numFeatures))
 
             xs, ys, batchIndex = _rebatch(x, k, batchSize, targetModel)
             y_c_star = y_c
@@ -397,7 +397,7 @@ def _generate_synthetic_record_batched(label: int,
         #  if (i % 20) == 0:
         #      print(f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
 
-    return None
+    return iter_max, None
 
 
 def _generate_synthetic_record(label: int,
@@ -407,7 +407,7 @@ def _generate_synthetic_record(label: int,
                                conf_min: float = 0.05,
                                rej_max: int = 20,
                                iter_max: int = 200,
-                               batchSize: int = 1) -> Optional[NDArray]:
+                               batchSize: int = 1) -> Tuple[int,Optional[NDArray]]:
     """
     Synthesize a data record, using Algorithm 1 from Shokri et als
     paper "Membership Inference Attacks against Machine Learning Models".
@@ -432,7 +432,7 @@ def _generate_synthetic_record(label: int,
             if y_c > conf_min and predictedClass == label:
                 #  print("Now sampling!")
                 if y_c > globalRandomGen.random():
-                    return x
+                    return i,x
 
             y_c_star = y_c
             j = 0
@@ -448,7 +448,7 @@ def _generate_synthetic_record(label: int,
         #      print(
         #          f"{i}/{iter_max}, y_c/y_c*: {y_c:.1%}/{y_c_star:.1%}, pred/class: {predictedClass}/{label}")
 
-    return None
+    return iter_max,None
 
 
 def hill_climbing(targetModel: Sequential, numRecords: int,
@@ -472,13 +472,16 @@ def hill_climbing(targetModel: Sequential, numRecords: int,
 
     numFeatures: int = 600
     features: NDArray = np.zeros((numRecords, numFeatures))
+    overallNumQueries = []
 
     for index, label in enumerate(labels):
         label = int(label[0])
-        new_record = _generate_synthetic_record(label, targetModel, **hyperpars)
+        queries, new_record = _generate_synthetic_record(label, targetModel, **hyperpars)
+        overallNumQueries.append(queries)
         while new_record is None:
-            new_record = _generate_synthetic_record(label, targetModel, **hyperpars)
-        print(f"Generating synthetic records: {index}/{numRecords}, {index/numRecords*100:.2f}% done.")
+            queries, new_record = _generate_synthetic_record(label, targetModel, **hyperpars)
+            overallNumQueries.append(queries)
+        print(f"Generating synthetic records: {index}/{numRecords}, {index/numRecords*100:.2f}% done. On average {sum(overallNumQueries)/(index+1)} +- {np.std(overallNumQueries)} queries.")
         features[index] = new_record.reshape((1, numFeatures))
 
     features = features.reshape((numRecords, numFeatures))
