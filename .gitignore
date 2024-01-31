@@ -14,7 +14,7 @@ models/
 mia/logs
 
 # Output files
-mia/precisionPerClass.csv
+mia/*.csv
 
 __pycache__/
 
