@@ -41,20 +41,7 @@ def prepare(configFile: str):
     run_script(f"attack_model.py", configFile)
     run_script(f"attack_pipeline.py", configFile)
 
-
-def evaluate(config: Dict):
-    attackDatasets = ad.load_attack_data(config)
-    attackModels = am.get_attack_models(config, attackDatasets)
-    overallAccuracy = am.evaluate_models(attackModels, attackDatasets)
-    print(f"Average attack accuracy over all classes: {overallAccuracy}")
-
-
 if __name__ == "__main__":
     options = parse_args()
-    if options["prepare"]:
-        configFileName = options["config"]
-        prepare(configFileName)
-
-    if options["evaluate"]:
-        config = con.from_cli_options(options)
-        evaluate(config)
+    configFileName = options["config"]
+    prepare(configFileName)

@@ -168,3 +168,5 @@ if __name__ == "__main__":
 
     attackDatasets = ad.load_attack_data(config)
     attackModels = get_attack_models(config, attackDatasets)
+    overallAccuracy = evaluate_models(attackModels, attackDatasets)
+    print(f"Average attack accuracy over all classes: {overallAccuracy}")
