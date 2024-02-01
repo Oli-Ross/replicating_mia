@@ -27,7 +27,7 @@ targetDataset:
   testSize: 10000
 
 shadowModels:
-  number: 10
+  number: 20
   split: 0.5
 
 shadowDataset:
