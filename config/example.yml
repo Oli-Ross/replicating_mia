@@ -47,5 +47,7 @@ shadowDataset:
       batchSize: 100
   statistic:
     hyperparameters:
+  original:
+    hyperparameters:
 
 ...
