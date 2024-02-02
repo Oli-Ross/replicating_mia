@@ -41,7 +41,7 @@ def load_shadow_models_and_datasets(config: Dict) -> Tuple[List[tm.Sequential], 
     print(f"Loading shadow models from disk.")
     for i in range(numModels):
         modelName = get_shadow_model_name(config, i)
-        model: tm.KaggleModel = tm.load_model(modelName, verbose=verbose)
+        model: tm.KaggleModel = load_model(modelName, verbose=verbose)
 
         trainDataName = modelName + "_train_data"
         testDataName = modelName + "_test_data"
