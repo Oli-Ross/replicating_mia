@@ -31,7 +31,7 @@ shadowModels:
   split: 0.5
 
 shadowDataset:
-  size: 30000
+  size: 50000
   # methods: hill_climbing, noisy, original, statistic
   method: statistic
   noisy:
