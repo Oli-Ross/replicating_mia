@@ -8,6 +8,7 @@ from os import environ, makedirs
 environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # NOQA
 
 import datasets as ds
+import utils
 
 from os.path import dirname, isdir, join
 import datetime
@@ -160,12 +161,17 @@ def get_target_model(config: Dict, targetDataset) -> Sequential:
     print("Evaluating target model on training data:")
     trainDataName = modelName + "_train_data"
     trainData = ds.load_target(trainDataName)
-    evaluate_model(model,trainData)
+    trainAcc = evaluate_model(model,trainData)[1]
 
     print("Evaluating target model on testing data:")
     testDataName = modelName + "_test_data"
     testData = ds.load_target(testDataName)
-    evaluate_model(model,testData)
+    testAcc = evaluate_model(model,testData)
+
+    hash = utils.hash(str(config))
+    with open(f"{hash}_targetModelAccuracy.csv",'w') as file:
+        file.write(f"Target Model Training Accuracy: {trainAcc}")
+        file.write(f"Target Model Testing Accuracy: {testAcc}")
 
     return model
 
