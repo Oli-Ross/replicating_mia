@@ -1,11 +1,13 @@
 from typing import Dict, List, Tuple
 
+import utils
 import datasets as ds
 import target_models as tm
 import shadow_data as sd
 
 from tensorflow.python.framework import random_seed
 from tensorflow.keras import Sequential  # pyright: ignore
+from tensorflow.data import Dataset
 from tensorflow import keras
 
 import numpy as np
@@ -139,6 +141,34 @@ def get_shadow_models_and_datasets(config: Dict, shadowDatasets: List[ds.Dataset
 
     return models, datasets
 
+def evaluate_model(model: Sequential, dataset: Dataset):
+    # TODO: batchSize is hardcoded
+    batchSize = 10
+    dataset = dataset.batch(batchSize, drop_remainder=False)
+    return model.evaluate(dataset)
+
+def evaluate_models(models:List[tm.Sequential], datasets: List[Tuple[ds.Dataset, ds.Dataset]]):
+    assert len(models) == len(datasets)
+    test_accuracies = []
+    train_accuracies = []
+    for i in range(len(models)):
+        testData = datasets[i][0]
+        trainData = datasets[i][1]
+        test_accuracy = evaluate_model(models[i], testData)[1]
+        train_accuracy = evaluate_model(models[i], trainData)[1]
+        test_accuracies.append(test_accuracy)
+        train_accuracies.append(train_accuracy)
+
+    hash = utils.hash(str(config))
+
+    with open(f"{hash}_shadowModelTrainAccuracy.csv",'w') as file:
+        file.write(f"Attack Model Training Accuracies (Overall:{np.average(train_accuracies)})\n")
+        for train_acc in train_accuracies:
+            file.write(f"{train_acc}\n")
+    with open(f"{hash}_shadowModelTestAccuracy.csv",'w') as file:
+        file.write(f"Attack Model Testing Accuracies (Overall:{np.average(test_accuracies)})\n")
+        for test_acc in test_accuracies:
+            file.write(f"{test_acc}\n")
 
 if __name__ == "__main__":
     import argparse
@@ -154,4 +184,5 @@ if __name__ == "__main__":
 
     shadowData = sd.load_shadow_data(config)
     shadowDatasets = sd.split_shadow_data(config, shadowData)
-    shadowModels = get_shadow_models_and_datasets(config, shadowDatasets)
+    shadowModels, shadowDatasets = get_shadow_models_and_datasets(config, shadowDatasets)
+    evaluate_models(shadowModels,shadowDatasets)
