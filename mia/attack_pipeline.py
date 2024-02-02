@@ -105,7 +105,8 @@ def run_pipeline(targetModel, targetTrainData, targetRestData):
         if nonmemberAttackPrediction:
             membersInferredAsMembers = len(memberAttackPrediction) - np.count_nonzero(memberAttackPrediction)
             nonmembersInferredAsMembers = len(nonmemberAttackPrediction) - np.count_nonzero(nonmemberAttackPrediction)
-            precisionPerClass[_class] = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
+            if (membersInferredAsMembers + nonmembersInferredAsMembers):
+                precisionPerClass[_class] = membersInferredAsMembers / (membersInferredAsMembers + nonmembersInferredAsMembers)
 
     membersInferredAsMembers = targetTrainDataSize - sum([sum(x) for x in memberAttackPredictions])
     nonmembersInferredAsMembers = targetTrainDataSize - sum([sum(x) for x in nonmemberAttackPredictions])
