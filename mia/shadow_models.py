@@ -6,6 +6,7 @@ import shadow_data as sd
 
 from tensorflow.python.framework import random_seed
 from tensorflow.keras import Sequential  # pyright: ignore
+from tensorflow import keras
 
 import numpy as np
 from os.path import dirname, isdir, join
@@ -51,6 +52,17 @@ def load_shadow_models_and_datasets(config: Dict) -> Tuple[List[tm.Sequential], 
         models.append(model)
 
     return models, datasets
+
+def load_model(name: str, verbose=True) -> Sequential:
+    """
+    Load model from disk.
+
+    The file name will be constructed from the `name` argument.
+    """
+    if verbose:
+        print(f"Loading model {name} from disk.")
+    filePath: str = join(dirname(__file__), "../models/shadow", name)
+    return keras.models.load_model(filePath)
 
 def save_model(name: str, model: Sequential) -> None:
     """
