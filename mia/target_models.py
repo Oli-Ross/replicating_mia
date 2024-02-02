@@ -166,12 +166,12 @@ def get_target_model(config: Dict, targetDataset) -> Sequential:
     print("Evaluating target model on testing data:")
     testDataName = modelName + "_test_data"
     testData = ds.load_target(testDataName)
-    testAcc = evaluate_model(model,testData)
+    testAcc = evaluate_model(model,testData)[1]
 
     hash = utils.hash(str(config))
     with open(f"{hash}_targetModelAccuracy.csv",'w') as file:
-        file.write(f"Target Model Training Accuracy: {trainAcc}")
-        file.write(f"Target Model Testing Accuracy: {testAcc}")
+        file.write(f"Target Model Training Accuracy: {trainAcc}\n")
+        file.write(f"Target Model Testing Accuracy: {testAcc}\n")
 
     return model
 
