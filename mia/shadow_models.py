@@ -152,8 +152,8 @@ def evaluate_models(models:List[tm.Sequential], datasets: List[Tuple[ds.Dataset,
     test_accuracies = []
     train_accuracies = []
     for i in range(len(models)):
-        testData = datasets[i][0]
-        trainData = datasets[i][1]
+        testData = datasets[i][1]
+        trainData = datasets[i][0]
         test_accuracy = evaluate_model(models[i], testData)[1]
         train_accuracy = evaluate_model(models[i], trainData)[1]
         test_accuracies.append(test_accuracy)
