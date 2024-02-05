@@ -90,8 +90,8 @@ def run_pipeline(targetModel, targetTrainData, targetRestData):
             if i % 100 == 0 and config["verbose"]:
                 print(f"Predicted {i}/{targetTrainDataSize} nonmember records on attack model.")
 
-        ds.save_numpy_array("{hash}_memberAttackPredictions.npy",memberAttackPredictions)
-        ds.save_numpy_array("{hash}_nonmemberAttackPredictions.npy",nonmemberAttackPredictions)
+        ds.save_numpy_array(f"{hash}_memberAttackPredictions.npy",memberAttackPredictions)
+        ds.save_numpy_array(f"{hash}_nonmemberAttackPredictions.npy",nonmemberAttackPredictions)
 
     precisionPerClass = [None for _ in range(numClasses)]
     recallPerClass = [None for _ in range(numClasses)]
