@@ -116,17 +116,14 @@ def run_pipeline(targetModel, targetTrainData, targetRestData):
 
 def process_results(precision, recall, precisionPerClass, recallPerClass):
 
-    precisionPerClassWithoutNone = [x for x in precisionPerClass if x]
-    recallPerClassWithoutNone = [x for x in recallPerClass if x]
-
     hash = utils.hash(str(config))
     with open(f"{hash}_recallPerClass.csv",'w') as file:
         file.write(f"Recall (Overall:{recall})\n")
-        for recall in sorted(recallPerClassWithoutNone):
+        for recall in recallPerClass:
             file.write(f"{recall}\n")
     with open(f"{hash}_precisionPerClass.csv",'w') as file:
         file.write(f"Precision (Overall: {precision})\n")
-        for precision in sorted(precisionPerClassWithoutNone):
+        for precision in precisionPerClass:
             file.write(f"{precision}\n")
 
 if __name__ == "__main__":
