@@ -24,7 +24,7 @@ python -m pip install -r requirements.txt
 
 Alternatively, use the provided dockerfile.
 To leverage the GPU, install the respective NVIDIA driver on the host system, as
-well as the [NVIDIA container toolkit](https://github.com/NVIDIA/nvidia-docker).
+well as the [NVIDIA container toolkit](https://github.com/NVIDIA/nvidia-container-toolkit).
 Build the image:
 ```bash
 docker build -t mia:0.1 .
