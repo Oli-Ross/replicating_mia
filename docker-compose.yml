@@ -7,7 +7,7 @@ services:
     stdin_open: true
     tty: true
     user: $UID:$GID
-    entrypoint: /bin/bash
+    entrypoint: python main.py
     working_dir: /mia/mia
     deploy:
       resources:
