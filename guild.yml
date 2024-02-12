@@ -1,7 +1,0 @@
-train:
-  main: mia/main --config example.yml
-  sourcecode: "mia"
-  flags-import: yes
-  flags-dest: config:config/example.yml
-  flags:
-    seed: 4321
