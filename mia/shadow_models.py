@@ -162,11 +162,11 @@ def evaluate_models(models:List[tm.Sequential], datasets: List[Tuple[ds.Dataset,
     hash = utils.hash(str(config))
 
     with open(f"{hash}_shadowModelTrainAccuracy.csv",'w') as file:
-        file.write(f"Attack Model Training Accuracies (Overall:{np.average(train_accuracies)})\n")
+        file.write(f"Shadow Model Training Accuracies (Overall:{np.average(train_accuracies)})\n")
         for train_acc in train_accuracies:
             file.write(f"{train_acc}\n")
     with open(f"{hash}_shadowModelTestAccuracy.csv",'w') as file:
-        file.write(f"Attack Model Testing Accuracies (Overall:{np.average(test_accuracies)})\n")
+        file.write(f"Shadow Model Testing Accuracies (Overall:{np.average(test_accuracies)})\n")
         for test_acc in test_accuracies:
             file.write(f"{test_acc}\n")
 
