@@ -28,12 +28,12 @@ targetDataset:
 
 shadowModels:
   number: 20
-  split: 0.5
+  split: 0.8
 
 shadowDataset:
-  size: 200000
+  size: 10000
   # methods: hill_climbing, noisy, original, statistic
-  method: statistic
+  method: original
   noisy:
     hyperparameters:
       fraction: 0.1

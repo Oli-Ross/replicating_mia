@@ -97,7 +97,10 @@ def get_shadow_data(config: Dict) -> ds.Dataset:
     verbose = config["verbose"]
     shadowConfig = config["shadowDataset"]
     method = shadowConfig["method"]
-    dataSize = shadowConfig["size"]
+    sizePerModel = shadowConfig["size"]
+    split = config["shadowModels"]["split"]
+    numModels = config["shadowModels"]["number"]
+    dataSize = int(np.ceil(sizePerModel * (numModels/split)))
     hyperpars = shadowConfig[method]["hyperparameters"]
     dataName = get_shadow_data_name(config)
 
@@ -115,9 +118,7 @@ def get_shadow_data(config: Dict) -> ds.Dataset:
         elif method == "hill_climbing":
             shadowData = hill_climbing(targetModel, dataSize, **hyperpars)
         elif method == "original":
-            modelName = tm.get_model_name(config)
-            restDataName = modelName + "_rest_data"
-            shadowData = ds.load_target(restDataName).take(dataSize)
+            shadowData = generate_shadow_data_original(targetDataset, dataSize)
         elif method == "statistic":
             shadowData = generate_shadow_data_statistic(config)
         else:
@@ -152,6 +153,26 @@ def _make_dataset_noisy(original_data: Dataset, fraction: float) -> Dataset:
             tf.numpy_function(func=_make_data_record_noisy, inp=(x, y, fraction), Tout=[tf.int64, tf.int64])
     )
 
+def generate_shadow_data_original(targetDataset, outputSize) -> Dataset:
+
+    inputSize = targetDataset.cardinality().numpy()
+
+    shadowData = ds.shuffle(targetDataset)
+
+    if inputSize >= outputSize:
+        return shadowData.take(outputSize)
+
+
+    numSets = int(np.floor(outputSize / inputSize))
+    for _ in range(numSets - 1):
+        newSet = ds.shuffle(targetDataset)
+        shadowData = shadowData.concatenate(newSet)
+
+    # How many records to add after collecting numSets sets
+    offset = outputSize % inputSize
+    offsetSet = ds.shuffle(targetDataset).take(offset)
+
+    return shadowData.concatenate(offsetSet)
 
 def generate_shadow_data_noisy(original_data: Dataset, outputSize: int, fraction: float = 0.1) -> Dataset:
     """
