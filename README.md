@@ -28,10 +28,13 @@ Start a container:
 docker compose run mia
 ```
 
-Verify that the GPU is available in `tensorflow`:
+To verify that the GPU is available in `tensorflow`:
 ```bash
 TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physical_devices('GPU')"
 ```
+
+If you want to debug in the Docker container, change the entrypoint of the `docker-compose.yml` file to 
+`entrypoint: /bin/bash`.
 
 ## Usage
 
@@ -56,11 +59,9 @@ Datasets and models will be saved to disk and only generated or trained if they 
 python mia/main.py
 ```
 
-Refer to the documentation of each module on how to use it as standalone. 
-
 ## Documentation
 
-Documentation is avaible at https://oli-ross.github.io/replicating_mia.
+Documentation is currently avaible at https://oli-ross.github.io/replicating_mia.
 You can generate it locally with [pdoc](https://pypi.org/project/pdoc/):
 ```bash
 cd mia && pdoc -o ../docs/build *.py
