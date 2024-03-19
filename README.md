@@ -35,6 +35,7 @@ TF_CPP_MIN_LOG_LEVEL=2 python -c "import tensorflow as tf; tf.config.list_physic
 
 If you want to debug in the Docker container, change the entrypoint of the `docker-compose.yml` file to 
 `entrypoint: /bin/bash`.
+If you don't want to use the GPU or none is availabe to Docker, remove the "`deploy`"-key from the `docker-compose.yml`.
 
 ## Usage
 
