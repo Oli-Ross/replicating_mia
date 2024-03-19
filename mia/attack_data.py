@@ -57,7 +57,7 @@ def from_target_data(targetTrainData: Dataset, targetTestData: Dataset,
                      targetModel: Sequential, label: int) -> Dataset:
     """
     Use the training and test data to construct the attack dataset.
-    Splitting is done according to this scheme:
+    Splitting is done according to this scheme (best viewed in the source code):
 
       Training data             Testing data
     
